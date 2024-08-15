@@ -53,7 +53,7 @@ class isv57communication {
     void readServoStates();
     bool checkCommunication();
     bool findServosSlaveId();
-
+    bool clearServoAlarms();
 
 
     void setZeroPos();

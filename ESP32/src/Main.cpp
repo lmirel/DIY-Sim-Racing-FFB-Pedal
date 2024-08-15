@@ -264,11 +264,11 @@ void setup()
   Serial.println(" ");
   Serial.println(" ");
   
+  Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
+  Serial.println("Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
   // init controller
   SetupController();
   delay(3000);
-  Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
-  Serial.println("Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
 
 // check whether iSV57 communication can be established
 // and in case, (a) send tuned servo parameters and (b) prepare the servo for signal read
@@ -293,7 +293,10 @@ void setup()
     ESP.restart();
   }
 
-
+  // reset iSV57 alarms
+  bool servoAlarmsCleared = isv57.clearServoAlarms();
+  delay(500);
+  
   Serial.print("iSV57 communication state:  ");
   Serial.println(isv57LifeSignal_b);
 
@@ -674,6 +677,7 @@ void pedalUpdateTask( void * pvParameters )
     if (now - cycleTimeLastCall < PUT_TARGET_CYCLE_TIME_IN_US) // 100us = 10kHz
     {
       // skip 
+      taskYIELD();
       continue;
     }
     {
@@ -1212,6 +1216,8 @@ void serialCommunicationTask( void * pvParameters )
       
       if (n > 0)
       {
+      Serial.print("Serial received bytes: ");
+      Serial.println(n);
         switch (n) {
 
           // likely config structure 
@@ -1434,7 +1440,7 @@ void serialCommunicationTask( void * pvParameters )
     // transmit controller output
     //Serial.print("Joy 1");
     delay( SERIAL_COOMUNICATION_TASK_DELAY_IN_MS );
-    if (IsControllerReady()) 
+    if (1/*IsControllerReady()*/) 
     {
       //Serial.print(" 2");
       if(semaphore_updateJoystick!=NULL)
@@ -1448,7 +1454,10 @@ void serialCommunicationTask( void * pvParameters )
       }
       //Serial.print(" 4");
       //Serial.print("\r\n");
-      SetControllerOutputValue(joystickNormalizedToInt32_local);
+      if (IsControllerReady()) 
+        SetControllerOutputValue(joystickNormalizedToInt32_local);
+      //
+      SerialControllerSend(joystickNormalizedToInt32_local);
     }
 
   /*#ifdef SERIAL_TIMEOUT

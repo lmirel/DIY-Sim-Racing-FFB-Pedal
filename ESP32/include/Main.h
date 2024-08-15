@@ -121,19 +121,22 @@
 
 // V3 version of dev PCB for regular ESP32
 #if PCB_VERSION == 3
+//#error PCB_VERSION_3
   // ADC defines
-  #define PIN_DRDY 19// 19 --> DRDY
+  #define PIN_DRDY 19 // 19 --> DRDY
   #define PIN_RST  15 // X --> X
-  #define PIN_SCK 16 // 16 -->SCLK
+  #define PIN_SCK 12 //16 // 16 -->SCLK
   #define PIN_MISO 18 // 18 --> DOUT
-  #define PIN_MOSI 17 // 17 --> DIN
-  #define PIN_CS 21 // 21 --> CS
-
+  #define PIN_MOSI 14 //17 // 17 --> DIN
+  #define PIN_CS 23 // 21 --> CS
+  // I2C
+  #define SDA_PIN 21  //data
+  #define SCL_PIN 22  //clock
   // stepper pins
-  #define dirPinStepper    22
-  #define stepPinStepper   23
+  #define dirPinStepper    32//22
+  #define stepPinStepper   33//23
   //analog output pin
-  #define D_O 25   
+  #define D_O 25
   
   // endstop pins
   #define minPin 12

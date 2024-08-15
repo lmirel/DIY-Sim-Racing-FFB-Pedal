@@ -207,3 +207,16 @@ void isv57communication::readServoStates() {
   }
   
 }
+
+bool isv57communication::clearServoAlarms() {
+
+  // read the alarm list
+  int8_t numberOfRegistersToRead_u8 = 0;
+  // Alarm register address: 0x02
+  //int bytesReceived_i = modbus.requestFrom(slaveId, 0x03, 0x02, numberOfRegistersToRead_u8);
+
+  // clear alarm list
+  modbus.holdingRegisterWrite(slaveId, 0x019a, 0x7777); 
+    
+  return 1;
+}
