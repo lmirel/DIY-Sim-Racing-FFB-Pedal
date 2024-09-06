@@ -13,7 +13,7 @@
 
 
 
-void SetupController();
+void SetupController(uint8_t val);
 bool IsControllerReady();
 
 void SetControllerOutputValue(int32_t value);

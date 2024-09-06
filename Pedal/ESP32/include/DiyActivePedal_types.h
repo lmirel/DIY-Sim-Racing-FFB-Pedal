@@ -169,6 +169,10 @@ struct payloadPedalConfig {
   uint8_t spindlePitch_mmPerRev_u8;
 
   //pedal type, 0= clutch, 1= brake, 2= gas
+#define FFB_PedalClutch 0
+#define FFB_PedalBrake  1
+#define FFB_PedalGas    2
+#define FFB_PedalUnk  (-1)  //unknown, for the kicks
   uint8_t pedal_type;
   //OTA flag
   uint8_t OTA_flag;

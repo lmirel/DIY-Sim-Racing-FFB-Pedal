@@ -266,8 +266,6 @@ void setup()
   
   Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
   Serial.println("Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
-  // init controller
-  SetupController();
   delay(3000);
 
 // check whether iSV57 communication can be established
@@ -344,11 +342,6 @@ void setup()
     Serial.println(dap_config_st_local.payloadFooter_.checkSum);*/
   }
 
-
-
-
-
-
   // if checks are successfull, overwrite global configuration struct
   if (structChecker == true)
   {
@@ -357,7 +350,6 @@ void setup()
   }
   else
   {
-
     Serial.println("Couldn't load config from EPROM due to mismatch: ");
 
     Serial.print("Payload type expected: ");
@@ -365,7 +357,6 @@ void setup()
     Serial.print(",   Payload type received: ");
     Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
 
-    
     Serial.print("Target version: ");
     Serial.print(DAP_VERSION_CONFIG);
     Serial.print(",    Source version: ");
@@ -378,11 +369,8 @@ void setup()
 
   }
 
-
   // interprete config values
   dap_calculationVariables_st.updateFromConfig(dap_config_st);
-
-
 
   bool invMotorDir = dap_config_st.payLoadPedalConfig_.invertMotorDirection_u8 > 0;
   stepper = new StepperWithLimits(stepPinStepper, dirPinStepper, minPin, maxPin, invMotorDir);
@@ -406,11 +394,8 @@ void setup()
   {
     stepper->findMinMaxEndstops();
   }
-
- 
   Serial.print("Min Position is "); Serial.println(stepper->getLimitMin());
   Serial.print("Max Position is "); Serial.println(stepper->getLimitMax());
-
 
   // setup Kalman filter
   Serial.print("Given loadcell variance: ");
@@ -419,26 +404,10 @@ void setup()
 
   kalman_2nd_order = new KalmanFilter_2nd_order(1);
   
-
-
-
-
-
-
-
-
-  
-
-  
-
   // activate parameter update in first cycle
   configUpdateAvailable = true;
   // equalize pedal config for both tasks
   dap_config_st_local = dap_config_st;
-
-
-
-
 
   // setup multi tasking
   semaphore_updateJoystick = xSemaphoreCreateMutex();
@@ -446,7 +415,6 @@ void setup()
   semaphore_resetServoPos = xSemaphoreCreateMutex();
   semaphore_updatePedalStates = xSemaphoreCreateMutex();
   delay(10);
-
 
   if(semaphore_updateJoystick==NULL)
   {
@@ -459,8 +427,6 @@ void setup()
     ESP.restart();
   }
 
-
-
   // print all servo registers
   if (dap_config_st.payLoadPedalConfig_.debug_flags_0 & DEBUG_INFO_0_PRINT_ALL_SERVO_REGISTERS) 
   {
@@ -470,9 +436,6 @@ void setup()
     }
   }
   
-
-
-
   disableCore0WDT();
 
   //create a task that will be executed in the Task2code() function, with priority 1 and executed on core 1
@@ -512,20 +475,18 @@ void setup()
     delay(500);
 #endif
 
-
-
   //Serial.begin(115200);
   #ifdef OTA_update
   char* APhost;
     switch(dap_config_st.payLoadPedalConfig_.pedal_type)
     {
-      case 0:
+      case FFB_PedalClutch:
         APhost="FFBPedalClutch";
         break;
-      case 1:
+      case FFB_PedalBrake:
         APhost="FFBPedalBrake";
         break;
-      case 2:
+      case FFB_PedalGas:
         APhost="FFBPedalGas";
         break;
       default:
@@ -590,7 +551,9 @@ void setup()
     }
   #endif
 
-
+  // init controller
+  SetupController(dap_config_st.payLoadPedalConfig_.pedal_type);
+  delay(3000);
   Serial.println("Setup end");
   
 }
