@@ -17,9 +17,7 @@
  Lib from Matthew Heironimus https://github.com/MHeironimus/ArduinoJoystickLibrary/archive/version-2.0.zip
 
  */
-#include <SoftwareSerial.h>
 
-SoftwareSerial mySerial(10, 11); // RX, TX
 #include "Joystick.h"
 #include <Wire.h>
 
@@ -32,16 +30,13 @@ Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID,
 void setup() {
   // Open serial communications and wait for port to open:
   Serial.begin(115200);
-  //while (!Serial) {
-  //  ; // wait for serial port to connect. Needed for native USB port only
-  //}
+
   // Set Range Values
   Joystick.setAcceleratorRange(0, 10000);
   Joystick.setBrakeRange(0, 10000);
   //Joystick.setSteeringRange(0, 10000);
   //Init Joy
   Joystick.begin(false);//autosend
-  delay(1000);
   //
   Joystick.setAccelerator(0);
   Joystick.setBrake(0);
@@ -50,55 +45,95 @@ void setup() {
 
   Serial.println("Ready!");
 
-  // set the data rate for the SoftwareSerial port
-  mySerial.begin(115200);
   //Wire.setSpeed(CLOCK_SPEED_400KHZ);
   Wire.begin();        // join I2C bus (address optional for master)
-  mySerial.println("SS Ready!");
+  Serial.println("SS Ready!");
 }
 
-long int lval = 0;
+long int lGasval = 0;
+long int lClcval = 0;
+long int lBrkval = 0;
 long int val;
 byte mt;
 byte ml;
+#define FFB_PedalClutch 0
+#define FFB_PedalBrake  1
+#define FFB_PedalGas    2
+#define FFB_PedalUnk  (-1)  //unknown, for the kicks
+#define I2CMSG_LEN 6
+#define I2CMSG_TYP 0xa
+#define I2CSLV_ADD 0x8
+static uint8_t i2cmsg[6] = {I2CMSG_TYP, sizeof(int32_t), 0,0,0,0};
 
 void read_i2c()
 {
     Wire.readBytes((char*)&mt, 1);
     Wire.readBytes((char*)&ml, 1);
-    if (mt == 0x0e && ml == 4)
+    if (ml == 4 && mt >= I2CMSG_TYP)
     {
       if (Wire.available()>= ml)
       {
         Wire.readBytes((char*)&val, ml);
+        Serial.print("I2C mtype: 0x");
+        Serial.print(mt, HEX);
         Serial.print("I2C mlen: ");
         Serial.print(ml);
         Serial.print(" value:");
         Serial.println(val);
-        if (lval != val)
+        switch(mt)
         {
-          lval = val;
-          //Joystick.setRudder(val);
-          Joystick.setAccelerator(val);
-          Joystick.setBrake(val);
-          Joystick.sendState();
+          case I2CMSG_TYP+FFB_PedalClutch:
+          {
+            break;
+          }
+          case I2CMSG_TYP+FFB_PedalBrake:
+          {
+            if (lBrkval != val)
+            {
+              lBrkval = val;
+              Joystick.setBrake(val);
+              Joystick.sendState();
+            }
+            break;
+          }
+          case I2CMSG_TYP+FFB_PedalGas:
+          {
+            if (lGasval != val)
+            {
+              lGasval = val;
+              Joystick.setAccelerator(val);
+              Joystick.sendState();
+            }
+            break;
+          }
         }
       }
     }
     else
     {
-      Serial.println("ERR:got wrong data, flashing..");
+      Serial.println("ERR:got wrong data, flushing..");
       //flush serial data
       while(Wire.available()) Wire.read();
     }
 }
 
 void loop() { // run over and over
-  Wire.requestFrom(8, 6);    // request 6 bytes from slave device #8
-  if (Wire.available() >= 6) { // slave may send less than requested
+  Wire.requestFrom(I2CSLV_ADD+FFB_PedalClutch, I2CMSG_LEN);    // request 6 bytes from slave device #8
+  if (Wire.available() >= I2CMSG_LEN) { // slave may send less than requested
        // print the character
        read_i2c();
   }
+  Wire.requestFrom(I2CSLV_ADD+FFB_PedalBrake, I2CMSG_LEN);    // request 6 bytes from slave device #8
+  if (Wire.available() >= I2CMSG_LEN) { // slave may send less than requested
+       // print the character
+       read_i2c();
+  }
+  Wire.requestFrom(I2CSLV_ADD+FFB_PedalGas, I2CMSG_LEN);    // request 6 bytes from slave device #8
+  if (Wire.available() >= I2CMSG_LEN) { // slave may send less than requested
+       // print the character
+       read_i2c();
+  }
+  #if 0
   if (mySerial.available() > 1)
   {
     mySerial.readBytes((char*)&mt, 1);
@@ -128,4 +163,5 @@ void loop() { // run over and over
       while(Serial.available()) Serial.read();
     }
   }
+  #endif
 }
