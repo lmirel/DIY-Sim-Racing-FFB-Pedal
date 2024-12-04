@@ -140,9 +140,9 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
   #define ISV57_TXPIN 27 //17
   #define ISV57_RXPIN 26 // 16
   //pedal assignment
-  #define PEDAL_ASSIGNMENT
-  #define CFG1 15
-  #define CFG2 12
+  // #define PEDAL_ASSIGNMENT
+  // #define CFG1 15
+  // #define CFG2 12
   //#define Using_analog_output
   //#define Using_I2C_Sync
   #define ESPNOW_Enable

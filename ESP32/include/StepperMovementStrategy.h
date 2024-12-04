@@ -246,11 +246,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   }
 
 
-  // Serial.printf("PosFraction: %f\n", stepper->getCurrentPositionFractionFromExternalPos( stepperPos ));
-  // Serial.printf("PosMin: %d\n", stepper->getMinPosition());
-  // delay(20);
-
-  // Serial.printf("PosFraction:%f,    TargetForce: %f,    LoadcellForce:%f\n", stepper->getCurrentPositionFractionFromExternalPos( stepperPos ), forceCurve->EvalForceCubicSpline(config_st, calc_st, stepper->getCurrentPositionFractionFromExternalPos( stepperPos )), loadCellReadingKg_corrected);
+  // Serial.printf("PosFraction: %f,    pos:%f,    travelRange:%f,    posMin:%d,    posMax:%d\n", stepper->getCurrentPositionFractionFromExternalPos( stepperPos ), stepperPos, stepper->getCurrentTravelRange(),  calc_st->stepperPosMin, calc_st->stepperPosMax );
   // delay(20);
 
   
@@ -281,7 +277,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     // float d_x_hor_d_phi_2 = -(b+d) * sinf(pedalInclineAngleInDeg_fl32 * DEG_TO_RAD_FL32);
 
     // apply effect force offset
-    loadCellTargetKg -= absForceOffset_fl32;
+    // loadCellTargetKg -= absForceOffset_fl32;
 
     // make stiffness dependent on force curve gradient
     // less steps per kg --> steeper line
@@ -296,16 +292,16 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       MOVE_STEPS_FOR_1KG *= fabs( forceGain );
     }*/
 
-  
-
     // angular foot model
     // m1 = d_f_d_x dForce / dx
     //float m1 = d_f_d_phi * (-d_phi_d_x);
 
+    float forceError_fl32 = loadCellReadingKg_corrected - loadCellTargetKg;
 
     // Translational foot model
     // given in kg/step
     float m1 = d_f_d_phi * (-d_x_hor_d_phi) * (-d_phi_d_x) * mmPerStep;
+
     // float m1 = d_f_d_phi * mmPerStep;
 
     // smoothen gradient with force curve gradient since it had better results w/ clutch pedal characteristic
@@ -319,7 +315,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float denom = m1 - m2;
     if ( fabs(denom) > 0 )
     {
-      float stepUpdate = ( loadCellReadingKg_corrected - loadCellTargetKg) / ( denom );
+      float stepUpdate = forceError_fl32 / ( denom );
 
       // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
       stepUpdate *= gradient_normalized_force_curve_fl32;
@@ -328,15 +324,11 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     }
   }
   
-  // readd the min position
+  // read the min position
   stepperPos += stepper->getMinPosition();
 
-  // limit the position update
-  float deltaMax = 0.5 * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);
-  int32_t posStepperNew = constrain(stepperPos, stepperPos_initial-deltaMax, stepperPos_initial+deltaMax );
-
   // clamp target position to range
-  posStepperNew = constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
+  int32_t posStepperNew = constrain(stepperPos, calc_st->stepperPosMin, calc_st->stepperPosMax );
 
   return posStepperNew;
 }

@@ -331,7 +331,7 @@ void ESPNow_initialize()
     }
     #endif
     
-    Serial.printf("BRK Mac: %02X:%02X:%02X:%02X:%02X:%02X\n", Brk_mac[0], Brk_mac[1], Brk_mac[2], Brk_mac[3], Brk_mac[4], Brk_mac[5]);
+    Serial.printf("[L]BRK Mac: %02X:%02X:%02X:%02X:%02X:%02X\n", Brk_mac[0], Brk_mac[1], Brk_mac[2], Brk_mac[3], Brk_mac[4], Brk_mac[5]);
     if(ESPNow.add_peer(Brk_mac)== ESP_OK)
     {
       ESPNOW_status=true;

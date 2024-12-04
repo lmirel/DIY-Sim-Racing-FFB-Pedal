@@ -604,6 +604,7 @@ void setup()
   #ifdef PEDAL_ASSIGNMENT
     pinMode(CFG1, INPUT_PULLUP);
     pinMode(CFG2, INPUT_PULLUP);
+    delay(50); // give the pin time to settle
     if(dap_config_st.payLoadPedalConfig_.pedal_type==4)
     {
       Serial.println("Pedal type:4, Pedal not assignment, reading from CFG pins....");
@@ -777,6 +778,8 @@ float Position_Next_Prev = 0.0f;
 //IRAM_ATTR DAP_config_st dap_config_pedalUpdateTask_st;
 DAP_config_st dap_config_pedalUpdateTask_st;
 //void loop()
+
+bool brakeResistorState = false;
 void pedalUpdateTask( void * pvParameters )
 {
 
@@ -990,14 +993,15 @@ void pedalUpdateTask( void * pvParameters )
     // select control loop algo
     switch (dap_config_pedalUpdateTask_st.payLoadPedalConfig_.control_strategy_b) {
       case 0:
+        // static PID
         Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity);
         break;
       case 1:
-      // int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float d_phi_d_x, float d_x_hor_d_phi) {
-
-        Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity, d_phi_d_x, d_x_hor_d_phi);
+        // dynamic PID
+        Position_Next = MoveByPidStrategy(filteredReading, stepperPosFraction, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity);
         break;
       default:
+        // MPC
         Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity, d_phi_d_x, d_x_hor_d_phi);
         break;
     }
@@ -1087,14 +1091,10 @@ void pedalUpdateTask( void * pvParameters )
     // Serial.print("Position next: ");
     // Serial.println(Position_Next);
 
-    // fiorce stop servo when certain voltage level is exceeded
+    // Activate brake resistor once a certain voltage level is exceeded
 #ifdef BRAKE_RESISTOR_PIN
     if ( stepper->getServosVoltage() > SERVO_VOLTAGE_TO_STOP_MOVEMENT_IN_0p1V)
     {
-      //stepper->forceStop();
-      
-      //stepper->moveTo(dap_calculationVariables_st.stepperPosMaxEndstop, false);
-      //Serial.println("Resistor high!");
       digitalWrite(BRAKE_RESISTOR_PIN, HIGH);
     }
     else
