@@ -252,7 +252,11 @@ char* APhost;
   #include "soc/soc_caps.h"
   #include <Adafruit_NeoPixel.h>
   #define LEDS_COUNT 1
-  Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_GRB + NEO_KHZ800);
+  #ifdef LED_ENABLE_RGB
+    Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_RGB + NEO_KHZ800);
+  #else
+    Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_GRB + NEO_KHZ800);
+  #endif
   #define CHANNEL 0
   #define LED_BRIGHT 30
   /*
