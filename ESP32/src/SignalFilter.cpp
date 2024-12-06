@@ -97,52 +97,78 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
   float delta_t_pow4 = delta_t_pow2 * delta_t_pow2;
 
   // update transition matrix
+  // F = [1, T; 0, 1]
+  F[0][0] = 1.0f;
   F[0][1] = delta_t;
+  F[1][0] = 0.0f;
+  F[1][1] = 1.0f;
 
-  float K_Q_11 = modelNoiseScaling_fl32 * KF_MODEL_NOISE_FORCE_ACCELERATION * (float)0.5f * delta_t_pow3;
-  Q[0][0] = modelNoiseScaling_fl32 * KF_MODEL_NOISE_FORCE_ACCELERATION * (float)0.25f * delta_t_pow4;
+  // Q = b * b' * a_var
+  // b = [0.5 * T^2; T]
+  // a_var: acceleration variance
+  // Q = [0.25*T^4 , 0.5*T^3; 0.5*T^3, T^2
+  float a_var = modelNoiseScaling_fl32 * KF_MODEL_NOISE_FORCE_ACCELERATION;
+  float K_Q_11 = a_var * 0.5f * delta_t_pow3;
+  Q[0][0] = a_var * 0.25f * delta_t_pow4;
   Q[0][1] = K_Q_11;
   Q[1][0] = K_Q_11;
-  Q[1][1] = modelNoiseScaling_fl32 * KF_MODEL_NOISE_FORCE_ACCELERATION * delta_t_pow2;
+  Q[1][1] = a_var * delta_t_pow2;
 
   // Predict Step
-    float x_pred[2] = {
-        F[0][0] * position + F[0][1] * velocity,
-        F[1][1] * velocity
-    };
+  // x_pred = x + T*v
+  // v_pred = v
+  float x_pred[2] = {
+    position + delta_t * velocity,
+    velocity
+  };
 
-    float Ftrans[2][2] = 
-    {
-        { F[0][0], F[1][0] }, 
-        { F[0][1], F[1][1] }
-    };
-    float FP[2][2];
-    float FPFtrans[2][2];
-    multiplyMatrices(F, P, FP);
-    multiplyMatrices(FP, Ftrans, FPFtrans);
-    float P_pred[2][2] = {
-        { FPFtrans[0][0] + Q[0][0], FPFtrans[0][1] + Q[0][1] }, 
-        { FPFtrans[1][0] + Q[1][0], FPFtrans[1][1] + Q[1][1] }
-    };
+  // transpose of F
+  float Ftrans[2][2] = 
+  {
+    { F[0][0], F[1][0] }, 
+    { F[0][1], F[1][1] }
+  };
+    
+  float FP[2][2];
+  float FPFtrans[2][2];
+  multiplyMatrices(F, P, FP);
+  multiplyMatrices(FP, Ftrans, FPFtrans);
+  float P_pred[2][2] = {
+    { FPFtrans[0][0] + Q[0][0], FPFtrans[0][1] + Q[0][1] }, 
+    { FPFtrans[1][0] + Q[1][0], FPFtrans[1][1] + Q[1][1] }
+  };
 
-    // Update Step
-    z = observation;  // Measurement
-    y = z - H[0][0] * x_pred[0]; // Residual
-    S = H[0][0] * P_pred[0][0] * H[0][0] + R; // Residual covariance
+  // Update Step
+  z = observation;  // Measurement
+    
+  // y = z - H*x_pred
+  y = z - x_pred[0]; // Residual
 
-    K[0] = P_pred[0][0] * H[0][0] / S;  // Kalman Gain
-    K[1] = P_pred[1][0] * H[0][0] / S;
+  // S = (H * P * H' + R)
+  // S = P + R, since H = [1, 0]
+  S = P_pred[0][0] + R; // Residual covariance
 
-    // Update state estimate
-    position = x_pred[0] + K[0] * y;
-    velocity = x_pred[1] + K[1] * y;
+  // K = P_pred * H' * inv(S)
+  // since S is 1x1 --> inv(S) = 1 / S
+  // P_pred * H' = [P_pred[0][0]; P_pred[1][0]  ], since H' = [1;0]
+  K[0] = P_pred[0][0] / S;  // Kalman Gain
+  K[1] = P_pred[1][0] / S;
 
-    // Update error covariance
-    P[0][0] = (1 - K[0] * H[0][0]) * P_pred[0][0];
-    P[1][1] = P_pred[0][0];
-    P[0][1] = 0.0f;
-    P[1][0] = 0.0f;
+  // Update state estimate
+  position = x_pred[0] + K[0] * y;
+  velocity = x_pred[1] + K[1] * y;
 
+  // Update error covariance
+  // P = (I - K*H)*P_pred
+  // K*H = [K[0], 0; K[1], 0]
+  // p_arg = (I - K*H)
+  float p_arg[2][2] = {
+    { (1 - K[0]),    0.0f},
+    {-K[1],          1.0f}
+  };
+    
+  multiplyMatrices(p_arg, P_pred, P);
+      
   return position;
 
 
