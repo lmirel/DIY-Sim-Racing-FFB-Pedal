@@ -92,15 +92,17 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
   // Predict Step
     float x_pred[2] = {
         F[0][0] * position + F[0][1] * velocity,
-        F[1][0] * position + F[1][1] * velocity
+        F[1][1] * velocity
     };
     float P_pred[2][2] = {
         {F[0][0] * P[0][0] + F[0][1] * P[1][0], F[0][0] * P[0][1] + F[0][1] * P[1][1]},
-        {F[1][0] * P[0][0] + F[1][1] * P[1][0], F[1][0] * P[0][1] + F[1][1] * P[1][1]}
+        {F[1][1] * P[1][0], F[1][0] * P[0][1] + F[1][1] * P[1][1]}
     };
 
     P_pred[0][0] += Q[0][0];
+    P_pred[0][1] += Q[0][1];
     P_pred[1][1] += Q[1][1];
+    P_pred[1][0] += Q[1][0];
 
     // Update Step
     z = observation;  // Measurement
