@@ -38,7 +38,23 @@ float z;                   // Measurement (position)
 float y;                   // Measurement residual
 float S;                   // Residual covariance
 
-
+void multiplyMatrices(float mat1[2][2], float mat2[2][2], float result[2][2]) {
+    // Initialize the result matrix to zero
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            result[i][j] = 0;
+        }
+    }
+    
+    // Perform matrix multiplication
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            for (int k = 0; k < 2; k++) {
+                result[i][j] += mat1[i][k] * mat2[k][j];
+            }
+        }
+    }
+}
 
 
 
@@ -94,15 +110,20 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
         F[0][0] * position + F[0][1] * velocity,
         F[1][1] * velocity
     };
-    float P_pred[2][2] = {
-        {F[0][0] * P[0][0] + F[0][1] * P[1][0], F[0][0] * P[0][1] + F[0][1] * P[1][1]},
-        {F[1][1] * P[1][0], F[1][0] * P[0][1] + F[1][1] * P[1][1]}
-    };
 
-    P_pred[0][0] += Q[0][0];
-    P_pred[0][1] += Q[0][1];
-    P_pred[1][1] += Q[1][1];
-    P_pred[1][0] += Q[1][0];
+    float Ftrans[2][2] = 
+    {
+        { F[0][0], F[1][0] }, 
+        { F[0][1], F[1][1] }
+    };
+    float FP[2][2];
+    float FPFtrans[2][2];
+    multiplyMatrices(F, P, FP);
+    multiplyMatrices(FP, Ftrans, FPFtrans);
+    float P_pred[2][2] = {
+        { FPFtrans[0][0] + Q[0][0], FPFtrans[0][1] + Q[0][1] }, 
+        { FPFtrans[1][0] + Q[1][0], FPFtrans[1][1] + Q[1][1] }
+    };
 
     // Update Step
     z = observation;  // Measurement
@@ -118,10 +139,9 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
 
     // Update error covariance
     P[0][0] = (1 - K[0] * H[0][0]) * P_pred[0][0];
-    P[0][1] = (1 - K[0] * H[0][0]) * P_pred[0][1];
-    P[1][0] = -K[1] * H[0][0] * P_pred[0][0] + P_pred[1][0];
-    P[1][1] = -K[1] * H[0][0] * P_pred[0][1] + P_pred[1][1];
-
+    P[1][1] = P_pred[0][0];
+    P[0][1] = 0.0f;
+    P[1][0] = 0.0f;
 
   return position;
 
