@@ -962,7 +962,7 @@ void pedalUpdateTask( void * pvParameters )
         break;
       case 1:
         filteredReading = kalman_2nd_order->filteredValue(pedalForce_fl32, 0, dap_config_pedalUpdateTask_st.payLoadPedalConfig_.kf_modelNoise);
-        changeVelocity = kalman->changeVelocity();
+        changeVelocity = kalman_2nd_order->changeVelocity();
         break;
       case 2:
         filteredReading_exp_filter = filteredReading_exp_filter * alpha_exp_filter + pedalForce_fl32 * (1.0-alpha_exp_filter);

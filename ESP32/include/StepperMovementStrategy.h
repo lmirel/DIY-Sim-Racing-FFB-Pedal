@@ -249,7 +249,13 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   // Serial.printf("PosFraction: %f,    pos:%f,    travelRange:%f,    posMin:%d,    posMax:%d\n", stepper->getCurrentPositionFractionFromExternalPos( stepperPos ), stepperPos, stepper->getCurrentTravelRange(),  calc_st->stepperPosMin, calc_st->stepperPosMax );
   // delay(20);
 
-  
+
+  int32_t currentSpeedInHz = stepper->getCurrentSpeedInMilliHz();
+
+  float speed = ( (float)currentSpeedInHz ) / 1000000.0f / 250.0f; // 250000000 --> 250
+  float speedAbs_fl32 = constrain( fabsf(speed), 0.3, 1.0f);
+
+
 
   // Find the intersections of the force curve and the foot model via Newtons-method
   #define MAX_NUMBER_OF_NEWTON_STEPS 5
@@ -311,6 +317,11 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     // given in kg/step
     float m2 = gradient_force_curve_fl32; 
     
+
+    // Serial.printf("m1:%f,    m2:%f,    speed:%f\n", m1, m2, (float)currentSpeedInHz);
+    // delay(20);
+
+
     // Newton update
     float denom = m1 - m2;
     if ( fabs(denom) > 0 )
@@ -319,6 +330,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
       // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
       stepUpdate *= gradient_normalized_force_curve_fl32;
+      stepUpdate *= speedAbs_fl32;
 
       stepperPos -= stepUpdate;
     }

@@ -44,7 +44,7 @@ FastAccelStepperEngine& stepperEngine() {
      firstTime = false;
   }
   
-  myEngine.task_rate(2);
+  myEngine.task_rate(4);
   return myEngine;
 }
 
@@ -70,7 +70,7 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, bool
     _stepper->setSpeedInTicks( maxSpeedInTicks ); // ticks
     _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);  // steps/s²
 	_stepper->setLinearAcceleration(0);
-    _stepper->setForwardPlanningTimeInMs(4);
+    _stepper->setForwardPlanningTimeInMs(8);
 	//_stepper->setForwardPlanningTimeInMs(4);
 
 	
@@ -440,6 +440,10 @@ bool StepperWithLimits::isAtMinPos()
   return isAtMinPos && isNotRunning;
 }
 
+int32_t StepperWithLimits::getCurrentSpeedInMilliHz()
+{
+	return _stepper->getCurrentSpeedInMilliHz();
+}
 
 
 
@@ -963,6 +967,8 @@ void StepperWithLimits::servoCommunicationTask(void *pvParameters)
 
 	}
 }
+
+
 
 
 /*int32_t StepperWithLimits::getStepLossCompensation()

@@ -72,6 +72,7 @@ public:
 	float getCurrentPositionFraction() const;
 	float getCurrentPositionFractionFromExternalPos(int32_t extPos_i32) const;
 	int32_t getTargetPositionSteps() const;
+	int32_t getCurrentSpeedInMilliHz();
 
 	int32_t getLimitMin() const { return _endstopLimitMin; }
 	int32_t getLimitMax() const { return _endstopLimitMax; }
