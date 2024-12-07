@@ -254,7 +254,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   uint32_t maxSpeedInMilliHz = stepper->getMaxSpeedInMilliHz();
 
   float speedNormalized_fl32 = ( (float)currentSpeedInMilliHz ) / ((float)maxSpeedInMilliHz)  ; // 250000000 --> 250
-  float speedAbsNormalized_fl32 = constrain( fabsf(speedNormalized_fl32), 0.5f, 1.0f);
+  float speedAbsNormalized_fl32 = constrain( fabsf(speedNormalized_fl32), 0.2f, 1.0f);
 
   // Serial.printf("speed: %f,    maxSpeed:%f\n", (float)currentSpeedInMilliHz, (float)maxSpeedInMilliHz);
   // delay(20);
@@ -325,14 +325,14 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
 
     // Newton update
-    float denom = m1 - m2;
+    float denom = m1 - m2 - 0.1f* fabsf(m1) / speedAbsNormalized_fl32;
     if ( fabs(denom) > 0 )
     {
       float stepUpdate = forceError_fl32 / ( denom );
 
       // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
       stepUpdate *= gradient_normalized_force_curve_fl32;
-      stepUpdate *= speedAbsNormalized_fl32;
+      // stepUpdate *= speedAbsNormalized_fl32;
 
       stepperPos -= stepUpdate;
     }

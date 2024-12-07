@@ -234,7 +234,7 @@ void StepperWithLimits::findMinMaxSensorless(DAP_config_st dap_config_st)
 		_stepper->move(INT32_MIN, false);
 		
 		while( (!endPosDetected) && (getLifelineSignal()) ){
-			delay(2);
+			delay(1);
 			endPosDetected = abs( getServosCurrent() ) > STEPPER_WITH_LIMITS_SENSORLESS_CURRENT_THRESHOLD_IN_PERCENT;
 		}
 		setPosition = - 5 * ENDSTOP_MOVEMENT_SENSORLESS;
