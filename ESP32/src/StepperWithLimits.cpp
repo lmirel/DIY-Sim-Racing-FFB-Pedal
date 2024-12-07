@@ -71,7 +71,6 @@ StepperWithLimits::StepperWithLimits(uint8_t pinStep, uint8_t pinDirection, bool
     _stepper->setAcceleration(MAXIMUM_STEPPER_ACCELERATION);  // steps/s²
 	_stepper->setLinearAcceleration(0);
     _stepper->setForwardPlanningTimeInMs(8);
-	//_stepper->setForwardPlanningTimeInMs(4);
 
 	
 	/************************************************************/
@@ -443,6 +442,11 @@ bool StepperWithLimits::isAtMinPos()
 int32_t StepperWithLimits::getCurrentSpeedInMilliHz()
 {
 	return _stepper->getCurrentSpeedInMilliHz();
+}
+
+uint32_t StepperWithLimits::getMaxSpeedInMilliHz()
+{
+	return _stepper->getMaxSpeedInMilliHz();
 }
 
 
