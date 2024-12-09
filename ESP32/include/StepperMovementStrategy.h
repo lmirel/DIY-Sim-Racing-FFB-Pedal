@@ -354,6 +354,11 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       stepUpdate *= gradient_normalized_force_curve_fl32;
       // stepUpdate *= speedAbsNormalized_fl32;
 
+      // update expected force reading
+      // Todo: update expected force after step execution
+      // loadCellReadingKg_corrected += m1 * stepUpdate;
+
+      // update position
       stepperPos -= stepUpdate;
     }
   }
