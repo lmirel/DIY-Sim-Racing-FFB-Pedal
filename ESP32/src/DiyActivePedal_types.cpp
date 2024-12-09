@@ -77,7 +77,7 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.PID_velocity_feedforward_gain = 0.0;
 
 
-  payLoadPedalConfig_.MPC_0th_order_gain = 1.0;
+  payLoadPedalConfig_.MPC_0th_order_gain = 10.0;
   payLoadPedalConfig_.MPC_1st_order_gain = 0.0;
   payLoadPedalConfig_.MPC_2nd_order_gain = 0.0;
 

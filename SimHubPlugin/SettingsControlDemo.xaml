@@ -1153,7 +1153,7 @@
                                         <TabItem Width="108" Height="30" Padding="0,0,0,0">
                                             <TabItem.Header>
                                                 <Border  Width="108" Height="30" Margin="0,0,0,0" >
-                                                    <Label Content="MPC"  FontFamily="Arial Black" FontSize="10" Height="30" Width="108" Padding="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
+                                                    <Label Content="MPC"  FontFamily="Arial Black" FontSize="10" Width="108" Padding="0,0,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" UseLayoutRounding="True"  />
                                                 </Border>
                                             </TabItem.Header>
 
@@ -1167,17 +1167,17 @@
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
                                                             <Label x:Name="label_MPC_0th_gain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <Slider x:Name="Slider_MPC_0th_gain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="1" ValueChanged="Slider_MPC_0th_gain_ValueChanged" IsSnapToTickEnabled="True" Value="1" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
+                                                        <Slider x:Name="Slider_MPC_0th_gain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="10" ValueChanged="Slider_MPC_0th_gain_ValueChanged" IsSnapToTickEnabled="True" Value="10" SmallChange="0.1" LargeChange="0.5" TickFrequency="0.1"/>
                                                     </StackPanel>
 
                                                     <!-- dampening-->
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_MPC_1st_gain"  Width="170" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring dampening:" Height="12" Padding="0,0,0,0"/>
+                                                            <Label x:Name="label_MPC_1st_gain"  Width="170" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring damping:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <Slider x:Name="Slider_MPC_1st_gain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="1" ValueChanged="Slider_MPC_1st_gain_ValueChanged" IsSnapToTickEnabled="True" Value="1" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
+                                                        <Slider x:Name="Slider_MPC_1st_gain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="1.0" ValueChanged="Slider_MPC_1st_gain_ValueChanged" IsSnapToTickEnabled="True" Value="1" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
                                                     </StackPanel>
-                                                    
+
                                                 </StackPanel>
                                             </Border>
 

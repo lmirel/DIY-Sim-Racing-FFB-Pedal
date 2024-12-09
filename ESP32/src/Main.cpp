@@ -948,7 +948,7 @@ void pedalUpdateTask( void * pvParameters )
     float b = dap_config_pedalUpdateTask_st.payLoadPedalConfig_.lengthPedal_b;
     float d = dap_config_pedalUpdateTask_st.payLoadPedalConfig_.lengthPedal_d;
     float d_x_hor_d_phi = -(b+d) * sinf(pedalInclineAngleInDeg_fl32 * DEG_TO_RAD_FL32);
-
+    d_x_hor_d_phi *= DEG_TO_RAD_FL32; // inner derivative
     
     // Do the loadcell signal filtering
     float filteredReading = 0.0f;
@@ -1007,6 +1007,7 @@ void pedalUpdateTask( void * pvParameters )
       default:
         // MPC
         Position_Next = MoveByForceTargetingStrategy(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity, d_phi_d_x, d_x_hor_d_phi);
+        // Position_Next = MoveByForceTargetingStrategy_old(filteredReading, stepper, &forceCurve, &dap_calculationVariables_st, &dap_config_pedalUpdateTask_st, 0/*effect_force*/, changeVelocity, d_phi_d_x, d_x_hor_d_phi);
         break;
     }
 
