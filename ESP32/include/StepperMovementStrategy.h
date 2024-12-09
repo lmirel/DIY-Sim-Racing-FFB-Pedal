@@ -219,31 +219,34 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   // get current stepper position
   float stepperPos = stepper->getCurrentPositionFromMin();
 
-  // add velocity feedforward
-  //stepperPos += changeVelocity * config_st->payLoadPedalConfig_.PID_velocity_feedforward_gain;
+  // get current stepper velocity
+  int32_t currentSpeedInMilliHz = stepper->getCurrentSpeedInMilliHz();
+  uint32_t maxSpeedInMilliHz = stepper->getMaxSpeedInMilliHz();
+  float speedNormalized_fl32 = ( (float)currentSpeedInMilliHz ) / ((float)maxSpeedInMilliHz)  ; // 250000000 --> 250
+  float speedAbsNormalized_fl32 = constrain( fabsf(speedNormalized_fl32), 0.2f, 1.0f);
 
+  
   // motion corrected loadcell reading
   float loadCellReadingKg_corrected = loadCellReadingKg;
 
+  
   // set initial guess
   float stepperPos_initial = stepperPos;
 
+  
   // foot spring stiffness
   float d_f_d_x_hor = -config_st->payLoadPedalConfig_.MPC_0th_order_gain;
 
-  // velocity dependent foot sping stiffness 
+  // velocity dependent foot spring stiffness 
   float d_f_t_d_x_hor = -config_st->payLoadPedalConfig_.MPC_1th_order_gain;
 
-  // acceleration dependent foot sping stiffness 
+  // acceleration dependent foot spring stiffness 
   float d_f_tt_d_x_hor = -config_st->payLoadPedalConfig_.MPC_2th_order_gain;
 
   // how many mm movement to order if 1kg of error force is detected
   // this can be tuned for responsiveness vs oscillation
   float mm_per_motor_rev = config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;//TRAVEL_PER_ROTATION_IN_MM;
   float steps_per_motor_rev = (float)calc_st->stepsPerMotorRevolution; //(float)STEPS_PER_MOTOR_REVOLUTION;
-
-  float move_mm_per_kg = config_st->payLoadPedalConfig_.MPC_0th_order_gain;
-  float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
 
   float mmPerStep = 0;
   if (steps_per_motor_rev > 0)
@@ -257,14 +260,6 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
   // Serial.printf("PosFraction: %f,    pos:%f,    travelRange:%f,    posMin:%d,    posMax:%d\n", stepper->getCurrentPositionFractionFromExternalPos( stepperPos ), stepperPos, stepper->getCurrentTravelRange(),  calc_st->stepperPosMin, calc_st->stepperPosMax );
   // delay(20);
-
-  
-
-  int32_t currentSpeedInMilliHz = stepper->getCurrentSpeedInMilliHz();
-  uint32_t maxSpeedInMilliHz = stepper->getMaxSpeedInMilliHz();
-
-  float speedNormalized_fl32 = ( (float)currentSpeedInMilliHz ) / ((float)maxSpeedInMilliHz)  ; // 250000000 --> 250
-  float speedAbsNormalized_fl32 = constrain( fabsf(speedNormalized_fl32), 0.2f, 1.0f);
 
   // Serial.printf("speed: %f,    maxSpeed:%f\n", (float)currentSpeedInMilliHz, (float)maxSpeedInMilliHz);
   // delay(20);
@@ -310,45 +305,34 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float gradient_normalized_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, true);
     gradient_normalized_force_curve_fl32 = constrain(gradient_normalized_force_curve_fl32, 0.05f, 1.0f);
 
-    // The foot is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
-    // This is accomplished with the forceGain variable
-    /*float forceGain_abs = fabs( d_phi_d_x );
-    if (forceGain_abs > 0)
-    {
-      MOVE_STEPS_FOR_1KG *= fabs( forceGain );
-    }*/
+    // compute force error
+    float forceError_fl32 = loadCellReadingKg_corrected - loadCellTargetKg;
 
     // angular foot model
     // m1 = d_f_d_x dForce / dx
     //float m1 = d_f_d_phi * (-d_phi_d_x);
-
-    float forceError_fl32 = loadCellReadingKg_corrected - loadCellTargetKg;
-
+    
     // Translational foot model
     // given in kg/step
     float m1 = d_f_d_x_hor * d_x_hor_d_step;
-
-    
-
-    // float m1 = d_f_d_phi * mmPerStep;
-
-    // smoothen gradient with force curve gradient since it had better results w/ clutch pedal characteristic
-    //m1 /= gradient_normalized_force_curve_fl32;
     
     // gradient of the force curve
     // given in kg/step
     float m2 = gradient_force_curve_fl32; 
     
-
     // Serial.printf("m1:%f,    m2:%f,    speed:%f\n", m1, m2, (float)currentSpeedInHz);
     // delay(20);
-
 
     // Newton update
     float denom = m1 - m2 - 0.1f* fabsf(m1) / speedAbsNormalized_fl32;
     if ( fabs(denom) > 0 )
     {
-      float stepUpdate = forceError_fl32 / ( denom );
+      // https://en.wikipedia.org/wiki/Newton%27s_method
+      // Newton algorithm
+      // x(n+1) = x(n) + stepUpdate
+      // x(n+1) = x(n) - f(x_n) / f'(x_n)
+      float stepUpdate = - forceError_fl32 / ( denom );
+      // a positive stepUpdate means sled moves away from the pedal.
 
       // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
       stepUpdate *= gradient_normalized_force_curve_fl32;
@@ -359,7 +343,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       // loadCellReadingKg_corrected += m1 * stepUpdate;
 
       // update position
-      stepperPos -= stepUpdate;
+      stepperPos += stepUpdate;
     }
   }
   
