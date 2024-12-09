@@ -229,7 +229,13 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   float stepperPos_initial = stepperPos;
 
   // foot spring stiffness
-  float d_f_d_phi = -config_st->payLoadPedalConfig_.MPC_0th_order_gain;
+  float d_f_d_x_hor = -config_st->payLoadPedalConfig_.MPC_0th_order_gain;
+
+  // velocity dependent foot sping stiffness 
+  float d_f_t_d_x_hor = -config_st->payLoadPedalConfig_.MPC_1th_order_gain;
+
+  // acceleration dependent foot sping stiffness 
+  float d_f_tt_d_x_hor = -config_st->payLoadPedalConfig_.MPC_2th_order_gain;
 
   // how many mm movement to order if 1kg of error force is detected
   // this can be tuned for responsiveness vs oscillation
@@ -245,10 +251,14 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     mmPerStep = mm_per_motor_rev / steps_per_motor_rev ;
   }
 
+  // compute d(x_hor) / d(step) from chain rule
+  // d(x_hor) / d(step) = ( d(x_hor) / d(phi) ) * [ d(phi)/d(x) ] * { d(x)/d(step) }
+  float d_x_hor_d_step = (-d_x_hor_d_phi) * (-d_phi_d_x) * mmPerStep;
 
   // Serial.printf("PosFraction: %f,    pos:%f,    travelRange:%f,    posMin:%d,    posMax:%d\n", stepper->getCurrentPositionFractionFromExternalPos( stepperPos ), stepperPos, stepper->getCurrentTravelRange(),  calc_st->stepperPosMin, calc_st->stepperPosMax );
   // delay(20);
 
+  
 
   int32_t currentSpeedInMilliHz = stepper->getCurrentSpeedInMilliHz();
   uint32_t maxSpeedInMilliHz = stepper->getMaxSpeedInMilliHz();
@@ -259,6 +269,14 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   // Serial.printf("speed: %f,    maxSpeed:%f\n", (float)currentSpeedInMilliHz, (float)maxSpeedInMilliHz);
   // delay(20);
 
+  // velocity dependent force in kg = (kg*s/step) * (step/s)
+  float forceInKgAndSecondPerStep_fl32 = d_f_t_d_x_hor * d_x_hor_d_step;
+  float velocityDependingForceInKg_fl32 = forceInKgAndSecondPerStep_fl32 * (currentSpeedInMilliHz / 1000.0f);
+
+  // acceleration dependent force in kg = (kg*s^2/step) * (step/(s^2))
+  float forceInKgAndSecondSquarePerStep_fl32 = d_f_tt_d_x_hor * d_x_hor_d_step;
+  // Todo: compute acceleration dependet force
+  
   // Find the intersections of the force curve and the foot model via Newtons-method
   #define MAX_NUMBER_OF_NEWTON_STEPS 5
   for (uint8_t iterationIdx = 0; iterationIdx < MAX_NUMBER_OF_NEWTON_STEPS; iterationIdx++)
@@ -308,7 +326,9 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
     // Translational foot model
     // given in kg/step
-    float m1 = d_f_d_phi * (-d_x_hor_d_phi) * (-d_phi_d_x) * mmPerStep;
+    float m1 = d_f_d_x_hor * d_x_hor_d_step;
+
+    
 
     // float m1 = d_f_d_phi * mmPerStep;
 
