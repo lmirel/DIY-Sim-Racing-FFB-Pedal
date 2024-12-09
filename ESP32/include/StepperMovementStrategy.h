@@ -223,7 +223,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   int32_t currentSpeedInMilliHz = stepper->getCurrentSpeedInMilliHz();
   uint32_t maxSpeedInMilliHz = stepper->getMaxSpeedInMilliHz();
   float speedNormalized_fl32 = ( (float)currentSpeedInMilliHz ) / ((float)maxSpeedInMilliHz)  ; // 250000000 --> 250
-  float speedAbsNormalized_fl32 = constrain( fabsf(speedNormalized_fl32), 0.2f, 1.0f);
+  float speedAbsNormalized_fl32 = constrain( fabsf(speedNormalized_fl32), 0.02f, 1.0f);
 
   
   // motion corrected loadcell reading
@@ -238,10 +238,10 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   float d_f_d_x_hor = -config_st->payLoadPedalConfig_.MPC_0th_order_gain;
 
   // velocity dependent foot spring stiffness 
-  float d_f_t_d_x_hor = -config_st->payLoadPedalConfig_.MPC_1th_order_gain;
+  float d_f_t_d_x_hor = -config_st->payLoadPedalConfig_.MPC_1st_order_gain;
 
   // acceleration dependent foot spring stiffness 
-  float d_f_tt_d_x_hor = -config_st->payLoadPedalConfig_.MPC_2th_order_gain;
+  float d_f_tt_d_x_hor = -config_st->payLoadPedalConfig_.MPC_2nd_order_gain;
 
   // how many mm movement to order if 1kg of error force is detected
   // this can be tuned for responsiveness vs oscillation
@@ -272,6 +272,11 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   float forceInKgAndSecondSquarePerStep_fl32 = d_f_tt_d_x_hor * d_x_hor_d_step;
   // Todo: compute acceleration dependet force
   
+
+  // correct loadcell reading with velocity and acceleration readings
+  // loadCellReadingKg_corrected -= velocityDependingForceInKg_fl32;
+
+
   // Find the intersections of the force curve and the foot model via Newtons-method
   #define MAX_NUMBER_OF_NEWTON_STEPS 5
   for (uint8_t iterationIdx = 0; iterationIdx < MAX_NUMBER_OF_NEWTON_STEPS; iterationIdx++)
@@ -324,7 +329,9 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     // delay(20);
 
     // Newton update
-    float denom = m1 - m2 - 0.1f* fabsf(m1) / speedAbsNormalized_fl32;
+    // float denom = m1 - m2 - 0.1f* fabsf(m1) / speedAbsNormalized_fl32;
+    float denom = (m1 - m2) * (1.0f - config_st->payLoadPedalConfig_.MPC_1st_order_gain * fabsf(m1) / speedAbsNormalized_fl32 );
+    
     if ( fabs(denom) > 0 )
     {
       // https://en.wikipedia.org/wiki/Newton%27s_method
@@ -335,12 +342,12 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       // a positive stepUpdate means sled moves away from the pedal.
 
       // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
-      stepUpdate *= gradient_normalized_force_curve_fl32;
+      // stepUpdate *= gradient_normalized_force_curve_fl32;
       // stepUpdate *= speedAbsNormalized_fl32;
 
       // update expected force reading
       // Todo: update expected force after step execution
-      // loadCellReadingKg_corrected += m1 * stepUpdate;
+      loadCellReadingKg_corrected += m1 * stepUpdate;
 
       // update position
       stepperPos += stepUpdate;

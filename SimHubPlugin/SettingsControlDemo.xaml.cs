@@ -505,6 +505,7 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.MPC_0th_order_gain = 1.0f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.MPC_1st_order_gain = 0.0f;
 
             dap_config_st[pedalIdx].payloadPedalConfig_.control_strategy_b = 2;
 
@@ -591,6 +592,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
             dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 0.7f;
+            dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain = 0.0f;
 
             dap_config_st_rudder.payloadPedalConfig_.control_strategy_b = 2;
 
@@ -1321,6 +1323,9 @@ namespace User.PluginSdkDemo
             Slider_MPC_0th_gain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain;
             label_MPC_0th_gain.Content = "Foot spring stiffness: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
 
+            Slider_MPC_1st_gain.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain;
+            label_MPC_1st_gain.Content = "Foot spring damping: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
+
             Slider_Pgain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain;
             label_Pgain.Content = "P-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
 
@@ -1887,6 +1892,10 @@ namespace User.PluginSdkDemo
 
                 Slider_MPC_0th_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain;
                 label_MPC_0th_gain_rudder.Content = "MPC Foot spring stiffness: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
+
+
+                //Slider_MPC_1st_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain;
+                //label_MPC_1st_gain_rudder.Content = "MPC Foot spring dampening: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
 
                 label_damping_rudder.Content = "Damping factor: " + (float)(dap_config_st_rudder.payloadPedalConfig_.dampingPress * 0.00015f) + "s";
                 Slider_damping_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.dampingPress;
@@ -6211,6 +6220,12 @@ namespace User.PluginSdkDemo
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)e.NewValue;
             label_MPC_0th_gain.Content = "Foot spring stiffness: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2)+ "kg/mm";
+        }
+
+        private void Slider_MPC_1st_gain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain = (float)e.NewValue;
+            label_MPC_1st_gain.Content = "Foot spring damping: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
         }
 
         private void Slider_Pgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

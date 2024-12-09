@@ -4,8 +4,8 @@
 #include "Main.h"
 
 // these are physical properties of the stepper
-static const int32_t MAXIMUM_STEPPER_ACCELERATION = INT32_MAX;                                                 // steps/s²
-
+static const int32_t MAXIMUM_STEPPER_ACCELERATION = INT32_MAX / 4;                                                 // steps/s²
+// 10000000; //
 
 class StepperWithLimits {
 private:
