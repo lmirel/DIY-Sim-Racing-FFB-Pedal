@@ -591,7 +591,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.PID_d_gain = 0.0f;
             dap_config_st_rudder.payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
-            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 10.0f;
+            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 6.0f;
             dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain = 0.0f;
 
             dap_config_st_rudder.payloadPedalConfig_.control_strategy_b = 2;
@@ -1892,6 +1892,8 @@ namespace User.PluginSdkDemo
 
                 Slider_MPC_0th_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain;
                 label_MPC_0th_gain_rudder.Content = "MPC Foot spring stiffness: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
+                Slider_MPC_1st_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain;
+                label_MPC_1st_gain_rudder.Content = "Foot spring damping: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
 
 
                 //Slider_MPC_1st_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain;
@@ -4635,8 +4637,8 @@ namespace User.PluginSdkDemo
                 if (rectangle.Name == "rect2_rudder")
                 {
                     dap_config_st_rudder.payloadPedalConfig_.relativeForce_p040 = Convert.ToByte(y_actual);
-                    text_point_pos.Text = "Travel:40%";
-                    text_point_pos.Text += "\nForce: " + (int)y_actual + "%";
+                    text_point_pos_rudder.Text = "Travel:40%";
+                    text_point_pos_rudder.Text += "\nForce: " + (int)y_actual + "%";
                 }
                 if (rectangle.Name == "rect3_rudder")
                 {
@@ -4647,8 +4649,8 @@ namespace User.PluginSdkDemo
                 if (rectangle.Name == "rect4_rudder")
                 {
                     dap_config_st_rudder.payloadPedalConfig_.relativeForce_p080 = Convert.ToByte(y_actual);
-                    text_point_pos.Text = "Travel:80%";
-                    text_point_pos.Text += "\nForce: " + (int)y_actual + "%";
+                    text_point_pos_rudder.Text = "Travel:80%";
+                    text_point_pos_rudder.Text += "\nForce: " + (int)y_actual + "%";
                 }
                 if (rectangle.Name == "rect5_rudder")
                 {
@@ -8273,6 +8275,15 @@ namespace User.PluginSdkDemo
                     Rangeslider_force_range.LowerValue = Rangeslider_force_range.LowerValue - 1;
                 }
 
+            }
+        }
+
+        private void Slider_MPC_1st_gain_rudder_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (Plugin != null)
+            {
+                dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain = (float)e.NewValue;
+                label_MPC_1st_gain_rudder.Content = "Foot spring damping: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
             }
         }
     }
