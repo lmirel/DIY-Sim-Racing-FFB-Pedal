@@ -8331,6 +8331,16 @@ namespace User.PluginSdkDemo
                 label_MPC_1st_gain_rudder.Content = "Foot spring damping: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
             }
         }
+
+        private void OpenProfileWindow_Click(object sender, RoutedEventArgs e)
+        {
+            OnlineProfile sideWindow = new OnlineProfile();
+            if (sideWindow.ShowDialog() == true)
+            {
+                // Retrieve the FileName from the side window and display it in the TextBox
+                TextBox_debug_count.Text = sideWindow.SelectedFileName;
+            }
+        }
     }
     
 }
