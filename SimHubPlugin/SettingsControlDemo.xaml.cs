@@ -746,7 +746,8 @@ namespace User.PluginSdkDemo
             Rangeslider_force_range.TickFrequency = 1;
             TextBox_debug_count.Visibility= Visibility.Hidden;
             text_rudder_log.Visibility=Visibility.Hidden;
-            
+            Online_profile = new Profile_Online();
+            Online_profile.Basic_Config=new BasicConfig();
 
 
 
