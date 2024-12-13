@@ -3535,42 +3535,7 @@ namespace User.PluginSdkDemo
                                             }
 
                                         }
-                                        
-                                    //}
-                                    /*
-                                    else
-                                    {
-                                        //Brk move
-
-                                        if (Pedal_position_reading[1] > Pedal_position_reading[2])
-                                        {
-                                            double Rudder_axis_value = 16384;
-                                            Rudder_axis_value = Rudder_axis_value - Pedal_position_reading[1];
-
-                                            joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
-                                        }
-                                        else
-                                        {
-                                            if (Pedal_position_reading[2] > Pedal_position_reading[1])
-                                            {
-                                                double Rudder_axis_value = 16384;
-                                                Rudder_axis_value = Rudder_axis_value + Pedal_position_reading[2];
-
-                                                joystick.SetAxis((int)Rudder_axis_value, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);   // HID_USAGES Enums
-                                            }
-                                            else
-                                            {
-                                                joystick.SetAxis(16384, Plugin.Settings.vjoy_order, HID_USAGES.HID_USAGE_RZ);
-
-                                            }
-
-                                        }
-
-
-
-
-                                    }
-                                    */
+                                   
 
 
 
@@ -6823,6 +6788,12 @@ namespace User.PluginSdkDemo
                                             string currentDirectory = Directory.GetCurrentDirectory();
                                             string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + pedalSelected + ".txt";
 
+                                            // delete file 
+                                            if (true == dumpPedalToResponseFile_clearFile[indexOfSelectedPedal_u])
+                                            {
+                                                dumpPedalToResponseFile_clearFile[indexOfSelectedPedal_u] = false;
+                                                File.Delete(filePath);
+                                            }
 
                                             // write header
                                             if (!File.Exists(filePath))
@@ -6902,7 +6873,7 @@ namespace User.PluginSdkDemo
                                 {
                                     Bridge_RSSI = bridge_state.payloadBridgeState_.Pedal_RSSI;
                                     Label_RSSI.Content = "" + (Bridge_RSSI - 100) + "dBm";
-                                    if (Bridge_RSSI < 12)
+                                    if (Bridge_RSSI < 25)
                                     {
                                         RSSI_1.Visibility = Visibility.Visible;
                                         RSSI_1.Fill = redcolor;
@@ -6910,7 +6881,7 @@ namespace User.PluginSdkDemo
                                         RSSI_3.Visibility = Visibility.Hidden;
                                         RSSI_4.Visibility = Visibility.Hidden;
                                     }
-                                    if (Bridge_RSSI > 12 && Bridge_RSSI < 23)
+                                    if (Bridge_RSSI > 25 && Bridge_RSSI < 30)
                                     {
                                         RSSI_1.Visibility = Visibility.Visible;
                                         RSSI_1.Fill = color_RSSI_1;
@@ -6919,7 +6890,7 @@ namespace User.PluginSdkDemo
                                         RSSI_3.Visibility = Visibility.Hidden;
                                         RSSI_4.Visibility = Visibility.Hidden;
                                     }
-                                    if (Bridge_RSSI > 23 && Bridge_RSSI < 34)
+                                    if (Bridge_RSSI > 30 && Bridge_RSSI < 35)
                                     {
                                         RSSI_1.Visibility = Visibility.Visible;
                                         RSSI_1.Fill = color_RSSI_1;
@@ -6928,7 +6899,7 @@ namespace User.PluginSdkDemo
                                         RSSI_3.Visibility = Visibility.Visible;
                                         RSSI_4.Visibility = Visibility.Hidden;
                                     }
-                                    if (Bridge_RSSI > 34)
+                                    if (Bridge_RSSI > 35)
                                     {
                                         RSSI_1.Visibility = Visibility.Visible;
                                         RSSI_1.Fill = defaultcolor;
@@ -8344,6 +8315,10 @@ namespace User.PluginSdkDemo
         private async void btn_OnlineProfile_Click(object sender, RoutedEventArgs e)
         {
             OnlineProfile sideWindow = new OnlineProfile();
+            double screenWidth = SystemParameters.PrimaryScreenWidth;
+            double screenHeight = SystemParameters.PrimaryScreenHeight;
+            sideWindow.Left=screenWidth/2-sideWindow.Width/2;
+            sideWindow.Top=screenHeight/2-sideWindow.Height/2;
             if (sideWindow.ShowDialog() == true)
             {
 
@@ -8365,7 +8340,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = (byte)Online_profile.Basic_Config.Damping;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = (byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition+((float)Online_profile.Basic_Config.Travel/ (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel*100.0f));
                     updateTheGuiFromConfig();
-                    DisplayProfileData(Online_profile);
+                    //DisplayProfileData(Online_profile);
                 }
                 catch (Exception ex)
                 {

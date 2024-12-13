@@ -7,7 +7,7 @@
              xmlns:styles="clr-namespace:SimHub.Plugins.Styles;assembly=SimHub.Plugins" mc:Ignorable="d" 
              xmlns:ui="clr-namespace:SimHub.Plugins.UI;assembly=SimHub.Plugins" 
              xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-             Height="900" Width="1190">
+             Height="910" Width="1220">
 
 
     <UserControl.Resources>
@@ -390,20 +390,11 @@
 
 
 
-    <ScrollViewer VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
-        <Grid RenderTransformOrigin="0,0">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <Grid RenderTransformOrigin="0,0" Width="1200" Height="900">
 
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="900"/>
 
-
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1220"/>
-
-
-            </Grid.ColumnDefinitions>
             <TabControl  x:Name="Function_Tab_seleciton"  SelectionChanged="Function_Tab_seleciton_SelectionChanged" Width="1200" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" VerticalAlignment="Top" Height="900" RenderTransformOrigin="0,0" Grid.RowSpan="1">
                 <TabControl.Resources>
                     <Style TargetType="TabItem">
@@ -561,11 +552,11 @@
                                                     <CheckBox x:Name="ConnectToPedal" Width="30" Height="30" IsChecked="False" IsEnabled="False" Content="" FontSize="8" Margin="5,0,0,0"/>
                                                 </StackPanel>
                                                 <styles:SHButtonPrimary x:Name="btn_pedal_connect" Click="ConnectToPedal_click" Width="160"  Height="25" Content="Connect to Pedal" HorizontalAlignment="Center" Margin="0,2,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0"  />
-                                                <styles:SHButtonPrimary x:Name="btn_update" Click="UpdateSerialPortList_click" Width="160" Height="25" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,2,0,0" VerticalContentAlignment="Center" VerticalAlignment="Center" Padding="15,0,15,0" />
-                                                <styles:SHButtonPrimary Click="SendConfigToPedal_click" Width="160" Height="25" Content="Send config to pedal &gt;&gt;" HorizontalAlignment="Left" Margin="0,2,0,0" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" />
-                                                <styles:SHButtonPrimary Click="ReadConfigFromPedal_click" Width="160" Height="25" Content="Read config from pedal &lt;&lt;" Margin="0,2,0,0" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalContentAlignment="Center" />
-                                                <styles:SHButtonPrimary Click="OpenButton_Click" Width="160" Content="Open Local Config" Height="25" Margin="0,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="15,0,15,0" VerticalContentAlignment="Center" />
-                                                <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Save Config to Local" Height="25" Margin="0,2,0,0" HorizontalAlignment="Left" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                                                <styles:SHButtonPrimary x:Name="btn_update" Click="UpdateSerialPortList_click" Width="160" Height="25" Content="Update Serial Port List" HorizontalAlignment="Left" Margin="0,2,0,0" VerticalContentAlignment="Center" VerticalAlignment="Center" Padding="15,0,15,0" />
+                                                <styles:SHButtonPrimary Click="SendConfigToPedal_click" Width="160" Height="25" Content="Send Config to Pedal &gt;&gt;" HorizontalAlignment="Left" Margin="0,2,0,0" Padding="0,0,0,0" VerticalAlignment="Center" VerticalContentAlignment="Center" />
+                                                <styles:SHButtonPrimary Click="ReadConfigFromPedal_click" Width="160" Height="25" Content="Load Config from Pedal &lt;&lt;" Margin="0,2,0,0" HorizontalAlignment="Left" Padding="0,0,0,0" VerticalContentAlignment="Center" />
+                                                <styles:SHButtonPrimary Click="OpenButton_Click" Width="160" Content="Load Config from Local" Height="25" Margin="0,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                                                <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Export Config to Local" Height="25" Margin="0,2,0,0" HorizontalAlignment="Left" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                                 <styles:SHButtonPrimary x:Name="btn_OnlineProfile" Click="btn_OnlineProfile_Click" Width="160" Content="Apply Online Config" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                                 <styles:SHButtonPrimary x:Name="btn_Export_OnlineProfile" Click="btn_Export_OnlineProfile_Click" Width="160" Content="Export Online Config" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                                 <styles:SHButtonPrimary x:Name="button_pedal_restart" Click="RestartPedal_click" Width="160" Content="Restart Pedal" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" MinHeight="20" Padding="15,0,15,0" VerticalContentAlignment="Center" />
@@ -1621,7 +1612,7 @@
                                             </StackPanel>
                                             <TextBox x:Name="TextBox_rudder_debug" HorizontalAlignment="Left" Grid.Column="2" Grid.Row="0" Grid.RowSpan="3" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160" Height="25" AutomationProperties.Name="TextBox2" BorderBrush="#00CCCCCC" Background="#00252525" FontSize="8" FontFamily="Arial" />
                                             <styles:SHButtonPrimary x:Name="btn_rudder_initialize" Click="btn_rudder_initialize_Click" Width="160" Height="25" Content="Rudder" Margin="0,2,0,0" HorizontalAlignment="Center" VerticalContentAlignment="Center" Padding="15,0,15,0" />
-                                            <styles:SHButtonPrimary Click="SHButtonPrimary_Click" Width="160" Content="Open Config file" Height="25" Margin="0,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                                            <styles:SHButtonPrimary Click="SHButtonPrimary_Click" Width="160" Content="Load Config from Local" Height="25" Margin="0,2,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                             <styles:SHButtonPrimary Click="SaveButton_Click" Width="160" Content="Save Config to Local" Height="25" Margin="0,2,0,0" HorizontalAlignment="Left" Padding="15,0,15,0" VerticalContentAlignment="Center" />
 
                                         </StackPanel>
@@ -1897,7 +1888,7 @@
                                                 <ComboBox x:Name="SerialPortSelection_ESPNow" SelectionChanged="ESPNow_SerialPortSelectionChanged" Width="100" ItemsSource="{Binding}" DisplayMemberPath="Display" SelectedValuePath="Value" FontSize="8" Height="20" HorizontalAlignment="Left" MinHeight="20"/>
                                                 <styles:SHButtonPrimary x:Name="btn_connect_espnow_port" Click="btn_connect_espnow_port_Click" Width="55" Content="Connect" Height="20" Margin="3,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial" FontSize="10" MinHeight="20" />
                                             </StackPanel>
-                                            <styles:SHButtonPrimary x:Name="btn_update_system" Click="UpdateSerialPortList_click" Width="160" Height="25" Content="Update serial port list" HorizontalAlignment="Left" Margin="0,2,0,0" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                                            <styles:SHButtonPrimary x:Name="btn_update_system" Click="UpdateSerialPortList_click" Width="160" Height="25" Content="Update Serial Port List" HorizontalAlignment="Left" Margin="0,2,0,0" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                             <styles:SHButtonPrimary x:Name="btn_Bridge_restart" Click="btn_Bridge_restart_Click" Width="160" Content="Bridge Restart" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                                             <styles:SHButtonPrimary x:Name="btn_Bridge_boot_restart" Click="btn_Bridge_boot_restart_Click" Width="160" Content="Enable Download Mode" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" ToolTip="Click for enabling Bridge into firmware download mode" />
                                             <styles:SHButtonPrimary x:Name="btn_Bridge_OTA" Click="btn_Bridge_OTA_Click" Width="160" Content="Bridge FW OTA Update" Height="25" Margin="0,2,0,0" HorizontalAlignment="Center" Padding="15,0,15,0" VerticalContentAlignment="Center" />

@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Newtonsoft.Json;
 using System.Net.Http;
+using System.ComponentModel;
 
 
 
@@ -39,6 +40,8 @@ namespace User.PluginSdkDemo
 
                 ProfilesListBox.ItemsSource = profilesData.Profiles;
                 ProfilesListBox.DisplayMemberPath = "ProfileName";
+                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(ProfilesListBox.ItemsSource);
+                view.SortDescriptions.Add(new SortDescription("ProfileName", ListSortDirection.Ascending));
             }
         }
 
