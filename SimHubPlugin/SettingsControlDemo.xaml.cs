@@ -54,6 +54,8 @@ using System.Windows.Navigation;
 using System.CodeDom;
 using System.Media;
 using System.Windows.Threading;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 // Win 11 install, see https://github.com/jshafer817/vJoy/releases
 //using vJoy.Wrapper;
@@ -101,6 +103,7 @@ namespace User.PluginSdkDemo
         //public VirtualJoystick joystick;
         internal vJoyInterfaceWrap.vJoy joystick;
 
+        private Profile_Online Online_profile;
 
         public bool[] dumpPedalToResponseFile = new bool[3];
         public bool[] dumpPedalToResponseFile_clearFile = new bool[3];
@@ -8334,11 +8337,103 @@ namespace User.PluginSdkDemo
 
         private void OpenProfileWindow_Click(object sender, RoutedEventArgs e)
         {
+
+        }
+
+        private async void btn_OnlineProfile_Click(object sender, RoutedEventArgs e)
+        {
             OnlineProfile sideWindow = new OnlineProfile();
             if (sideWindow.ShowDialog() == true)
             {
-                // Retrieve the FileName from the side window and display it in the TextBox
-                TextBox_debug_count.Text = sideWindow.SelectedFileName;
+
+                string jsonUrl = "https://raw.githubusercontent.com/tcfshcrw/FFB_PEDAL_PROFILE/master/Profiles/"+sideWindow.SelectedFileName;
+
+                try
+                {
+                    Online_profile = await GetProfileDataAsync(jsonUrl);
+                    //DisplayProfileData(_profile);
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = Online_profile.Basic_Config.MaxForce;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = Online_profile.Basic_Config.PreloadForce;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = (byte)Online_profile.Basic_Config.relativeForce_p000;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = (byte)Online_profile.Basic_Config.relativeForce_p020;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = (byte)Online_profile.Basic_Config.relativeForce_p040;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = (byte)Online_profile.Basic_Config.relativeForce_p060;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = (byte)Online_profile.Basic_Config.relativeForce_p080;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = (byte)Online_profile.Basic_Config.relativeForce_p100;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = (byte)Online_profile.Basic_Config.Damping;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = (byte)Online_profile.Basic_Config.Damping;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = (byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition+((float)Online_profile.Basic_Config.Travel/ (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel*100.0f));
+                    updateTheGuiFromConfig();
+                    DisplayProfileData(Online_profile);
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show($"Error loading JSON: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    
+                }
+            }
+        }
+
+        private void btn_Export_OnlineProfile_Click(object sender, RoutedEventArgs e)
+        {
+            Online_profile.Basic_Config.Travel = (int)((float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition - dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition)/100.0f* (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel);
+            Online_profile.Basic_Config.MaxForce = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce;
+            Online_profile.Basic_Config.PreloadForce = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce;
+            Online_profile.Basic_Config.Damping = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
+            Online_profile.Basic_Config.relativeForce_p000 = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000;
+            Online_profile.Basic_Config.relativeForce_p020 = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020;
+            Online_profile.Basic_Config.relativeForce_p040 = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040;
+            Online_profile.Basic_Config.relativeForce_p060 = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060;
+            Online_profile.Basic_Config.relativeForce_p080 = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080;
+            Online_profile.Basic_Config.relativeForce_p100 = (int)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100;
+            
+            if (Online_profile != null)
+            {
+                Microsoft.Win32.SaveFileDialog saveFileDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    Filter = "JSON files (*.json)|*.json",
+                    DefaultExt = "json",
+                    FileName = "Profile.json"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string jsonString = JsonConvert.SerializeObject(Online_profile, Formatting.Indented);
+                    File.WriteAllText(saveFileDialog.FileName, jsonString);
+                    System.Windows.MessageBox.Show("File saved successfully.");
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("No profile data to save.");
+            }
+        }
+        private async Task<Profile_Online> GetProfileDataAsync(string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string jsonString = await client.GetStringAsync(url);
+                return JsonConvert.DeserializeObject<Profile_Online>(jsonString);
+            }
+        }
+        private void DisplayProfileData(Profile_Online profile)
+        {
+            if (profile?.Basic_Config != null)
+            {
+                TextBox_debug_count.Text = $"Max Force: {profile.Basic_Config.MaxForce}\n" +
+                                     $"Preload Force: {profile.Basic_Config.PreloadForce}\n" +
+                                     $"Damping: {profile.Basic_Config.Damping}\n" +
+                                     $"Travel: {profile.Basic_Config.Travel}\n" +
+                                     $"Relative Force (0%): {profile.Basic_Config.relativeForce_p000}\n" +
+                                     $"Relative Force (20%): {profile.Basic_Config.relativeForce_p020}\n" +
+                                     $"Relative Force (40%): {profile.Basic_Config.relativeForce_p040}\n" +
+                                     $"Relative Force (60%): {profile.Basic_Config.relativeForce_p060}\n" +
+                                     $"Relative Force (80%): {profile.Basic_Config.relativeForce_p080}\n" +
+                                     $"Relative Force (100%): {profile.Basic_Config.relativeForce_p100}";
+            }
+            else
+            {
+                TextBox_debug_count.Text = "No data available.";
             }
         }
     }

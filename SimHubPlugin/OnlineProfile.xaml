@@ -7,13 +7,14 @@
         xmlns:styles="clr-namespace:SimHub.Plugins.Styles;assembly=SimHub.Plugins" mc:Ignorable="d" 
         xmlns:ui="clr-namespace:SimHub.Plugins.UI;assembly=SimHub.Plugins" 
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-        Title="OnlineProfile" Height="320" Width="380" Background="{x:Null}">
+        Title="Online Profile Selection" Height="330" Width="380" Background="{x:Null}" WindowStyle="ToolWindow">
     <Grid Background="#CC252525">
-        <Border Background="#7F4E4E4E" Height="305" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" Width="380" >
+        <Border Background="#7F4E4E4E" Height="305" CornerRadius="5,5,5,5" BorderThickness="0,2,0,0" Width="380" VerticalAlignment="Top" >
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
                 <StackPanel Width="180" Height="305">
                     <ListBox Name="ProfilesListBox" Width="160" Height="200" SelectionChanged="ProfilesListBox_SelectionChanged" VerticalAlignment="Top" Margin="10" HorizontalAlignment="Left"/>
-                    <styles:SHButtonPrimary Click="CloseAndReturn_Click" Width="160" Content="Apply" Height="25" Margin="10,0,0,0" HorizontalAlignment="Left" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                    <styles:SHButtonPrimary x:Name="Btn_Apply" Click="CloseAndReturn_Click" Width="160" Content="Apply" Height="25" Margin="10,0,0,0" HorizontalAlignment="Left" Padding="15,0,15,0" VerticalContentAlignment="Center" />
+                    <styles:SHButtonPrimary x:Name="Btn_Online_profile_leave"  Click="Btn_Online_profile_leave_Click" Width="160" Content="Leave without Change" Height="25" Margin="10,10,0,0" HorizontalAlignment="Left" Padding="15,0,15,0" VerticalContentAlignment="Center" />
                 </StackPanel>
                 <StackPanel Width="160" Height="305">
                     <Label x:Name="Label_Online_Profile_Description" Content="" Height="305" Width="160" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="10"/>

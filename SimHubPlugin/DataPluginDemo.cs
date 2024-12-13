@@ -287,6 +287,25 @@ unsafe public struct Basic_WIfi_info
     public fixed byte WIFI_PASS[30];
 };
 
+public class BasicConfig
+{
+    public int MaxForce { get; set; }
+    public int PreloadForce { get; set; }
+    public int Damping { get; set; }
+    public int Travel { get; set; }
+    public int relativeForce_p000 { get; set; }
+    public int relativeForce_p020 { get; set; }
+    public int relativeForce_p040 { get; set; }
+    public int relativeForce_p060 { get; set; }
+    public int relativeForce_p080 { get; set; }
+    public int relativeForce_p100 { get; set; }
+};
+
+public class Profile_Online
+{
+    public BasicConfig Basic_Config { get; set; }
+};
+
 namespace User.PluginSdkDemo
 {
     [PluginDescription("The Plugin was for FFB pedal, To tune the pedal parameters and communicates with the pedal over USB.")]

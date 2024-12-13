@@ -59,9 +59,15 @@ namespace User.PluginSdkDemo
         {
             if (ProfilesListBox.SelectedItem is Profile selectedProfile)
             {
-                Label_Online_Profile_Description.Content = selectedProfile.Description;
+                Label_Online_Profile_Description.Content = "Author: "+selectedProfile.Author+"\nVersion: "+selectedProfile.Version+"\n"+selectedProfile.Description;
             }
             
+        }
+
+
+        private void Btn_Online_profile_leave_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
         }
     }
 
@@ -74,6 +80,7 @@ namespace User.PluginSdkDemo
     {
         public string Author { get; set; }
         public string ProfileName { get; set; }
+        public string Version { get; set; }
         public string FileName { get; set; }
         public string Description { get; set; }
     }
