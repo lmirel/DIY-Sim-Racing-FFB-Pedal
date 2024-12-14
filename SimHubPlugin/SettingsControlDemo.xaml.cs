@@ -8372,8 +8372,32 @@ namespace User.PluginSdkDemo
 
                 try
                 {
-                    Online_profile = await GetProfileDataAsync(jsonUrl);
+                    DAP_config_st tmp_config;
+                    tmp_config = await GetProfileDataAsync(jsonUrl);
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = tmp_config.payloadPedalConfig_.maxForce;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = tmp_config.payloadPedalConfig_.preloadForce;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = tmp_config.payloadPedalConfig_.relativeForce_p000;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p020 = tmp_config.payloadPedalConfig_.relativeForce_p020;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p040 = tmp_config.payloadPedalConfig_.relativeForce_p040;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p060 = tmp_config.payloadPedalConfig_.relativeForce_p060;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p080 = tmp_config.payloadPedalConfig_.relativeForce_p080;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p100 = tmp_config.payloadPedalConfig_.relativeForce_p100;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = tmp_config.payloadPedalConfig_.dampingPress;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = tmp_config.payloadPedalConfig_.dampingPull;
+                    float travel = (tmp_config.payloadPedalConfig_.pedalEndPosition - tmp_config.payloadPedalConfig_.pedalStartPosition) / 100.0f * (float)tmp_config.payloadPedalConfig_.lengthPedal_travel;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = (byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition + (travel / (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel * 100.0f));
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = tmp_config.payloadPedalConfig_.MPC_0th_order_gain;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain = tmp_config.payloadPedalConfig_.MPC_1st_order_gain;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_2nd_order_gain = tmp_config.payloadPedalConfig_.MPC_2nd_order_gain;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = tmp_config.payloadPedalConfig_.PID_d_gain;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = tmp_config.payloadPedalConfig_.PID_i_gain;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = tmp_config.payloadPedalConfig_.PID_p_gain;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = tmp_config.payloadPedalConfig_.PID_velocity_feedforward_gain;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.control_strategy_b = tmp_config.payloadPedalConfig_.control_strategy_b;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = tmp_config.payloadPedalConfig_.kf_modelNoise;
+                    dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelOrder = tmp_config.payloadPedalConfig_.kf_modelOrder;
                     //DisplayProfileData(_profile);
+                    /*
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce = Online_profile.Basic_Config.MaxForce;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce = Online_profile.Basic_Config.PreloadForce;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.relativeForce_p000 = (byte)Online_profile.Basic_Config.relativeForce_p000;
@@ -8385,6 +8409,7 @@ namespace User.PluginSdkDemo
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = (byte)Online_profile.Basic_Config.Damping;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = (byte)Online_profile.Basic_Config.Damping;
                     dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalEndPosition = (byte)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition+((float)Online_profile.Basic_Config.Travel/ (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel*100.0f));
+                    */
                     updateTheGuiFromConfig();
                     //DisplayProfileData(Online_profile);
                 }
@@ -8431,12 +8456,13 @@ namespace User.PluginSdkDemo
                 System.Windows.MessageBox.Show("No profile data to save.");
             }
         }
-        private async Task<Profile_Online> GetProfileDataAsync(string url)
+        private async Task<DAP_config_st> GetProfileDataAsync(string url)
         {
             using (HttpClient client = new HttpClient())
             {
                 string jsonString = await client.GetStringAsync(url);
-                return JsonConvert.DeserializeObject<Profile_Online>(jsonString);
+                //return JsonConvert.DeserializeObject<Profile_Online>(jsonString);
+                return JsonConvert.DeserializeObject<DAP_config_st>(jsonString);
             }
         }
         private void DisplayProfileData(Profile_Online profile)
