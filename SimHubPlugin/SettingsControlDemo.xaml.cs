@@ -130,6 +130,8 @@ namespace User.PluginSdkDemo
         public bool[] Version_error_warning_b = new bool[3] { false, false, false };
         public bool[] Version_warning_first_show_b= new bool[3] { false, false, false };
         public byte[] Pedal_version = new byte[3];
+        private SerialMonitor_Window _serial_monitor_window;
+        public bool Pedal_Log_warning_1st_show_b = true;
         //public int Bridge_baudrate = 921600;
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -505,8 +507,8 @@ namespace User.PluginSdkDemo
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_3 = 0;
             dap_config_st[pedalIdx].payloadPedalConfig_.cubic_spline_param_b_4 = 0;
 
-            dap_config_st[pedalIdx].payloadPedalConfig_.PID_p_gain = 0.3f;
-            dap_config_st[pedalIdx].payloadPedalConfig_.PID_i_gain = 50.0f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_p_gain = 0.1f;
+            dap_config_st[pedalIdx].payloadPedalConfig_.PID_i_gain = 1.0f;
             dap_config_st[pedalIdx].payloadPedalConfig_.PID_d_gain = 0.0f;
             dap_config_st[pedalIdx].payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
@@ -705,12 +707,12 @@ namespace User.PluginSdkDemo
 
             // debug mode invisiable
             //text_debug_flag.Visibility = Visibility.Hidden;
-            text_serial.Visibility = Visibility.Hidden;
-            TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
+            //text_serial.Visibility = Visibility.Hidden;
+            //TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
             //InvertLoadcellReading_check.Visibility = Visibility.Hidden;
             //InvertMotorDir_check.Visibility = Visibility.Hidden;
             //textBox_debug_Flag_0.Visibility = Visibility.Hidden;
-            Border_serial_monitor.Visibility=Visibility.Hidden;
+            //Border_serial_monitor.Visibility=Visibility.Hidden;
             
            
 
@@ -1415,11 +1417,11 @@ namespace User.PluginSdkDemo
 
                 if (Plugin.Settings.Serial_auto_clean)
                 {
-                    Checkbox_auto_remove_serial_line.IsChecked = true;
+                    //Checkbox_auto_remove_serial_line.IsChecked = true;
                 }
                 else
                 { 
-                    Checkbox_auto_remove_serial_line.IsChecked= false;
+                    //Checkbox_auto_remove_serial_line.IsChecked= false;
                 }
 
                 if (Plugin.Settings.Using_CDC_bridge)
@@ -2819,9 +2821,13 @@ namespace User.PluginSdkDemo
                             {
                                 //TextBox_serialMonitor.Text += "DataArrayLength: " + dataArray.Length + "\n";
                                 //TextBox_serialMonitor.Text += "DataLength: " + dataToSend.Length + "\n";
-                                TextBox_serialMonitor.Text += dataToSend + "\n";
-
-                                TextBox_serialMonitor.ScrollToEnd();
+                                if (_serial_monitor_window != null)
+                                {
+                                    _serial_monitor_window.TextBox_SerialMonitor.Text += dataToSend + "\n";
+                                    _serial_monitor_window.TextBox_SerialMonitor.ScrollToEnd();
+                                }
+                                //TextBox_serialMonitor.Text += dataToSend + "\n";
+                                //TextBox_serialMonitor.ScrollToEnd();
                                 //TextBox_serialMonitor.Text += receivedLength + "\n";
                             });
                         }
@@ -3349,9 +3355,15 @@ namespace User.PluginSdkDemo
                 {
                     if (Plugin.Settings.Serial_auto_clean)
                     {
+                        /*
                         if (TextBox_serialMonitor.LineCount > 300)
                         {
                             TextBox_serialMonitor.Clear();
+                        }
+                        */
+                        if (_serial_monitor_window != null)
+                        {
+                            _serial_monitor_window.TextBox_SerialMonitor.Clear();
                         }
                     }
 
@@ -3752,14 +3764,20 @@ namespace User.PluginSdkDemo
 
                             // If non known array datatype was received, assume a text message was received and print it
                             // only print debug messages when debug mode is active as it degrades performance
-                            if (Debug_check.IsChecked == true)
+                            if (/*Debug_check.IsChecked == true|| */_serial_monitor_window != null)
                             {
                                 byte[] destinationArray_sub = new byte[destBuffLength];
                                 Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
                                 string resultString = Encoding.GetEncoding(28591).GetString(destinationArray_sub);
-
+                                if (_serial_monitor_window != null)
+                                {
+                                    _serial_monitor_window.TextBox_SerialMonitor.Text += resultString + "\n";
+                                    _serial_monitor_window.TextBox_SerialMonitor.ScrollToEnd();
+                                }
+                                /*
                                 TextBox_serialMonitor.Text += resultString + "\n";
                                 TextBox_serialMonitor.ScrollToEnd();
+                                */
                             }
 
                             
@@ -4751,8 +4769,8 @@ namespace User.PluginSdkDemo
         {
 
             //text_debug_flag.Visibility = Visibility.Visible; 
-            text_serial.Visibility = Visibility.Visible;
-            TextBox_serialMonitor.Visibility = System.Windows.Visibility.Visible;
+            //text_serial.Visibility = Visibility.Visible;
+            //TextBox_serialMonitor.Visibility = System.Windows.Visibility.Visible;
             //textBox_debug_Flag_0.Visibility = Visibility.Visible;
 
             debug_flag = true;
@@ -4760,13 +4778,13 @@ namespace User.PluginSdkDemo
             {
                 Plugin.Settings.advanced_b = debug_flag;
             }
-            Border_serial_monitor.Visibility = Visibility.Visible;
+            //Border_serial_monitor.Visibility = Visibility.Visible;
             
             
            // Label_reverse_LC.Visibility = Visibility.Visible;
             //Label_reverse_servo.Visibility = Visibility.Visible;
             btn_test.Visibility = Visibility.Visible;
-            Line_H_HeaderTab.X2 = 1128;
+            //Line_H_HeaderTab.X2 = 1128;
 
             Slider_LC_rate.TickFrequency = 1;
             Rangeslider_force_range.TickFrequency = 0.1;
@@ -4777,8 +4795,8 @@ namespace User.PluginSdkDemo
         private void Debug_checkbox_Unchecked(object sender, RoutedEventArgs e)
         {
             //text_debug_flag.Visibility = Visibility.Hidden; ;
-            text_serial.Visibility = Visibility.Hidden;
-            TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
+            //text_serial.Visibility = Visibility.Hidden;
+            //TextBox_serialMonitor.Visibility = System.Windows.Visibility.Hidden;
             //textBox_debug_Flag_0.Visibility = Visibility.Hidden;
 
             debug_flag = false;
@@ -4786,13 +4804,13 @@ namespace User.PluginSdkDemo
             {
                 Plugin.Settings.advanced_b = debug_flag;
             }
-            Border_serial_monitor.Visibility = Visibility.Hidden;
+            //Border_serial_monitor.Visibility = Visibility.Hidden;
             
             
             //Label_reverse_LC.Visibility = Visibility.Hidden;
             //Label_reverse_servo.Visibility = Visibility.Hidden;
             btn_test.Visibility = Visibility.Hidden;
-            Line_H_HeaderTab.X2 = 763;
+            //Line_H_HeaderTab.X2 = 763;
 
             Slider_LC_rate.TickFrequency = 10;
             Rangeslider_force_range.TickFrequency = 1;
@@ -5436,7 +5454,7 @@ namespace User.PluginSdkDemo
 
         private void btn_serial_clear_Click(object sender, RoutedEventArgs e)
         {
-            TextBox_serialMonitor.Clear();
+            //TextBox_serialMonitor.Clear();
         }
 
         private void checkbox_enable_impact_Checked(object sender, RoutedEventArgs e)
@@ -6558,9 +6576,14 @@ namespace User.PluginSdkDemo
                 {
                     TextBox_serialMonitor_bridge.Clear();
                 }
+                /*
                 if (TextBox_serialMonitor.LineCount > 100)
                 {
                     TextBox_serialMonitor.Clear();
+                }*/
+                if (_serial_monitor_window != null && _serial_monitor_window.TextBox_SerialMonitor.LineCount>100)
+                {
+                    _serial_monitor_window.TextBox_SerialMonitor.Clear();
                 }
             }
             try 
@@ -7040,7 +7063,7 @@ namespace User.PluginSdkDemo
                             }
                             // If non known array datatype was received, assume a text message was received and print it
                             // only print debug messages when debug mode is active as it degrades performance
-                            if (Debug_check.IsChecked == true)
+                            if (Debug_check.IsChecked == true||_serial_monitor_window != null)
                             {
                                 byte[] destinationArray_sub = new byte[destBuffLength];
                                 Buffer.BlockCopy(destinationArray, 0, destinationArray_sub, 0, destBuffLength);
@@ -7053,19 +7076,33 @@ namespace User.PluginSdkDemo
                                         string temp = resultString.Substring(3, resultString.Length - 3);
                                         //TextBox_serialMonitor.Text += str_chk + "\n";
                                         TextBox_serialMonitor_bridge.Text += temp + "\n";
-                                        TextBox_serialMonitor.Text += temp + "\n";
+                                        //TextBox_serialMonitor.Text += temp + "\n";
+                                        if (_serial_monitor_window != null)
+                                        {
+                                            _serial_monitor_window.TextBox_SerialMonitor.Text += temp + "\n";
+                                        }
+                                     
                                         SimHub.Logging.Current.Info(temp);
                                     }
                                     if ( String.Equals(str_chk, "E ("))
                                     {
                                         TextBox_serialMonitor_bridge.Text += resultString + "\n";
-                                        TextBox_serialMonitor.Text += resultString + "\n";
+                                        //TextBox_serialMonitor.Text += resultString + "\n";
                                         SimHub.Logging.Current.Info(resultString);
+                                        if (_serial_monitor_window != null)
+                                        {
+                                            _serial_monitor_window.TextBox_SerialMonitor.Text += resultString + "\n";
+                                        }
                                     }
                                 }
 
                                 //TextBox_serialMonitor.Text += resultString + "\n";
                                 TextBox_serialMonitor_bridge.ScrollToEnd();
+                                //TextBox_serialMonitor.ScrollToEnd();
+                                if (_serial_monitor_window != null)
+                                {
+                                    _serial_monitor_window.TextBox_SerialMonitor.ScrollToEnd();
+                                }
 
                             }
                         }
@@ -7317,7 +7354,12 @@ namespace User.PluginSdkDemo
                         {
                             string errorMessage = caughtEx.Message;
                             //TextBox_debugOutput.Text = errorMessage;
-                            TextBox_serialMonitor.Text+= errorMessage+"\n";
+                            if (_serial_monitor_window != null)
+                            {
+                                _serial_monitor_window.TextBox_SerialMonitor.Text += errorMessage + "\n";
+                                _serial_monitor_window.TextBox_SerialMonitor.ScrollToEnd();
+                            }
+                            //TextBox_serialMonitor.Text+= errorMessage+"\n";
                         }
                     }
                 }
@@ -7337,7 +7379,11 @@ namespace User.PluginSdkDemo
                         {
                             string errorMessage = caughtEx.Message;
                             //TextBox_debugOutput.Text = errorMessage;
-                            TextBox_serialMonitor.Text += errorMessage + "\n";
+                            if (_serial_monitor_window != null)
+                            {
+                                _serial_monitor_window.TextBox_SerialMonitor.Text += errorMessage + "\n";
+                            }
+                            //TextBox_serialMonitor.Text += errorMessage + "\n";
                         }
                     }
                 }
@@ -8377,6 +8423,7 @@ namespace User.PluginSdkDemo
                     string jsonString = JsonConvert.SerializeObject(Online_profile, Formatting.Indented);
                     File.WriteAllText(saveFileDialog.FileName, jsonString);
                     System.Windows.MessageBox.Show("File saved successfully.");
+                    
                 }
             }
             else
@@ -8410,6 +8457,25 @@ namespace User.PluginSdkDemo
             else
             {
                 TextBox_debug_count.Text = "No data available.";
+            }
+        }
+        private void btn_SerialMonitorWindow_Click(object sender, RoutedEventArgs e)
+        {
+            if (_serial_monitor_window == null || !_serial_monitor_window.IsVisible)
+            {
+                if (Pedal_Log_warning_1st_show_b)
+                {
+                    System.Windows.MessageBox.Show("Please connect Pedal via USB to Simhub to get Logs");
+                    Pedal_Log_warning_1st_show_b = false;
+                }
+                
+                _serial_monitor_window = new SerialMonitor_Window(this); // Create a new side window
+                double screenWidth = SystemParameters.PrimaryScreenWidth;
+                double screenHeight = SystemParameters.PrimaryScreenHeight;
+                _serial_monitor_window.Left = screenWidth / 2 - _serial_monitor_window.Width / 2;
+                _serial_monitor_window.Top = screenHeight / 2 - _serial_monitor_window.Height / 2;
+                _serial_monitor_window.Show(); // Show the side window
+
             }
         }
     }

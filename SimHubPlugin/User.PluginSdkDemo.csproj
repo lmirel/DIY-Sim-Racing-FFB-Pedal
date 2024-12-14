@@ -157,6 +157,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SerialMonitor.xaml.cs">
+      <DependentUpon>SerialMonitor.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsControlDemo.xaml.cs">
       <DependentUpon>SettingsControlDemo.xaml</DependentUpon>
     </Compile>
@@ -170,6 +173,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
       <ContainsDesignTimeResources>true</ContainsDesignTimeResources>
+    </Page>
+    <Page Include="SerialMonitor.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsControlDemo.xaml">
       <SubType>Designer</SubType>
