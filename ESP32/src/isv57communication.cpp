@@ -151,7 +151,8 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection,
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_1_00+33, 0); // speed given filter
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_1_00+35, 0); // position command filter
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_1_00+36, 0); // encoder feedback
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_1_00+37, 1052); // special function register
+  //retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_1_00+37, 1052); // special function register
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_1_00+37, 4); // special function register
   // see https://www.oyostepper.com/images/upload/File/ISV57T-180.pdf
   // 0x01 = 1: velocity feedforward disabled
   // 0x02 = 2: torque feedforward disabled
@@ -169,7 +170,7 @@ void isv57communication::sendTunedServoParameters(bool commandRotationDirection,
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_2_00+5, 20);
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_2_00+6, 99);
   retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_2_00+22, 0);
-  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_2_00+23, 80);// FIR based command smoothing time. Since the stpper task runs every 4ms, this time is selected to be larger than that. Unit is 0.1ms 
+  retValue_b |= modbus.checkAndReplaceParameter(slaveId, pr_2_00+23, 0);// FIR based command smoothing time. Since the stpper task runs every 4ms, this time is selected to be larger than that. Unit is 0.1ms 
   
 
   // Pr3 register

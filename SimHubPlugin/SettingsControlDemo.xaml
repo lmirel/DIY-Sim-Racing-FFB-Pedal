@@ -1113,19 +1113,19 @@
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
                                                             <Label x:Name="label_Pgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="P-Gain:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <Slider x:Name="Slider_Pgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" ValueChanged="Slider_Pgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
+                                                        <Slider x:Name="Slider_Pgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="0.5" ValueChanged="Slider_Pgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
                                                             <Label x:Name="label_Igain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="I-Gain:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <Slider x:Name="Slider_Igain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="500" ValueChanged="Slider_Igain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1" LargeChange="10"/>
+                                                        <Slider x:Name="Slider_Igain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="10" ValueChanged="Slider_Igain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1" LargeChange="10"/>
                                                     </StackPanel>
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
                                                             <Label x:Name="label_Dgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="D-Gain:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <Slider x:Name="Slider_Dgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="0.01" ValueChanged="Slider_Dgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.0001" LargeChange="0.001" TickFrequency="0.0001"/>
+                                                        <Slider x:Name="Slider_Dgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="0.001" ValueChanged="Slider_Dgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.0001" LargeChange="0.001" TickFrequency="0.0001"/>
                                                     </StackPanel>
 
                                                     <StackPanel Width="400" Height="40">

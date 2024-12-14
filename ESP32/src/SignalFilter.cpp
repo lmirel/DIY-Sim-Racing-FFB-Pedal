@@ -15,11 +15,11 @@ static const double KF_MODEL_NOISE_FORCE_ACCELERATION = ( 8.0f * 4.0f / 0.1f/ 0.
 
 float position = 0;        // Estimated position
 float velocity = 0;        // Estimated velocity
-float dt = 0.1;            // Time step (seconds)
+float dt = 0.1f;            // Time step (seconds)
 
 float P[2][2] = {          // Initial error covariance
-    {1, 0},
-    {0, 1}
+    {0, 0},
+    {0, 0}
 };
 float F[2][2] = {          // State transition matrix
     {1, dt},
@@ -77,15 +77,11 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
   modelNoiseScaling_fl32 /= 1000.0f;
 
   
-
-  if (modelNoiseScaling_fl32 < 0.000001)
-  {
-    modelNoiseScaling_fl32 = 0.000001;
-  }
+  float modelNoiseLowerThreshold = 1e-9f; // 1/255 / 1000 / 1000 ca. 4*1e-9
+  if (modelNoiseScaling_fl32 < modelNoiseLowerThreshold){ modelNoiseScaling_fl32 = modelNoiseLowerThreshold; }
   if (elapsedTime < 1) { elapsedTime=1; }
-  _timeLastObservation = currentTime;
-
   if (elapsedTime > 5000) { elapsedTime=5000; }
+
   _timeLastObservation = currentTime;
 
 
@@ -148,26 +144,38 @@ float KalmanFilter::filteredValue(float observation, float command, uint8_t mode
   // S = P + R, since H = [1, 0]
   S = P_pred[0][0] + R; // Residual covariance
 
-  // K = P_pred * H' * inv(S)
-  // since S is 1x1 --> inv(S) = 1 / S
-  // P_pred * H' = [P_pred[0][0]; P_pred[1][0]  ], since H' = [1;0]
-  K[0] = P_pred[0][0] / S;  // Kalman Gain
-  K[1] = P_pred[1][0] / S;
+  if (fabsf(S) > 0.000001f)
+  {
+    // K = P_pred * H' * inv(S)
+    // since S is 1x1 --> inv(S) = 1 / S
+    // P_pred * H' = [P_pred[0][0]; P_pred[1][0]  ], since H' = [1;0]
+    K[0] = P_pred[0][0] / S;  // Kalman Gain
+    K[1] = P_pred[1][0] / S;
 
-  // Update state estimate
-  position = x_pred[0] + K[0] * y;
-  velocity = x_pred[1] + K[1] * y;
+    // Update state estimate
+    position = x_pred[0] + K[0] * y;
+    velocity = x_pred[1] + K[1] * y;
 
-  // Update error covariance
-  // P = (I - K*H)*P_pred
-  // K*H = [K[0], 0; K[1], 0]
-  // p_arg = (I - K*H)
-  float p_arg[2][2] = {
-    { (1 - K[0]),    0.0f},
-    {-K[1],          1.0f}
-  };
-    
-  multiplyMatrices(p_arg, P_pred, P);
+    // Update error covariance
+    // P = (I - K*H)*P_pred
+    // K*H = [K[0], 0; K[1], 0]
+    // p_arg = (I - K*H)
+    float p_arg[2][2] = {
+      { (1.0f - K[0]),    0.0f},
+      {-K[1],          1.0f}
+    };
+      
+    multiplyMatrices(p_arg, P_pred, P);
+  }
+  else
+  {
+    P[0][0] = 0.0f;
+    P[0][1] = 0.0f;
+    P[1][0] = 0.0f;
+    P[1][1] = 0.0f;
+  }
+
+  
       
   return position;
 

@@ -50,9 +50,9 @@
 /********************************************************************/
 /*                      Loadcell defines                            */
 /********************************************************************/
-#define LOADCELL_WEIGHT_RATING_KG 300.0
-#define LOADCELL_EXCITATION_V 5.0
-#define LOADCELL_SENSITIVITY_MV_V 2.0
+#define LOADCELL_WEIGHT_RATING_KG 300.0f
+#define LOADCELL_EXCITATION_V 5.0f
+#define LOADCELL_SENSITIVITY_MV_V 2.0f
 
 
 /********************************************************************/
