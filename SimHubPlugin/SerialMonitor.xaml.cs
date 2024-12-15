@@ -50,9 +50,9 @@ namespace User.PluginSdkDemo
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             StackPanel_UI.Width = this.Width;
-            StackPanel_UI.Height = this.Height-17;
-            TextBox_SerialMonitor.Height=this.Height-42;
-            TextBox_SerialMonitor.Width=this.Width-2;
+            StackPanel_UI.Height = this.Height-12;
+            TextBox_SerialMonitor.Height=this.Height-47;
+            TextBox_SerialMonitor.Width=this.Width-7;
 
         }
     }
