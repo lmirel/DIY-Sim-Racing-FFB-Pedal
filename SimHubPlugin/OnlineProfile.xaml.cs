@@ -70,12 +70,29 @@ namespace User.PluginSdkDemo
                     string jsonUrl = "https://raw.githubusercontent.com/tcfshcrw/FFB_PEDAL_PROFILE/master/Profiles/" + selectedProfile.FileName;
                     tmp_config = await GetProfileDataAsync(jsonUrl);
                     Update_ForceCurve();
+                    Textbox_Online_Profile_Description.Text += "\nPreview:\n";
                     Textbox_Online_Profile_Description.Text += "DAP Version: "+tmp_config.payloadHeader_.version+"\n";
                     Textbox_Online_Profile_Description.Text += "Max force: " + tmp_config.payloadPedalConfig_.maxForce + "\n";
                     Textbox_Online_Profile_Description.Text += "Preload: " + tmp_config.payloadPedalConfig_.preloadForce + "\n";
                     //Textbox_Online_Profile_Description.Text += "Max force: " + tmp_config.payloadPedalConfig_.maxForce + "\n";
                     Textbox_Online_Profile_Description.Text += "Travel: " + ((float)(tmp_config.payloadPedalConfig_.pedalEndPosition-tmp_config.payloadPedalConfig_.pedalStartPosition)/100.0f*tmp_config.payloadPedalConfig_.lengthPedal_travel) + "\n";
                     Textbox_Online_Profile_Description.Text += "Damping: " + tmp_config.payloadPedalConfig_.dampingPress + "\n";
+                    switch (tmp_config.payloadPedalConfig_.kf_modelOrder)
+                    {
+                        case 0:
+                            Textbox_Online_Profile_Description.Text += "KF Model: Const. Vel\n";
+                            break;
+                        case 1:
+                            Textbox_Online_Profile_Description.Text += "KF Model: Const. Acc\n";
+                            break;
+                        case 2:
+                            Textbox_Online_Profile_Description.Text += "KF Model: EXP.\n";
+                            break;
+                        case 4:
+                            Textbox_Online_Profile_Description.Text += "KF Model: None\n";
+                            break;
+                    }
+                    Textbox_Online_Profile_Description.Text += "KF :" + tmp_config.payloadPedalConfig_.kf_modelNoise + "\n";
                     switch (tmp_config.payloadPedalConfig_.control_strategy_b)
                     {
                         case 0:
@@ -98,7 +115,9 @@ namespace User.PluginSdkDemo
                             break;
                     }
 
-                    
+
+
+
                 }
                 catch (Exception ex)
                 {

@@ -49,7 +49,7 @@
                             <Rectangle x:Name="rect5_Online_Config" Width="6" Height="6" Fill="{DynamicResource AccentColorBrush}" Canvas.Left="197" Canvas.Top="-3" Opacity="0.8"/>
                         </Canvas>
                     </StackPanel>
-                    <TextBox x:Name="Textbox_Online_Profile_Description" Text="" Height="200" Width="210" FontFamily="Arial" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="10" Background="{x:Null}" BorderBrush="{x:Null}" ScrollViewer.CanContentScroll="True" CaretBrush="{x:Null}" BorderThickness="0,0,0,0"/>
+                    <TextBox x:Name="Textbox_Online_Profile_Description" Text="" Height="200" Width="210" FontFamily="Arial" HorizontalAlignment="Center" VerticalAlignment="Top" FontSize="10" Background="{x:Null}" BorderBrush="{x:Null}" ScrollViewer.CanContentScroll="True" CaretBrush="{x:Null}" BorderThickness="0,0,0,0" VerticalScrollBarVisibility="Auto"/>
                     
                 </StackPanel>
             </StackPanel>
