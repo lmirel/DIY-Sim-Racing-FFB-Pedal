@@ -8360,6 +8360,7 @@ namespace User.PluginSdkDemo
 
         private async void btn_OnlineProfile_Click(object sender, RoutedEventArgs e)
         {
+            System.Windows.MessageBox.Show("Please make sure you already set the correct Pedal kinematics and Pedal start position(min pos)", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             OnlineProfile sideWindow = new OnlineProfile();
             double screenWidth = SystemParameters.PrimaryScreenWidth;
             double screenHeight = SystemParameters.PrimaryScreenHeight;
