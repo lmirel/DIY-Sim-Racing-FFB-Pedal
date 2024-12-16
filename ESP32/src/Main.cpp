@@ -655,10 +655,9 @@ void setup()
   //enable ESP-NOW
   #ifdef ESPNOW_Enable
   dap_calculationVariables_st.rudder_brake_status=false;
-  
-  Serial.println("Starting ESP now tasks");
   if(dap_config_st.payLoadPedalConfig_.pedal_type==0||dap_config_st.payLoadPedalConfig_.pedal_type==1||dap_config_st.payLoadPedalConfig_.pedal_type==2)
   {
+    Serial.println("Starting ESP now tasks");
     ESPNow_initialize();
     xTaskCreatePinnedToCore(
                         ESPNOW_SyncTask,   
@@ -670,6 +669,10 @@ void setup()
                         &Task6,    
                         0);     
     delay(500);
+  }
+  else
+  {
+    Serial.println("ESPNOW task did not started due to Assignment error, please usb connect to Simhub and finish Assignment.");
   }
   #endif
   #ifdef CONTROLLER_SPECIFIC_VIDPID

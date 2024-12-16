@@ -2441,9 +2441,11 @@ namespace User.PluginSdkDemo
             this.dap_config_st[pedalIdx].payloadHeader_.PedalTag = (byte)pedalIdx;
             this.dap_config_st[pedalIdx].payloadHeader_.storeToEeprom = 1;
             DAP_config_st tmp = this.dap_config_st[pedalIdx];
-
+            //prevent read default config from pedal without assignement
+            tmp.payloadPedalConfig_.pedal_type = (byte)pedalIdx;
             //payloadPedalConfig tmp = this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
             DAP_config_st* v = &tmp;
+
             byte* p = (byte*)v;
             this.dap_config_st[pedalIdx].payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
             int length = sizeof(DAP_config_st);
