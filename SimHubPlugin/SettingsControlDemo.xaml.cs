@@ -129,6 +129,7 @@ namespace User.PluginSdkDemo
         public bool Update_CV_textbox = false;
         public bool[] Version_error_warning_b = new bool[3] { false, false, false };
         public bool[] Version_warning_first_show_b= new bool[3] { false, false, false };
+        public bool Version_warning_first_show_b_bridge = false;
         public byte[] Pedal_version = new byte[3];
         private SerialMonitor_Window _serial_monitor_window;
         public bool Pedal_Log_warning_1st_show_b = true;
@@ -6887,6 +6888,25 @@ namespace User.PluginSdkDemo
                                     check_payload_state_b = true;
                                 }
 
+                                if (bridge_state.payLoadHeader_.version != Constants.pedalConfigPayload_version && bridge_state.payLoadHeader_.payloadType== Constants.bridgeStatePayloadType)
+                                {
+                                    if (!Version_warning_first_show_b_bridge)
+                                    {
+                                        Version_warning_first_show_b_bridge = true;
+                                        if (bridge_state.payLoadHeader_.version > Constants.pedalConfigPayload_version)
+                                        {
+                                            String MSG_tmp;
+                                            MSG_tmp = "Bridge Dap version: " + bridge_state.payLoadHeader_.version + ", Plugin DAP version: " + Constants.pedalConfigPayload_version + ". Please update Simhub Plugin.";
+                                            System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                        }
+                                        else
+                                        {
+                                            String MSG_tmp;
+                                            MSG_tmp = "Bridge Dap version: " + bridge_state.payLoadHeader_.version + ", Plugin DAP version: " + Constants.pedalConfigPayload_version + ". Please update Bridge Firmware.";
+                                            System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning); 
+                                        }
+                                    }
+                                }
                                 // CRC check
                                 bool check_crc_state_b = false;
                                 if (Plugin.checksumCalc(p_state, sizeof(payloadHeader) + sizeof(payloadBridgeState)) == bridge_state.payloadFooter_.checkSum)
