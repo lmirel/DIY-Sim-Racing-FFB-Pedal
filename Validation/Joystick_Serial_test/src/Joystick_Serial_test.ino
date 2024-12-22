@@ -11,6 +11,7 @@
 // 2015-11-20
 //--------------------------------------------------------------------
 
+#include <Arduino.h>
 //#include <Joystick_ESP32S2.h>
 //USBCDC USBSerial;
 
@@ -32,9 +33,18 @@ void setup() {
   USB.begin();
   gamepad.begin();
 
-  Serial.setTxTimeoutMs(0);
+
+  /* UART serial seetings */
+  // Serial.begin(115200, SERIAL_8N1);
+  // Serial.setTimeout(5);
+  // Serial.setHwFlowCtrlMode(UART_HW_FLOWCTRL_DISABLE);
+
+  /* CDC serial settings */
+  //  Serial.setTxTimeoutMs(0);
   
-  
+
+
+
   //Joystick.setBrakeRange(0, 1000);
 
   // Initialize Joystick Library
@@ -60,7 +70,9 @@ void loop() {
   uint8_t tmp[100];
   Serial.write((char*)&tmp[0], sizeof(uint8_t) * 100 );
 
-  delay(2); // <-- This helped a lot!
+  // Serial.flush();
+
+  // delay(2); // <-- This helped a lot!
 
   // send USB HID output
   //Joystick.setBrake(counter);
