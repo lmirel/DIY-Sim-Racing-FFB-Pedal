@@ -148,6 +148,7 @@
   #define ISV57_RXPIN 26 // 16
 
   #define Using_analog_output
+  #define FANATEC_analog_output
 
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK

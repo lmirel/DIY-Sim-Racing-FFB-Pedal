@@ -251,8 +251,11 @@ void setup()
   //Serial.begin(115200);
   //Serial.begin(921600);
   //Serial.begin(512000);
-  //
-  
+
+  //Fanatec inverted output
+  #ifdef FANATEC_analog_output
+    dacWrite(D_O, 255); //set signal to max for Fanatec pedal calibration
+  #endif
 
   #if PCB_VERSION == 6
     Serial.setTxTimeoutMs(0);
@@ -1028,7 +1031,11 @@ void pedalUpdateTask( void * pvParameters )
     // provide joystick output on PIN
     #ifdef Using_analog_output
       int dac_value=(int)(joystickNormalizedToInt32*255/10000);
-      dacWrite(D_O,dac_value);
+      #ifdef FANATEC_analog_output
+        dacWrite(D_O, 255 - dac_value);
+      #else
+        dacWrite(D_O,dac_value);
+      #endif
     #endif
 
     #ifdef Using_analog_output_ESP32_S3
