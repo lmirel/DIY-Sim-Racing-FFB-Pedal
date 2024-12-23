@@ -223,7 +223,7 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
 
 
 
-// V3 version of dev PCB for ESP32 S3
+// V4 version of dev PCB for ESP32 S3
 // flash instructions, see https://hutscape.com/tutorials/hello-arduino-esp32s3
 // 1. ESP32S3 Dev Module
 // 2. USB CDC On Boot Enabled
@@ -255,12 +255,13 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK
-  #define ESPNOW_Enable
+  // #define ESPNOW_Enable
   #define ESPNow_S3
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 5
   //#define ESPNow_Pairing_function
   #define Pairing_GPIO 0
   #define OTA_update
+  #define CONTROLLER_SPECIFIC_VIDPID
 #endif
 
 // For Gilphilbert PCBA design

@@ -309,11 +309,11 @@ void setup()
     Buzzer.single_beep_tone(770,100);
   #endif
 
-  #if PCB_VERSION == 6 || PCB_VERSION == 7
+  #if PCB_VERSION == 7
     Serial.setTxTimeoutMs(0);
     Serial.begin(921600);
   #else
-    Serial.begin(921600);
+    Serial.begin(921600, SERIAL_8N1);
     Serial.setTimeout(5);
   #endif
   Serial.println(" ");
@@ -1228,11 +1228,13 @@ void pedalUpdateTask( void * pvParameters )
         
         //error code
         dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=0;
+        #ifdef ESPNOW_Enable
         if(ESPNow_error_code!=0)
         {
           dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=ESPNow_error_code;
           ESPNow_error_code=0;
         }
+        #endif
         //dap_state_basic_st.payloadPedalState_Basic_.erroe_code_u8=200;
         /*if(isv57.isv57_update_parameter_b)
         {
@@ -1443,6 +1445,7 @@ void serialCommunicationTask( void * pvParameters )
                 ESP.restart();
               }
               //3= Wifi OTA
+              #ifdef ESPNOW_Enable
               if (dap_actions_st.payloadPedalAction_.system_action_u8==3)
               {
                 Serial.println("Get OTA command");
@@ -1450,6 +1453,7 @@ void serialCommunicationTask( void * pvParameters )
                 //OTA_enable_start=true;
                 ESPNow_OTA_enable=false;
               }
+              #endif
               //4 Enable pairing
               if (dap_actions_st.payloadPedalAction_.system_action_u8==4)
               {
@@ -1743,9 +1747,13 @@ void OTATask( void * pvParameters )
       {
         Serial.println("de-initialize espnow");
         Serial.println("wait...");
-        esp_err_t result= esp_now_deinit();
-        ESPNow_initial_status=false;
-        ESPNOW_status=false;
+        #ifdef ESPNOW_Enable
+          esp_err_t result= esp_now_deinit();
+          ESPNow_initial_status=false;
+          ESPNOW_status=false;
+        #else
+          esp_err_t result = ESP_OK;
+        #endif
         delay(3000);
         if(result==ESP_OK)
         {
