@@ -5863,14 +5863,14 @@ namespace User.PluginSdkDemo
 
         private void btn_plus_travel_Click(object sender, RoutedEventArgs e)
         {
-            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel <= 100)
+            if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel <= 200)
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = (Int16)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel + 1);
                 updateTheGuiFromConfig();
             }
             else
             {
-                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = 100;
+                dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = 200;
             }
 
         }
@@ -6041,7 +6041,7 @@ namespace User.PluginSdkDemo
             {
                 if (int.TryParse(textbox.Text, out int result))
                 {
-                    if (result >= 10 && result <= 100)
+                    if (result >= 10 && result <= 200)
                     {
                         dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.lengthPedal_travel = (Int16)result;
                         Pedal_joint_draw();
