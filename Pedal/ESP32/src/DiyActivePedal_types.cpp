@@ -8,9 +8,10 @@
 
 static const float ABS_SCALING = 50;
 
-const uint32_t EEPROM_OFFSET = (DAP_VERSION_CONFIG-128) * sizeof(DAP_config_st) % (2048-sizeof(DAP_config_st));
+const uint32_t EEPROM_OFFSET = (DAP_VERSION_CONFIG - 128) * sizeof(DAP_config_st) % (2048 - sizeof(DAP_config_st));
 
-void DAP_config_st::initialiseDefaults() {
+void DAP_config_st::initialiseDefaults()
+{
   payLoadHeader_.payloadType = DAP_PAYLOAD_TYPE_CONFIG;
   payLoadHeader_.version = DAP_VERSION_CONFIG;
   payLoadHeader_.storeToEeprom = false;
@@ -37,28 +38,27 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.absForceOrTarvelBit = 0;
 
   payLoadPedalConfig_.lengthPedal_a = 205;
-  payLoadPedalConfig_.lengthPedal_b = 220; 
-  payLoadPedalConfig_.lengthPedal_d = 60; 
+  payLoadPedalConfig_.lengthPedal_b = 220;
+  payLoadPedalConfig_.lengthPedal_d = 60;
   payLoadPedalConfig_.lengthPedal_c_horizontal = 215;
   payLoadPedalConfig_.lengthPedal_c_vertical = 60;
   payLoadPedalConfig_.lengthPedal_travel = 100;
-  
 
-  payLoadPedalConfig_.Simulate_ABS_trigger = 0;// add for abs trigger
-  payLoadPedalConfig_.Simulate_ABS_value = 80;// add for abs trigger
+  payLoadPedalConfig_.Simulate_ABS_trigger = 0; // add for abs trigger
+  payLoadPedalConfig_.Simulate_ABS_value = 80;  // add for abs trigger
   payLoadPedalConfig_.RPM_max_freq = 40;
   payLoadPedalConfig_.RPM_min_freq = 10;
   payLoadPedalConfig_.RPM_AMP = 5;
-  payLoadPedalConfig_.BP_trigger_value =50;
-  payLoadPedalConfig_.BP_amp=1;
-  payLoadPedalConfig_.BP_freq=15;
-  payLoadPedalConfig_.BP_trigger=0;
+  payLoadPedalConfig_.BP_trigger_value = 50;
+  payLoadPedalConfig_.BP_amp = 1;
+  payLoadPedalConfig_.BP_freq = 15;
+  payLoadPedalConfig_.BP_trigger = 0;
   payLoadPedalConfig_.G_multi = 50;
-  payLoadPedalConfig_.G_window=60;
-  payLoadPedalConfig_.WS_amp=1;
-  payLoadPedalConfig_.WS_freq=15;
+  payLoadPedalConfig_.G_window = 60;
+  payLoadPedalConfig_.WS_amp = 1;
+  payLoadPedalConfig_.WS_freq = 15;
   payLoadPedalConfig_.Road_multi = 50;
-  payLoadPedalConfig_.Road_window=60;
+  payLoadPedalConfig_.Road_window = 60;
   payLoadPedalConfig_.cubic_spline_param_a_array[0] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[1] = 0;
   payLoadPedalConfig_.cubic_spline_param_a_array[2] = 0;
@@ -75,7 +75,6 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.PID_i_gain = 50.0;
   payLoadPedalConfig_.PID_d_gain = 0.0;
   payLoadPedalConfig_.PID_velocity_feedforward_gain = 0.0;
-
 
   payLoadPedalConfig_.MPC_0th_order_gain = 1.0;
   payLoadPedalConfig_.MPC_1st_order_gain = 0.0;
@@ -97,21 +96,17 @@ void DAP_config_st::initialiseDefaults() {
   payLoadPedalConfig_.invertLoadcellReading_u8 = 0;
 
   payLoadPedalConfig_.invertMotorDirection_u8 = 0;
-  payLoadPedalConfig_.pedal_type=0;
-  payLoadPedalConfig_.OTA_flag=0;
-  payLoadPedalConfig_.enableReboot_u8=1;
+  payLoadPedalConfig_.pedal_type = 0;
+  payLoadPedalConfig_.OTA_flag = 0;
+  payLoadPedalConfig_.enableReboot_u8 = 1;
 }
 
-
-
-
-void DAP_config_st::storeConfigToEprom(DAP_config_st& config_st)
+void DAP_config_st::storeConfigToEprom(DAP_config_st &config_st)
 {
-
-  EEPROM.put(EEPROM_OFFSET, config_st); 
+  EEPROM.put(EEPROM_OFFSET, config_st);
   EEPROM.commit();
   Serial.println("Successfully stored config in EPROM");
-  
+
   /*if (true == config_st.payLoadHeader_.storeToEeprom)
   {
     config_st.payLoadHeader_.storeToEeprom = false; // set to false, thus at restart existing EEPROM config isn't restored to EEPROM
@@ -121,7 +116,7 @@ void DAP_config_st::storeConfigToEprom(DAP_config_st& config_st)
   }*/
 }
 
-void DAP_config_st::loadConfigFromEprom(DAP_config_st& config_st)
+void DAP_config_st::loadConfigFromEprom(DAP_config_st &config_st)
 {
   DAP_config_st local_config_st;
 
@@ -145,23 +140,18 @@ void DAP_config_st::loadConfigFromEprom(DAP_config_st& config_st)
     Serial.println(local_config_st.payLoadHeader_.version);
 
   }*/
-
 }
 
-
-
-
-
-void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
+void DAP_calculationVariables_st::updateFromConfig(DAP_config_st &config_st)
+{
   startPosRel = ((float)config_st.payLoadPedalConfig_.pedalStartPosition) / 100.0f;
   endPosRel = ((float)config_st.payLoadPedalConfig_.pedalEndPosition) / 100.0f;
 
-
-  if (startPosRel  ==  endPosRel)
+  if (startPosRel == endPosRel)
   {
-    endPosRel =   startPosRel + 1 / 100;
+    endPosRel = startPosRel + 1 / 100;
   }
-  
+
   absFrequency = ((float)config_st.payLoadPedalConfig_.absFrequency);
   absAmplitude = ((float)config_st.payLoadPedalConfig_.absAmplitude) / 20.0f; // in kg or percent
 
@@ -170,17 +160,17 @@ void DAP_calculationVariables_st::updateFromConfig(DAP_config_st& config_st) {
   RPM_min_freq = ((float)config_st.payLoadPedalConfig_.RPM_min_freq);
   RPM_AMP = ((float)config_st.payLoadPedalConfig_.RPM_AMP) / 100.0f;
   //Bite point effect;
-  
-  BP_trigger_value=(float)config_st.payLoadPedalConfig_.BP_trigger_value;
-  BP_amp=((float)config_st.payLoadPedalConfig_.BP_amp) / 100.0f;
-  BP_freq=(float)config_st.payLoadPedalConfig_.BP_freq;
-  WS_amp=((float)config_st.payLoadPedalConfig_.WS_amp) / 20.0f;
-  WS_freq=(float)config_st.payLoadPedalConfig_.WS_freq;
+
+  BP_trigger_value = (float)config_st.payLoadPedalConfig_.BP_trigger_value;
+  BP_amp = ((float)config_st.payLoadPedalConfig_.BP_amp) / 100.0f;
+  BP_freq = (float)config_st.payLoadPedalConfig_.BP_freq;
+  WS_amp = ((float)config_st.payLoadPedalConfig_.WS_amp) / 20.0f;
+  WS_freq = (float)config_st.payLoadPedalConfig_.WS_freq;
   // update force variables
   Force_Min = ((float)config_st.payLoadPedalConfig_.preloadForce);
-  Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce); 
+  Force_Max = ((float)config_st.payLoadPedalConfig_.maxForce);
   Force_Range = Force_Max - Force_Min;
-  Force_Max_default=((float)config_st.payLoadPedalConfig_.maxForce); 
+  Force_Max_default = ((float)config_st.payLoadPedalConfig_.maxForce);
 }
 
 void DAP_calculationVariables_st::dynamic_update()
@@ -193,35 +183,32 @@ void DAP_calculationVariables_st::reset_maxforce()
   Force_Max = Force_Max_default;
 }
 
-void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMaxEndstop) {
- 
-  if ( newMinEndstop == newMaxEndstop )
+void DAP_calculationVariables_st::updateEndstops(long newMinEndstop, long newMaxEndstop)
+{
+  if (newMinEndstop == newMaxEndstop)
   {
-    newMaxEndstop = newMinEndstop  + 10;
+    newMaxEndstop = newMinEndstop + 10;
   }
-  
+
   stepperPosMinEndstop = newMinEndstop;
   stepperPosMaxEndstop = newMaxEndstop;
   stepperPosEndstopRange = stepperPosMaxEndstop - stepperPosMinEndstop;
-  
+
   stepperPosMin = stepperPosEndstopRange * startPosRel;
   stepperPosMax = stepperPosEndstopRange * endPosRel;
 
   stepperPosRange = stepperPosMax - stepperPosMin;
 }
 
-void DAP_calculationVariables_st::updateStiffness() {
+void DAP_calculationVariables_st::updateStiffness()
+{
   springStiffnesss = Force_Range / stepperPosRange;
-  if ( fabs(springStiffnesss) > 0.0001 )
+  if (fabs(springStiffnesss) > 0.0001)
   {
-      springStiffnesssInv = 1.0 / springStiffnesss;
+    springStiffnesssInv = 1.0 / springStiffnesss;
   }
   else
   {
     springStiffnesssInv = 1000000;
   }
-  
-  }
-
-
-
+}

@@ -10,9 +10,6 @@
 #endif
 */
 
-
-
-
 void SetupController(uint8_t val);
 bool IsControllerReady();
 

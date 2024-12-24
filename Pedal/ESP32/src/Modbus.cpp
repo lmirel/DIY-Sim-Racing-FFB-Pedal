@@ -11,7 +11,6 @@ Modbus::Modbus(HardwareSerial &st)
     this->s = &st;
 }
 
-
 bool Modbus::init(int mode, bool en_log)
 {
      this->mode_ =  mode;
@@ -70,10 +69,9 @@ int Modbus::discreteInputRead(int id, int address)
    }
 }
 
-
-
 // check target values at register address. If target value was already present, return 0. If target value has to be set, return 1.
-void Modbus::readParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress) {
+void Modbus::readParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress)
+{
 
   bool retValue_b = false;
 
@@ -106,8 +104,8 @@ void Modbus::readParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress)
 
 
 // check target values at register address. If target value was already present, return 0. If target value has to be set, return 1.
-bool Modbus::checkAndReplaceParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress, long value) {
-
+bool Modbus::checkAndReplaceParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress, long value)
+{
   bool retValue_b = false;
 
   // check if value at address is already target value
@@ -137,8 +135,6 @@ bool Modbus::checkAndReplaceParameter(uint16_t slaveId_local_u16, uint16_t param
     Serial.print(",    target:");
     Serial.println(value);
 
-
-
     holdingRegisterWrite(slaveId_local_u16, parameterAdress, value); // deactivate auto gain
     delay(50);
     retValue_b = true;
@@ -155,7 +151,7 @@ long Modbus::holdingRegisterRead(int address)
 
 long Modbus::holdingRegisterRead(int id, int address, int block)
 {
-  if(block > 2){block = 2;}
+  if(block > 2) { block = 2; }
   if(requestFrom(SlaveID, Holding_Register, address, block))
   {
     if(block == 2)
@@ -174,13 +170,13 @@ long Modbus::holdingRegisterRead(int id, int address, int block)
 
 long Modbus::inputRegisterRead(int address)
 {
-   return inputRegisterRead(SlaveID , address, 1);
+   return inputRegisterRead(SlaveID, address, 1);
 }
 
 long Modbus::inputRegisterRead(int id, int address, int block)
 {
   if(block > 2){block = 2;}
-  if(requestFrom(id, Input_Register,address,block))
+  if(requestFrom(id, Input_Register, address, block))
   {
     if(block == 2)
     {
@@ -196,14 +192,8 @@ long Modbus::inputRegisterRead(int id, int address, int block)
   }
 }
 
-
-
-
-
-
 int Modbus::requestFrom(int slaveId, int type, int address, int nb)
 {
-    
     // address = address - 1;
     int crc ;
     txout[0] = slaveId;
@@ -217,13 +207,14 @@ int Modbus::requestFrom(int slaveId, int type, int address, int nb)
     txout[7] = crc >> 8;
  
      
-    if(log){
+    if(log)
+    {
       Serial.print("TX: ");
-       for(int i =0; i < 8; i++)
-            {
-                Serial.printf("%02X ",txout[i] );
-            }
-            Serial.print("\t");
+      for(int i =0; i < 8; i++)
+      {
+          Serial.printf("%02X ",txout[i] );
+      }
+      Serial.print("\t");
      }
 
     //digitalWrite(mode_,1);
@@ -239,7 +230,8 @@ int Modbus::requestFrom(int slaveId, int type, int address, int nb)
     int rx;
     uint8_t found = 0;
   
-    while((millis() - t) < timeout_){
+    while((millis() - t) < timeout_)
+    {
        if(this->s->available())
        {
         rx = this->s->read();
@@ -253,7 +245,8 @@ int Modbus::requestFrom(int slaveId, int type, int address, int nb)
             found = 1; 
           }
         }
-        else if(found == 1){
+        else if(found == 1)
+        {
           
          rawRx[0] = txout[0]; // Slave ID
          rawRx[1] = txout[1]; // Function code
@@ -276,59 +269,54 @@ int Modbus::requestFrom(int slaveId, int type, int address, int nb)
          // The total message length is thus N = 5+m
          if(lenRx >= rawRx[2] + 5) { break; }
         }
-        
        }
-        
-
     }
 
-    if(log){
-        Serial.print("RX: ");
-        for(int i =0; i < lenRx; i++)
-            {
-             Serial.printf("%02X ",rawRx[i] );
-            }
-            Serial.println();
-     }
+    if(log)
+    {
+      Serial.print("RX: ");
+      for(int i =0; i < lenRx; i++)
+      {
+        Serial.printf("%02X ",rawRx[i] );
+      }
+      Serial.println();
+    }
 
     /*Serial.print(lenRx);
     Serial.println();*/
 
 
-    if(lenRx > 2){
-        int crc1 = rawRx[lenRx - 1] <<8 | rawRx[lenRx - 2];
-        int crc2 = CheckCRC(rawRx, lenRx - 2);
-        //Serial.printf("CRC1: %04X CRC2: %04X\n",crc1, crc2);
+    if(lenRx > 2)
+    {
+      int crc1 = rawRx[lenRx - 1] <<8 | rawRx[lenRx - 2];
+      int crc2 = CheckCRC(rawRx, lenRx - 2);
+      //Serial.printf("CRC1: %04X CRC2: %04X\n",crc1, crc2);
 
 
-        /*Serial.print("CRC1: ");
-        Serial.print(crc1);
-        Serial.print(",   CRC2: ");
-        Serial.print(crc2);
-        Serial.println();*/
+      /*Serial.print("CRC1: ");
+      Serial.print(crc1);
+      Serial.print(",   CRC2: ");
+      Serial.print(crc2);
+      Serial.println();*/
 
-         if(crc1 == crc2)
-          {
-            datalen = rawRx[2];
-            /*Serial.print("Datalen: ");
-            Serial.print(datalen);
-            Serial.println();*/
-            return datalen;
-          }
-          else
-          { 
-            return -1; 
-          }
-    }else{
+      if(crc1 == crc2)
+      {
+          datalen = rawRx[2];
+          /*Serial.print("Datalen: ");
+          Serial.print(datalen);
+          Serial.println();*/
+          return datalen;
+      }
+      else
+      { 
+        return -1; 
+      }
+    }
+    else
+    {
         return -1;
     }
 }
-
-
-
-
-
-
 
 int Modbus::ReadCoilReg(int add)
 {
@@ -345,7 +333,8 @@ int Modbus::ReadCoilReg(int slaveId, int add, int nbit)
    if(requestFrom(slaveId,Coil_Register,add,nbit))
    {
     return byteRead(0);
-   }else
+   }
+   else
    {
     return -1;
    }
@@ -364,10 +353,12 @@ int Modbus::ReadDiscretReg(int slaveId, int add)
 
 int Modbus::ReadDiscretReg(int slaveId, int add, int nbit)
 {
-    if(requestFrom(slaveId,Discret_Register,add,nbit)) {
+  if(requestFrom(slaveId, Discret_Register, add, nbit))
+  {
     return byteRead(0);
    }
-   else {
+   else
+   {
     return -1;
    }
 }
@@ -473,11 +464,14 @@ int Modbus::CheckCRC(uint8_t*buf, int len)
   int crc = 0xFFFF;
   unsigned char pos,i;
  
-  for ( pos = 0; pos < len; pos++) {
+  for ( pos = 0; pos < len; pos++)
+  {
     crc ^= (unsigned int)buf[pos];          // XOR byte into least sig. byte of crc
  
-    for (i = 8; i != 0; i--) {        // Loop over each bit
-      if ((crc & 0x0001) != 0) {      // If the LSB is set
+    for (i = 8; i != 0; i--)
+    {        // Loop over each bit
+      if ((crc & 0x0001) != 0)
+      {      // If the LSB is set
         crc >>= 1;                    // Shift right and XOR 0xA001
         crc ^= nominal;
       }
@@ -494,7 +488,6 @@ int Modbus::CheckCRC(uint8_t*buf, int len)
 int Modbus::holdingRegisterWrite(int id, int address, uint16_t value)
 {
     int crc ;
-	
 	// form signal
     txout[0] = id;
     txout[1] = Write_Holding_Register;
@@ -516,8 +509,4 @@ int Modbus::holdingRegisterWrite(int id, int address, uint16_t value)
 	
 	
 	return 1;
-	
-	
-	
-	
 }

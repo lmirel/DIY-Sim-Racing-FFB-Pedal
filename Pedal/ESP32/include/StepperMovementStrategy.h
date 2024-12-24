@@ -3,10 +3,6 @@
 #include "DiyActivePedal_types.h"
 #include "Main.h"
 
-
-
-
-
 // see https://github.com/Dlloydev/QuickPID/blob/master/examples/PID_Basic/PID_Basic.ino
 #include <QuickPID.h>
 
@@ -14,13 +10,13 @@
 float Setpoint, Input, Output;
 
 //Specify the links and initial tuning parameters
-double Kp=0.3, Ki=50.0, Kd=0.000;
+double Kp = 0.3, Ki = 50.0, Kd = 0.000;
 uint8_t control_strategy_u8 = 0;
-QuickPID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd,  /* OPTIONS */
-               myPID.pMode::pOnError,                   /* pOnError, pOnMeas, pOnErrorMeas */
-               myPID.dMode::dOnMeas,                    /* dOnError, dOnMeas */
-               myPID.iAwMode::iAwOff,             /* iAwCondition, iAwClamp, iAwOff */
-               myPID.Action::direct);                   /* direct, reverse */
+QuickPID myPID(&Input, &Output, &Setpoint, Kp, Ki, Kd, /* OPTIONS */
+               myPID.pMode::pOnError,                  /* pOnError, pOnMeas, pOnErrorMeas */
+               myPID.dMode::dOnMeas,                   /* dOnError, dOnMeas */
+               myPID.iAwMode::iAwOff,                  /* iAwCondition, iAwClamp, iAwOff */
+               myPID.Action::direct);                  /* direct, reverse */
 bool pidWasInitialized = false;
 
 #define PID_OUTPUT_LIMIT_FL32 0.5f
@@ -31,13 +27,14 @@ bool pidWasInitialized = false;
 /*                                                                                            */
 /**********************************************************************************************/
 
-int32_t MoveByInterpolatedStrategy(float filteredLoadReadingKg, float stepperPosFraction, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, const DAP_config_st* config_st) {
+int32_t MoveByInterpolatedStrategy(float filteredLoadReadingKg, float stepperPosFraction, ForceCurve_Interpolated *forceCurve, const DAP_calculationVariables_st *calc_st, const DAP_config_st *config_st)
+{
   float spingStiffnessInv_lcl = calc_st->springStiffnesssInv;
   //float springStiffnessInterp = forceCurve->stiffnessAtPosition(stepperPosFraction);
   float springStiffnessInterp = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, stepperPosFraction, false);
 
-  
-  if (springStiffnessInterp > 0) {
+  if (springStiffnessInterp > 0)
+  {
     spingStiffnessInv_lcl = (1.0f / springStiffnessInterp);
   }
 
@@ -47,27 +44,25 @@ int32_t MoveByInterpolatedStrategy(float filteredLoadReadingKg, float stepperPos
   return spingStiffnessInv_lcl * (filteredLoadReadingKg - pedalForceInterp) + stepperPosInterp;
 }
 
-
-
-
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         Movement strategy: PID                                             */
 /*                                                                                            */
 /**********************************************************************************************/
 
-void tunePidValues(DAP_config_st& config_st)
+void tunePidValues(DAP_config_st &config_st)
 {
-  Kp=config_st.payLoadPedalConfig_.PID_p_gain;
-  Ki=config_st.payLoadPedalConfig_.PID_i_gain;
-  Kd=config_st.payLoadPedalConfig_.PID_d_gain;
+  Kp = config_st.payLoadPedalConfig_.PID_p_gain;
+  Ki = config_st.payLoadPedalConfig_.PID_i_gain;
+  Kd = config_st.payLoadPedalConfig_.PID_d_gain;
 
   control_strategy_u8 = config_st.payLoadPedalConfig_.control_strategy_b;
 
   myPID.SetTunings(config_st.payLoadPedalConfig_.PID_p_gain, config_st.payLoadPedalConfig_.PID_i_gain, config_st.payLoadPedalConfig_.PID_d_gain);
 }
 
-int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity) {
+int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, StepperWithLimits *stepper, ForceCurve_Interpolated *forceCurve, const DAP_calculationVariables_st *calc_st, DAP_config_st *config_st, float absForceOffset_fl32, float changeVelocity)
+{
 
   if (pidWasInitialized == false)
   {
@@ -78,7 +73,6 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     myPID.SetAntiWindupMode(myPID.iAwMode::iAwClamp);
     //myPID.SetAntiWindupMode(myPID.iAwMode::iAwOff);
 
-
     pidWasInitialized = true;
     myPID.SetSampleTimeUs(PUT_TARGET_CYCLE_TIME_IN_US);
     //myPID.SetOutputLimits(-1.0,0.0);
@@ -87,11 +81,10 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     myPID.SetTunings(config_st->payLoadPedalConfig_.PID_p_gain, config_st->payLoadPedalConfig_.PID_i_gain, config_st->payLoadPedalConfig_.PID_d_gain);
   }
 
-
-  // clamp the stepper position to prevent problems with the spline 
+  // clamp the stepper position to prevent problems with the spline
   float stepperPosFraction_constrained = constrain(stepperPosFraction, 0, 1);
 
-  // constrain the output to the correct positioning interval to prevent PID windup 
+  // constrain the output to the correct positioning interval to prevent PID windup
   float neg_output_limit_fl32 = 1.0 - stepperPosFraction_constrained;
   float pos_output_limit_fl32 = stepperPosFraction_constrained;
   if (pos_output_limit_fl32 < PID_OUTPUT_LIMIT_FL32)
@@ -107,18 +100,15 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     myPID.SetOutputLimits(-PID_OUTPUT_LIMIT_FL32, PID_OUTPUT_LIMIT_FL32);
   }
 
-  
-
   // read target force at spline position
   float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction_constrained);
 
   // apply effect force offset
-  loadCellTargetKg -=absForceOffset_fl32;
+  loadCellTargetKg -= absForceOffset_fl32;
 
   // clip to min & max force to prevent Ki to overflow
   float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
   float loadCellTargetKg_clip = constrain(loadCellTargetKg, calc_st->Force_Min, calc_st->Force_Max);
-
 
   // dynamically scale the PID values depending on the force curve gradient
   if (control_strategy_u8 == 1)
@@ -132,9 +122,9 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     float gain_modifier_fl32 = 10.0;
     if (gradient_abs_fl32 > 1e-5)
     {
-       gain_modifier_fl32 = 1.0 / pow( gradient_abs_fl32 , 1);
+      gain_modifier_fl32 = 1.0 / pow(gradient_abs_fl32, 1);
     }
-    gain_modifier_fl32 = constrain( gain_modifier_fl32, 0.1, 10);
+    gain_modifier_fl32 = constrain(gain_modifier_fl32, 0.1, 10);
 
     myPID.SetTunings(gain_modifier_fl32 * Kp, gain_modifier_fl32 * Ki, gain_modifier_fl32 * Kd);
   }
@@ -143,14 +133,6 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
     myPID.SetTunings(Kp, Ki, Kd);
   }
 
-
-
- 
-
-
-  
-  
-  
   // ToDO
   // - Min and Max force need to be identified from forceCurve->forceAtPosition() as they migh differ from calc_st.Force_Min & calc_st.Force_Max
   // - model predictive control, see e.g. https://www.researchgate.net/profile/Mohamed-Mourad-Lafifi/post/Model-Predictive-Control-examples/attachment/60202ac761fb570001029f61/AS%3A988637009301508%401612720839656/download/An+Introduction+to+Model-based+Predictive+Control+%28MPC%29.pdf
@@ -159,19 +141,19 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
   if (calc_st->Force_Range > 0.001)
   {
-      Input = ( loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
-      Setpoint = ( loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range; 
+    Input = (loadCellReadingKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
+    Setpoint = (loadCellTargetKg_clip - calc_st->Force_Min) / calc_st->Force_Range;
   }
   else
   {
     Input = 0;
-    Setpoint= 0;
+    Setpoint = 0;
   }
   // compute PID output
   myPID.Compute();
 
   // integrate the position update
-  // The setpoint comes from the force curve. The input comes from the loadcell. When the loadcell reading is below the force curve, the difference becomes positive. 
+  // The setpoint comes from the force curve. The input comes from the loadcell. When the loadcell reading is below the force curve, the difference becomes positive.
   // Thus, the stepper has to move towards the foot to increase the loadcell reading.
   // Since the QuickPID has some filtering applied on the input, both variables are changed for performance reasons.
   float posStepperNew_fl32 = stepperPosFraction - Output;
@@ -183,26 +165,22 @@ int32_t MoveByPidStrategy(float loadCellReadingKg, float stepperPosFraction, Ste
 
   // convert position to integer
   int32_t posStepperNew = floor(posStepperNew_fl32);
-  
-  // clamp target position to range
-  posStepperNew=constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
 
-  //#define PLOT_PID_VALUES
-  #ifdef PLOT_PID_VALUES
-    static RTDebugOutput<float, 8> rtDebugFilter({ "stepperPosFraction", "loadCellTargetKg", "loadCellReadingKg", "loadCellReadingKg_clip", "Setpoint", "Input", "Output", "posStepperNew"});
-    rtDebugFilter.offerData({ stepperPosFraction, loadCellTargetKg, loadCellReadingKg, loadCellReadingKg_clip, Setpoint, Input, Output, posStepperNew});       
-  #endif
-  
+  // clamp target position to range
+  posStepperNew = constrain(posStepperNew, calc_st->stepperPosMin, calc_st->stepperPosMax);
+
+//#define PLOT_PID_VALUES
+#ifdef PLOT_PID_VALUES
+  static RTDebugOutput<float, 8> rtDebugFilter({"stepperPosFraction", "loadCellTargetKg", "loadCellReadingKg", "loadCellReadingKg_clip", "Setpoint", "Input", "Output", "posStepperNew"});
+  rtDebugFilter.offerData({stepperPosFraction, loadCellTargetKg, loadCellReadingKg, loadCellReadingKg_clip, Setpoint, Input, Output, posStepperNew});
+#endif
 
   return posStepperNew;
 }
 
-
-
-
-int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32, float d_phi_d_x, float d_x_hor_d_phi) {
+int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits *stepper, ForceCurve_Interpolated *forceCurve, const DAP_calculationVariables_st *calc_st, DAP_config_st *config_st, float absForceOffset_fl32, float changeVelocity, float stepper_vel_filtered_fl32, float stepper_accel_filtered_fl32, float d_phi_d_x, float d_x_hor_d_phi)
+{
   // see https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal/wiki/Movement-control-strategies#mpc
-
 
   /*
   This closed-loop control strategy models the foot as a spring with a certain stiffness k1.
@@ -218,7 +196,7 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   f(x_n) = -k1 * x + b - forceCurve(x)
   f'(x_n) = -k1 - d(forceCurve(x)) / dx
   */
-  
+
   // get current stepper position
   float stepperPos = stepper->getCurrentPosition();
 
@@ -230,30 +208,29 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
   //loadCellReadingKg_corrected += config_st->payLoadPedalConfig_.MPC_1st_order_gain * stepper_vel_filtered_fl32 / STEPS_PER_MOTOR_REVOLUTION / 10;// + stepper_accel_filtered_fl32;
   //loadCellReadingKg_corrected += config_st->payLoadPedalConfig_.MPC_1st_order_gain * stepper_accel_filtered_fl32 / STEPS_PER_MOTOR_REVOLUTION / 10;// + stepper_accel_filtered_fl32;
 
-
   // set initial guess
   float stepperPos_initial = stepperPos;
 
-  // Find the intersections of the force curve and the foot model via Newtons-method
-  #define MAX_NUMBER_OF_NEWTON_STEPS 5
+// Find the intersections of the force curve and the foot model via Newtons-method
+#define MAX_NUMBER_OF_NEWTON_STEPS 5
   for (uint8_t iterationIdx = 0; iterationIdx < MAX_NUMBER_OF_NEWTON_STEPS; iterationIdx++)
   {
     //float stepperPosFraction = stepper->getCurrentPositionFraction();
-    float stepperPosFraction = stepper->getCurrentPositionFractionFromExternalPos( stepperPos );
-  
+    float stepperPosFraction = stepper->getCurrentPositionFractionFromExternalPos(stepperPos);
+
     // clamp the stepper position to prevent problems with the spline
     float x_0 = constrain(stepperPosFraction, 0, 1);
-    
+
     // get force and force gradient of force vs travel curve
     float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, x_0);
     float gradient_force_curve_fl32 = forceCurve->EvalForceGradientCubicSpline(config_st, calc_st, x_0, false);
 
     // apply effect force offset
-    loadCellTargetKg -=absForceOffset_fl32;
+    loadCellTargetKg -= absForceOffset_fl32;
 
     // how many mm movement to order if 1kg of error force is detected
     // this can be tuned for responsiveness vs oscillation
-    float mm_per_motor_rev = config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8;//TRAVEL_PER_ROTATION_IN_MM;
+    float mm_per_motor_rev = config_st->payLoadPedalConfig_.spindlePitch_mmPerRev_u8; //TRAVEL_PER_ROTATION_IN_MM;
     float steps_per_motor_rev = STEPS_PER_MOTOR_REVOLUTION;
 
     // foot spring stiffness
@@ -261,8 +238,6 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
     float move_mm_per_kg = config_st->payLoadPedalConfig_.MPC_0th_order_gain;
     float MOVE_STEPS_FOR_1KG = (move_mm_per_kg / mm_per_motor_rev) * steps_per_motor_rev;
-    
-
 
     // make stiffness dependent on force curve gradient
     // less steps per kg --> steeper line
@@ -272,10 +247,8 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
     float mmPerStep = 0;
     if (steps_per_motor_rev > 0)
     {
-      mmPerStep = mm_per_motor_rev / steps_per_motor_rev ;
+      mmPerStep = mm_per_motor_rev / steps_per_motor_rev;
     }
-    
-
 
     // The foot is modeled to be of proportional resistance with respect to deflection. Since the deflection depends on the pedal kinematics, the kinematic must be respected here
     // This is accomplished with the forceGain variable
@@ -285,12 +258,9 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       MOVE_STEPS_FOR_1KG *= fabs( forceGain );
     }*/
 
-  
-
     // angular foot model
     // m1 = d_f_d_x dForce / dx
     //float m1 = d_f_d_phi * (-d_phi_d_x);
-
 
     // Translational foot model
     // given in kg/step
@@ -298,16 +268,16 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
 
     // smoothen gradient with force curve gradient since it had better results w/ clutch pedal characteristic
     //m1 /= gradient_normalized_force_curve_fl32;
-    
+
     // gradient of the force curve
     // given in kg/step
-    float m2 = gradient_force_curve_fl32; 
-    
+    float m2 = gradient_force_curve_fl32;
+
     // Newton update
     float denom = m1 - m2;
-    if ( fabs(denom) > 0 )
+    if (fabs(denom) > 0)
     {
-      float stepUpdate = ( loadCellReadingKg_corrected - loadCellTargetKg) / ( denom );
+      float stepUpdate = (loadCellReadingKg_corrected - loadCellTargetKg) / (denom);
 
       // smoothen update with force curve gradient since it had better results w/ clutch pedal characteristic
       stepUpdate *= gradient_normalized_force_curve_fl32;
@@ -315,57 +285,37 @@ int32_t MoveByForceTargetingStrategy(float loadCellReadingKg, StepperWithLimits*
       stepperPos -= stepUpdate;
     }
   }
-    
+
   // limit the position update
   float deltaMax = 0.5 * (float)(calc_st->stepperPosMax - calc_st->stepperPosMin);
-  int32_t posStepperNew = constrain(stepperPos, stepperPos_initial-deltaMax, stepperPos_initial+deltaMax );
+  int32_t posStepperNew = constrain(stepperPos, stepperPos_initial - deltaMax, stepperPos_initial + deltaMax);
 
   // clamp target position to range
-  posStepperNew = constrain(posStepperNew,calc_st->stepperPosMin,calc_st->stepperPosMax );
+  posStepperNew = constrain(posStepperNew, calc_st->stepperPosMin, calc_st->stepperPosMax);
 
   return posStepperNew;
 }
 
-
-int32_t mpcBasedMove(float loadCellReadingKg, float stepperPosFraction, StepperWithLimits* stepper, ForceCurve_Interpolated* forceCurve, const DAP_calculationVariables_st* calc_st, DAP_config_st* config_st, float absForceOffset_fl32) 
+int32_t mpcBasedMove(float loadCellReadingKg, float stepperPosFraction, StepperWithLimits *stepper, ForceCurve_Interpolated *forceCurve, const DAP_calculationVariables_st *calc_st, DAP_config_st *config_st, float absForceOffset_fl32)
 {
-
-
 
   static const float MOVE_MM_FOR_1KG = 3.0;
   static const float MOVE_STEPS_FOR_1KG = (MOVE_MM_FOR_1KG / TRAVEL_PER_ROTATION_IN_MM) * STEPS_PER_MOTOR_REVOLUTION;
 
-
-
   // get target force at current location
   float loadCellTargetKg = forceCurve->EvalForceCubicSpline(config_st, calc_st, stepperPosFraction);
-  loadCellTargetKg -=absForceOffset_fl32;
-
-  
+  loadCellTargetKg -= absForceOffset_fl32;
 
   // get loadcell reading
   float loadCellReadingKg_clip = constrain(loadCellReadingKg, calc_st->Force_Min, calc_st->Force_Max);
 
-  
-  
   // if target force at location is lower than loadcell reading --> move towards the foot k_f * n_steps
 
   // Take into account system constraints like stepper rpm & acceleration
 
-  
-
   // if target force at location is lower than loadcell reading --> move away from the foot -k_f * n_steps
 
-  
-
   // predict target force at new location and compare to predicted force --> compute cost matrix
-
-  
-  
-
-  
-
-  
 
   // e_k = r^2 = (F_lc - k * (delta_x_0) - F_t(x_0 + delta_x_0))^2
 
@@ -385,27 +335,15 @@ int32_t mpcBasedMove(float loadCellReadingKg, float stepperPosFraction, StepperW
 
   // F_t(x): target force at location
 
-  
-
-  
-
   // minimize e with x_1
 
   // d[e(delta_x_0)] / d[delta_x_0] == 0
-
-  
 
   // d[e] / d[delta_x_0] = d[e] / d[r] * d[r] / d[delta_x_0]
 
   // d[e] / d[r] = 2 * r
 
-  
-
   // d[r] / d[delta_x_0] = d[F_lc - k * (delta_x_0) - F_t(x_0 + delta_x_0)] = -k  - d[F_t]/d[delta_x_0]
-
-  
-
-  
 
   // MPC: sum up over planing horizon and optimize costs
 
@@ -413,19 +351,13 @@ int32_t mpcBasedMove(float loadCellReadingKg, float stepperPosFraction, StepperW
 
   // constraint |delta_x_0| < max step rate
 
-  
-
   // l = sum_k( e_k(delta_x_k, x_0) )
 
   // where k = [0, 1, ..., N]
-
-  
 }
 
-
-
 // see https://pidtuner.com
-void measureStepResponse(StepperWithLimits* stepper, const DAP_calculationVariables_st* calc_st, const DAP_config_st* config_st, const LoadCell_ADS1256* loadcell)
+void measureStepResponse(StepperWithLimits *stepper, const DAP_calculationVariables_st *calc_st, const DAP_config_st *config_st, const LoadCell_ADS1256 *loadcell)
 {
 
   int32_t currentPos = stepper->getCurrentPositionFromMin();
@@ -476,10 +408,10 @@ void measureStepResponse(StepperWithLimits* stepper, const DAP_calculationVariab
 
       // get current position
       currentPos = stepper->getCurrentPositionFraction();
-      loadcellReading = (loadcellReading - calc_st->Force_Min) / calc_st->Force_Range; 
+      loadcellReading = (loadcellReading - calc_st->Force_Min) / calc_st->Force_Range;
 
       static RTDebugOutput<float, 3, 9> rtDebugFilter;
-      rtDebugFilter.offerData({ ((float)t) *1e-6 , currentPos,  loadcellReading});   
+      rtDebugFilter.offerData({((float)t) * 1e-6, currentPos, loadcellReading});
     }
   }
 

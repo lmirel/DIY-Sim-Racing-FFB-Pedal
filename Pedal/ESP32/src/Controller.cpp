@@ -11,62 +11,65 @@ static const int16_t JOYSTICK_RANGE = JOYSTICK_MAX_VALUE - JOYSTICK_MIN_VALUE;
 //EspSoftwareSerial::UART myPort;
 
 #ifdef USB_JOYSTICK
-  #include <Joystick_ESP32S2.h>
-  
-  Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
-                   0, 0,                 // Button Count, Hat Switch Count
-                   false, false, false,  // X and Y, but no Z Axis
-                   false, false, false,  // No Rx, Ry, or Rz
-                   false, false,         // No rudder or throttle
-                   false, true, false);  // No accelerator, brake, or steering
-  
-  void SetupController(uint8_t pdl) {
-    Joystick.setBrakeRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);
-    delay(100);
-    //myPort.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, 12/* RX*/, 13/*TX*/, false);
-    Serial2.begin(115200);
-    #warning using USB_JOYSTICK
-    if (!Serial2) { // If the object did not initialize, then its configuration is invalid
-      Serial.println("USB:Invalid Serial2 pin configuration, check config"); 
-    }
-    else
-    {
-      Serial.println("USB:Serial2 controller ready!"); 
-    }
+#include <Joystick_ESP32S2.h>
 
-    Joystick.begin();
+Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
+                   0, 0,                // Button Count, Hat Switch Count
+                   false, false, false, // X and Y, but no Z Axis
+                   false, false, false, // No Rx, Ry, or Rz
+                   false, false,        // No rudder or throttle
+                   false, true, false); // No accelerator, brake, or steering
 
-    // rename HID device name, see e.g. https://github.com/schnoog/Joystick_ESP32S2/issues/8
-    //USB.PID(0x8211);
-    //USB.VID(0x303b);
-    //USB.productName("DIY FFB pedal");
-    //USB.manufacturerName("Open source");
-    //USB.begin();
-
+void SetupController(uint8_t pdl)
+{
+  Joystick.setBrakeRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);
+  delay(100);
+  //myPort.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, 12/* RX*/, 13/*TX*/, false);
+  Serial2.begin(115200);
+#warning using USB_JOYSTICK
+  if (!Serial2)
+  { // If the object did not initialize, then its configuration is invalid
+    Serial.println("USB:Invalid Serial2 pin configuration, check config");
   }
-  bool IsControllerReady() { return true; }
-  void SetControllerOutputValue(int32_t value) {
-    Joystick.setBrake(value);
+  else
+  {
+    Serial.println("USB:Serial2 controller ready!");
   }
+
+  Joystick.begin();
+
+  // rename HID device name, see e.g. https://github.com/schnoog/Joystick_ESP32S2/issues/8
+  //USB.PID(0x8211);
+  //USB.VID(0x303b);
+  //USB.productName("DIY FFB pedal");
+  //USB.manufacturerName("Open source");
+  //USB.begin();
+}
+bool IsControllerReady() { return true; }
+void SetControllerOutputValue(int32_t value)
+{
+  Joystick.setBrake(value);
+}
 
 #elif defined BLUETOOTH_GAMEPAD
-  #include <BleGamepad.h>
-  // get the max address 
-  // see https://arduino.stackexchange.com/questions/58677/get-esp32-chip-id-into-a-string-variable-arduino-c-newbie-here
-  char ssid[23];
-  uint64_t chipid = ESP.getEfuseMac(); // The chip ID is essentially its MAC address(length: 6 bytes).
-  unsigned int chip = (unsigned int)(chipid >> 32);
-  std::string bluetoothName_lcl = "DiyFfbPedal_" + std::to_string( chip );
-  BleGamepad bleGamepad(bluetoothName_lcl, bluetoothName_lcl, 100);
+#include <BleGamepad.h>
+// get the max address
+// see https://arduino.stackexchange.com/questions/58677/get-esp32-chip-id-into-a-string-variable-arduino-c-newbie-here
+char ssid[23];
+uint64_t chipid = ESP.getEfuseMac(); // The chip ID is essentially its MAC address(length: 6 bytes).
+unsigned int chip = (unsigned int)(chipid >> 32);
+std::string bluetoothName_lcl = "DiyFfbPedal_" + std::to_string(chip);
+BleGamepad bleGamepad(bluetoothName_lcl, bluetoothName_lcl, 100);
 
 static uint8_t mt = 0x0a;
 static uint8_t ml = sizeof(int32_t);
 static unsigned long ctlvalue = 0;
 #define I2CMSG_LEN 6
 #define I2CSLV_ADD 0x8
-static uint8_t i2cmsg[6] = {0x0a, sizeof(int32_t), 0,0,0,0};
+static uint8_t i2cmsg[6] = {0x0a, sizeof(int32_t), 0, 0, 0, 0};
 
-void requestEvent() {
+void requestEvent()
+{
   //memcpy(i2cmsg+2, &ctlvalue, 4);
   //int n = Wire.write((const uint8_t *)&i2cmsg, I2CMSG_LEN);
   int n = Wire.write((const uint8_t *)&mt, 1);
@@ -75,106 +78,109 @@ void requestEvent() {
   // as expected by master
 }
 
-  void SetupController(uint8_t pdl) {
-    //myPort.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, 12/* RX*/, 13/*TX*/, false);
-    Serial2.begin(115200);
-    Wire.setPins(SDA_PIN, SCL_PIN);
-    mt = 0xa + pdl;
-    i2cmsg[0] = 0xa + pdl;
-    if(Wire.begin(I2CSLV_ADD + pdl)) // join I2C bus with address #8, #9 or #10
-      Wire.onRequest(requestEvent);   // register event
-    else
-      Serial.println("BLE:Invalid I2C pin configuration, check config"); 
-    if (!Serial2) { // If the object did not initialize, then its configuration is invalid
-      Serial.println("BLE:Invalid Serial2 pin configuration, check config"); 
-    }
-    else
-    {
-      Serial.println("BLE:Serial2 controller ready!"); 
-    }
-    #warning using BLE_JOYSTICK
-    BleGamepadConfiguration bleGamepadConfig;
-    bleGamepadConfig.setControllerType(CONTROLLER_TYPE_MULTI_AXIS); // CONTROLLER_TYPE_JOYSTICK, CONTROLLER_TYPE_GAMEPAD (DEFAULT), CONTROLLER_TYPE_MULTI_AXIS
-    bleGamepadConfig.setAxesMin(JOYSTICK_MIN_VALUE); // 0 --> int16_t - 16 bit signed integer - Can be in decimal or hexadecimal
-    bleGamepadConfig.setAxesMax(JOYSTICK_MAX_VALUE); // 32767 --> int16_t - 16 bit signed integer - Can be in decimal or hexadecimal 
-    //bleGamepadConfig.setWhichSpecialButtons(false, false, false, false, false, false, false, false);
-    bleGamepadConfig.setWhichAxes(true, true, true, true, true, true, true, true);
-    //bleGamepadConfig.setWhichSimulationControls(true, true, true, true, true); // only brake active 
-    bleGamepadConfig.setButtonCount(0);
-    bleGamepadConfig.setHatSwitchCount(0);
-    bleGamepadConfig.setAutoReport(false);
-    bleGamepadConfig.setPid(chip); // product id
-
-    bleGamepad.begin(&bleGamepadConfig);
-
-    //bleGamepad.deviceManufacturer = "DiyFfbPedal";
-    //bleGamepad.deviceName = chip;
+void SetupController(uint8_t pdl)
+{
+  //myPort.begin(9600, EspSoftwareSerial::SWSERIAL_8N1, 12/* RX*/, 13/*TX*/, false);
+  Serial2.begin(115200);
+  Wire.setPins(SDA_PIN, SCL_PIN);
+  mt = 0xa + pdl;
+  i2cmsg[0] = 0xa + pdl;
+  if (Wire.begin(I2CSLV_ADD + pdl)) // join I2C bus with address #8, #9 or #10
+    Wire.onRequest(requestEvent);   // register event
+  else
+    Serial.println("BLE:Invalid I2C pin configuration, check config");
+  if (!Serial2)
+  { // If the object did not initialize, then its configuration is invalid
+    Serial.println("BLE:Invalid Serial2 pin configuration, check config");
   }
+  else
+  {
+    Serial.println("BLE:Serial2 controller ready!");
+  }
+#warning using BLE_JOYSTICK
+  BleGamepadConfiguration bleGamepadConfig;
+  bleGamepadConfig.setControllerType(CONTROLLER_TYPE_MULTI_AXIS); // CONTROLLER_TYPE_JOYSTICK, CONTROLLER_TYPE_GAMEPAD (DEFAULT), CONTROLLER_TYPE_MULTI_AXIS
+  bleGamepadConfig.setAxesMin(JOYSTICK_MIN_VALUE);                // 0 --> int16_t - 16 bit signed integer - Can be in decimal or hexadecimal
+  bleGamepadConfig.setAxesMax(JOYSTICK_MAX_VALUE);                // 32767 --> int16_t - 16 bit signed integer - Can be in decimal or hexadecimal
+  //bleGamepadConfig.setWhichSpecialButtons(false, false, false, false, false, false, false, false);
+  bleGamepadConfig.setWhichAxes(true, true, true, true, true, true, true, true);
+  //bleGamepadConfig.setWhichSimulationControls(true, true, true, true, true); // only brake active
+  bleGamepadConfig.setButtonCount(0);
+  bleGamepadConfig.setHatSwitchCount(0);
+  bleGamepadConfig.setAutoReport(false);
+  bleGamepadConfig.setPid(chip); // product id
+
+  bleGamepad.begin(&bleGamepadConfig);
+
+  //bleGamepad.deviceManufacturer = "DiyFfbPedal";
+  //bleGamepad.deviceName = chip;
+}
 
 void SerialControllerSend(int32_t value)
 {
   ctlvalue = value;
   return;
   static uint32_t srate = 0;
-    //Serial.print("Pedal value: ");
-    //Serial.println(value);
-    static uint32_t lvalue = 0;
-    if (lvalue == value)
-    {
-      return;
-    }
-    if ((srate++ % 5))
-      return;
-    lvalue = value;
-    if (Serial2) { // If the object did not initialize, then its configuration is invalid
-      int n = Serial2.write((const char *)&mt, 1);
-      n = Serial2.write((const char *)&ml, 1);
-      n = Serial2.write((const char *)&value, ml);
-      if (n != sizeof(int32_t))
-      {
-        Serial.print("SerialCtrl error - bytes sent: ");
-        Serial.println(value);
-      }
-    }
-    else
-    {
-        Serial.println("SerialCtrl error - can't send");
-    }
-}
-  bool IsControllerReady() { return bleGamepad.isConnected(); }
-
-  void SetControllerOutputValue(int32_t value) {
-    //bleGamepad.setBrake(value);
-    Serial.print("Pedal value: ");
-    Serial.println(value);
-
-    if (bleGamepad.isConnected() )
-    {
-      //bleGamepad.setAxes(value, 0, 0, 0, 0, 0, 0, 0);
-      bleGamepad.setX(value);
-      //bleGamepad.setSimulationControls(value, 0, 0, 0, 0);
-      //bleGamepad.setSliders(value,0);
-      bleGamepad.sendReport();
-    }
-    else
-    {
-      Serial.println("BLE not connected!");
-      delay(500);
-    }
-    
-    
+  //Serial.print("Pedal value: ");
+  //Serial.println(value);
+  static uint32_t lvalue = 0;
+  if (lvalue == value)
+  {
+    return;
   }
-  
+  if ((srate++ % 5))
+    return;
+  lvalue = value;
+  if (Serial2)
+  { // If the object did not initialize, then its configuration is invalid
+    int n = Serial2.write((const char *)&mt, 1);
+    n = Serial2.write((const char *)&ml, 1);
+    n = Serial2.write((const char *)&value, ml);
+    if (n != sizeof(int32_t))
+    {
+      Serial.print("SerialCtrl error - bytes sent: ");
+      Serial.println(value);
+    }
+  }
+  else
+  {
+    Serial.println("SerialCtrl error - can't send");
+  }
+}
+
+bool IsControllerReady() { return bleGamepad.isConnected(); }
+
+void SetControllerOutputValue(int32_t value)
+{
+  //bleGamepad.setBrake(value);
+  Serial.print("Pedal value: ");
+  Serial.println(value);
+
+  if (bleGamepad.isConnected())
+  {
+    //bleGamepad.setAxes(value, 0, 0, 0, 0, 0, 0, 0);
+    bleGamepad.setX(value);
+    //bleGamepad.setSimulationControls(value, 0, 0, 0, 0);
+    //bleGamepad.setSliders(value,0);
+    bleGamepad.sendReport();
+  }
+  else
+  {
+    Serial.println("BLE not connected!");
+    delay(500);
+  }
+}
 #endif
 
-
-int32_t NormalizeControllerOutputValue(float value, float minVal, float maxVal, float maxGameOutput) {
+int32_t NormalizeControllerOutputValue(float value, float minVal, float maxVal, float maxGameOutput)
+{
   float valRange = (maxVal - minVal);
-  if (abs(valRange) < 0.01) {
-    return JOYSTICK_MIN_VALUE;   // avoid div-by-zero
+  if (abs(valRange) < 0.01)
+  {
+    return JOYSTICK_MIN_VALUE; // avoid div-by-zero
   }
 
   float fractional = (value - minVal) / valRange;
   int32_t controller = JOYSTICK_MIN_VALUE + (fractional * JOYSTICK_RANGE);
-  return constrain(controller, JOYSTICK_MIN_VALUE, (maxGameOutput/100.) * JOYSTICK_MAX_VALUE);
+  return constrain(controller, JOYSTICK_MIN_VALUE, (maxGameOutput / 100.) * JOYSTICK_MAX_VALUE);
 }

@@ -4,7 +4,6 @@
 //   #ifdef MODEBUS_LOG
 //  #define MODEBUS_LOG
 
-
 #include <Arduino.h>
 #include <Stream.h>
 #include <vector>
@@ -17,33 +16,31 @@ private:
     bool log = false;
     int mode_ = -1;
     uint32_t timeout_ = 20;
-    HardwareSerial* s ;
+    HardwareSerial *s;
     uint8_t rawRx[512];
-    int  lenRx = 0;
+    int lenRx = 0;
     uint8_t dataRx[512];
-    int  datalen = 0;
-    int  SlaveID = 0x01;
-    uint8_t txout[9] = {0,0,0,0,0,0,0,0,0};
-    #define Coil_Register       0x01
-    #define Discret_Register    0x02
-    #define Holding_Register    0x03
-    #define Input_Register      0x04  
-	#define Write_Holding_Register      0x06
+    int datalen = 0;
+    int SlaveID = 0x01;
+    uint8_t txout[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+#define Coil_Register 0x01
+#define Discret_Register 0x02
+#define Holding_Register 0x03
+#define Input_Register 0x04
+#define Write_Holding_Register 0x06
     // vector <char> txbuff;
     // vector <char> rxbuff;
-    
+
 public:
-    
     Modbus();
     Modbus(HardwareSerial &st);
-    
+
     bool init(int mode, bool en_log = false);
     void setTimeout(uint16_t timeout);
 
-
     uint8_t byteRead(int nb);
     int blockRead(int index);
-    int coilRead(int address);                                      //Return 1 byte = 8 bit coil
+    int coilRead(int address); //Return 1 byte = 8 bit coil
     int coilRead(int id, int address);
     int discreteInputRead(int address);
     int discreteInputRead(int id, int address);
@@ -51,7 +48,7 @@ public:
     long holdingRegisterRead(int id, int address, int block);
     long inputRegisterRead(int address);
     long inputRegisterRead(int id, int address, int block);
-    
+
     int coilWrite(int address, uint8_t value);
     int coilWrite(int id, int address, uint8_t value);
     int holdingRegisterWrite(int address, uint16_t value);
@@ -60,11 +57,10 @@ public:
     void TxRaw(uint8_t *raw, uint8_t &rlen);
     //Read multiple coils, discrete inputs, holding registers, or input register values.
     //int requestFrom(int type, int address, int nb, byte *ret,int len);
-    int requestFrom(int slaveId, int type, int address,int nb);
+    int requestFrom(int slaveId, int type, int address, int nb);
     //  ~Modbus();
     bool checkAndReplaceParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress, long value);
     void readParameter(uint16_t slaveId_local_u16, uint16_t parameterAdress);
-
 
     // Read Coil Register       0x01
     int ReadCoilReg(int add);
@@ -77,7 +73,7 @@ public:
     int ReadDiscretReg(int slaveId, int add, int nbit);
 
     // Read Holding Register    0x03
-    int ReadHoldingReg(int add); 
+    int ReadHoldingReg(int add);
     int ReadHoldingReg(int slaveId, int add);
     int ReadHoldingReg(int slaveId, int add, int nbyte);
 
@@ -86,12 +82,9 @@ public:
     int ReadInputReg(int slaveId, int add);
     int ReadInputReg(int slaveId, int add, int nbyte);
 
-
-    int8_t   uint8(int add);
+    int8_t uint8(int add);
     uint16_t uint16(int add);
     uint32_t uint32(int add, bool byteHL = true);
-    
-
 
     int CheckCRC(uint8_t *buf, int len);
 };
