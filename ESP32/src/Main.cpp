@@ -605,10 +605,59 @@ void setup()
       //delay(3000);
   #endif
 
-  #ifdef PEDAL_ASSIGNMENT
+  //print pedal role assignment
+  if(dap_config_st.payLoadPedalConfig_.pedal_type!=4)
+  {
+    Serial.print("Pedal Assignment:");
+    Serial.println(dap_config_st.payLoadPedalConfig_.pedal_type);
+  }
+  else
+  {
+    #ifdef PEDAL_HARDWARE_ASSIGNMENT
+      Serial.println("Pedal Role Assignment:4, reading from CFG pins....");
+    #else
+      Serial.println("Pedal Role Assignment:4, Role assignment Error, Please send the ocnfig in to finish role assignment");
+    #endif
+  }
+  
+  #ifdef PEDAL_HARDWARE_ASSIGNMENT
     pinMode(CFG1, INPUT_PULLUP);
     pinMode(CFG2, INPUT_PULLUP);
     delay(50); // give the pin time to settle
+    Serial.println("Overriding Pedal Role Assignment from Hardware switch......");
+    uint8_t CFG1_reading=digitalRead(CFG1);
+    uint8_t CFG2_reading=digitalRead(CFG2);
+    uint8_t Pedal_assignment=CFG1_reading*2+CFG2_reading*1;//00=clutch 01=brk  02=gas
+    if(Pedal_assignment==3)
+    {
+      Serial.println("Pedal Type:3, assignment error, please adjust dip switch on control board to finish role assignment.");
+    }
+    else
+    {
+      if(Pedal_assignment!=4)
+        {
+          //Serial.print("Pedal Type");
+          //Serial.println(Pedal_assignment);
+          if(Pedal_assignment==0)
+          {
+            Serial.println("Overriding Pedal as Clutch.");
+          }
+          if(Pedal_assignment==1)
+          {
+            Serial.println("Overriding Pedal as Brake.");
+          }
+          if(Pedal_assignment==2)
+          {
+            Serial.println("Overriding Pedal as Throttle.");
+          }
+          dap_config_st.payLoadPedalConfig_.pedal_type=Pedal_assignment;
+        }
+        else
+        {
+          Serial.println("Asssignment error, defective pin connection, pelase connect USB and send a config to finish assignment");
+        }
+    }
+    /*
     if(dap_config_st.payLoadPedalConfig_.pedal_type==4)
     {
       Serial.println("Pedal type:4, Pedal not assignment, reading from CFG pins....");
@@ -650,6 +699,7 @@ void setup()
       }
 
     }
+    */
   #endif
 
   //enable ESP-NOW
