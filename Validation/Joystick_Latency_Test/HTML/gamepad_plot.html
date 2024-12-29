@@ -31,16 +31,17 @@ const zoomOutButton = document.getElementById('zoomOutButton');
 let gamepadIndex1, gamepadIndex2;
 let startTime = Date.now();
 // Arrays to store the history of axis values
-const historyLength = 500;
 // Number of points to keep in history
-const history1 = [];
-const history2 = [];
+let history1 = [];
+let history2 = [];
 
 let lastClearTime = Date.now();
 // Keep track of the last clear time
 
 let paused = false; // Flag to track pause state
 let scale = 1; // Initial scale
+
+const maxTimeToShowInSeconds = 5;
 
 window.addEventListener("gamepadconnected", (e) => {
   const gamepad = e.gamepad;
@@ -89,9 +90,11 @@ function update() {
     const x1 = elapsedTime;
     const y1 = canvas.height / 2 - axisValue1 * (canvas.height / 2 - 10);
     history1.push({ x: x1, y: y1 }); // Store the current value in history1
-    if (history1.length > historyLength) {
-      history1.shift();
-    }
+	
+	// Remove elements older than 5 seconds
+    history1 = history1.filter(point => point.x >= elapsedTime - maxTimeToShowInSeconds); 
+  
+  
     drawHistory(history1, 'red', 1, scale, 1); // Draw the history of gamepad1
     axisValueDisplay1.textContent = "FFB_Pedal_Brake Axis 0: " + axisValue1.toFixed(2);
   }
@@ -102,9 +105,10 @@ function update() {
     const x2 = elapsedTime;
     const y2 = canvas.height / 2 - axisValue2 * (canvas.height / 2 - 10);
     history2.push({ x: x2, y: y2 }); // Store the current value in history2
-    if (history2.length > historyLength) {
-      history2.shift();
-    }
+
+	// Remove elements older than 5 seconds
+    history2 = history2.filter(point => point.x >= elapsedTime - maxTimeToShowInSeconds); 
+	
     drawHistory(history2, 'blue', 1, scale, 0.5); // Draw the history of gamepad2
     axisValueDisplay2.textContent = "DIY_FFB_PEDAL_JOYSTICK Axis 3: " + axisValue2.toFixed(2);
   }
@@ -115,8 +119,26 @@ function update() {
   // Draw axis ticks
   //drawTicks(scale);
   
+  // Draw legend
+  drawLegend();
+  
   // Restore the canvas context
   ctx.restore();
+}
+
+
+function drawLegend() {
+  ctx.font = '14px Arial'; // Adjust font size as needed
+
+  // First plot legend
+  ctx.fillStyle = 'red';
+  ctx.fillRect(10, 10, 15, 15); // Draw a small red rectangle
+  ctx.fillText('FFB_Pedal_Brake Axis 0', 35, 25);
+
+  // Second plot legend
+  ctx.fillStyle = 'blue';
+  ctx.fillRect(10, 35, 15, 15); // Draw a small blue rectangle
+  ctx.fillText('DIY_FFB_PEDAL_JOYSTICK Axis 3', 35, 50);
 }
 
 function drawHistory(history, color, size, scale, alpha) {
@@ -136,11 +158,13 @@ function drawHistory(history, color, size, scale, alpha) {
     const start = history[i];
     const end = history[i + 1];
 	
+	if ( startPos < 0 ){continue;}
+	
 	const startDataPointTime = (start.x - currentTime);
 	const endDataPointTime = (end.x - currentTime);
 	
-	const tmp2 = canvas.width  + endDataPointTime / 5 * scale * canvas.width; 
-	const tmp1 = canvas.width + startDataPointTime / 5 * scale * canvas.width;
+	const tmp2 = canvas.width  + endDataPointTime / maxTimeToShowInSeconds * scale * canvas.width; 
+	const tmp1 = canvas.width + startDataPointTime / maxTimeToShowInSeconds * scale * canvas.width;
     ctx.moveTo(tmp1, start.y);
     ctx.lineTo(tmp2, end.y);
   }
@@ -156,17 +180,22 @@ function drawGridLines(elapsedTime, scale) {
   // Calculate the starting x-coordinate for the grid lines (aligned with the plot)
   const startX = (elapsedTime * 100) % (100 * scale); // 100 is the speed of the plot
   
-  const tmp = Math.ceil( scale / 5 * canvas.width );
+  const tmp = maxTimeToShowInSeconds * scale;//Math.ceil( scale / 5 * canvas.width );
   
   for (let x = 0; x < tmp; x++) { // Adjust spacing as needed
-	  const x_px = canvas.width - x * scale / 5 * canvas.width
+  
+	  const x_inSeconds = x / scale;
+	  const x_px = canvas.width - x_inSeconds * scale / maxTimeToShowInSeconds * canvas.width;
+	  
+	  if ( x_px < 0 ){continue;}
+	
 	  ctx.beginPath();
 	  ctx.moveTo(x_px, 0);
 	  ctx.lineTo(x_px, canvas.height);
 	  ctx.stroke();
 	  
 	  // Add tick labels
-	  const tickValue = (x).toFixed(1); // Calculate tick value based on y position
+	  const tickValue = (x_inSeconds).toFixed(1) + "s"; // Calculate tick value based on y position
 	  ctx.fillText(tickValue, x_px, canvas.height-20); // Adjust text position as needed
   }
   
@@ -210,7 +239,12 @@ zoomInButton.addEventListener('click', () => {
 });
 
 zoomOutButton.addEventListener('click', () => {
-  scale /= 1.1; // Decrease scale by 10%
+
+  if (scale > 1)
+  {
+	scale /= 1.1; // Decrease scale by 10%
+  }
+  
 });
 
 update();
