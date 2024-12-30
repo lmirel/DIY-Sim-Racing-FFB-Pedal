@@ -12,6 +12,7 @@ canvas {
 
 <canvas id="myCanvas" width="1500" height="600"></canvas>
 <div id="timeValueDisplay0">Time: </div>
+<div id="timeValueDisplay1">Time: </div>
 <div id="axisValueDisplay1">FFB_Pedal_Brake Axis 0: </div>
 <div id="axisValueDisplay2">DIY_FFB_PEDAL_JOYSTICK Axis 3: </div>
 
@@ -24,6 +25,7 @@ const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const axisValueDisplay1 = document.getElementById('axisValueDisplay1');
 const axisValueDisplay2 = document.getElementById('axisValueDisplay2');
+const timeValueDisplay1 = document.getElementById('timeValueDisplay1');
 const pauseButton = document.getElementById('pauseButton');
 const zoomInButton = document.getElementById('zoomInButton');
 const zoomOutButton = document.getElementById('zoomOutButton');
@@ -34,6 +36,10 @@ let startTime = Date.now();
 // Number of points to keep in history
 let history1 = [];
 let history2 = [];
+
+let frameTimes = []; // Array to store timestamps of frames
+const maxFrameTimes = 100; // Max number of timestamps to keep
+
 
 let lastClearTime = Date.now();
 // Keep track of the last clear time
@@ -79,7 +85,25 @@ function update() {
   ctx.save();
   //ctx.scale(scale, 1);
 
-  const elapsedTime = (Date.now() - startTime) / 1000;
+  const currentTime = Date.now();
+  const elapsedTime = (currentTime - startTime) / 1000;
+  
+  // Add the current timestamp to the frameTimes array
+  frameTimes.push(currentTime);
+  
+  // Limit the size of the frameTimes array
+  if (frameTimes.length > maxFrameTimes) {
+    frameTimes.shift();
+  }
+
+  // Calculate refresh rate if there are at least two timestamps
+  if (frameTimes.length > 1) {
+    const intervals = frameTimes.slice(1).map((time, i) => time - frameTimes[i]);
+    const averageInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+    const refreshRate = 1000 / averageInterval;
+    timeValueDisplay1.textContent = 
+      "Estimated Refresh Rate: " + refreshRate.toFixed(1) + " Hz";
+  }
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   timeValueDisplay0.textContent = "Time: " + elapsedTime.toFixed(2) + "s";
@@ -195,7 +219,7 @@ function drawGridLines(elapsedTime, scale) {
 	  ctx.stroke();
 	  
 	  // Add tick labels
-	  const tickValue = (x_inSeconds).toFixed(1) + "s"; // Calculate tick value based on y position
+	  const tickValue = (x_inSeconds).toFixed(2) + "s"; // Calculate tick value based on y position
 	  ctx.fillText(tickValue, x_px, canvas.height-20); // Adjust text position as needed
   }
   

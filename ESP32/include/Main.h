@@ -257,7 +257,7 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
   #define USB_JOYSTICK
   #define ESPNOW_Enable
   #define ESPNow_S3
-  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 5
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 0
   //#define ESPNow_Pairing_function
   #define Pairing_GPIO 0
   #define OTA_update
