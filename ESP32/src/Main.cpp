@@ -1566,7 +1566,7 @@ void serialCommunicationTask( void * pvParameters )
                 Serial.write((char*)dap_config_st_local_ptr, sizeof(DAP_config_st));
                 Serial.print("\r\n");
               }
-              if(dap_actions_st.payloadPedalAction_.Rudder_action==1)
+              if(dap_actions_st.payloadPedalAction_.Rudder_action==1)//Enable Rudder
               {
                 if(dap_calculationVariables_st.Rudder_status==false)
                 {
@@ -1601,6 +1601,15 @@ void serialCommunicationTask( void * pvParameters )
                   //Serial.print("status:");
                   //Serial.println(dap_calculationVariables_st.Rudder_status);
                 }
+              }
+              //clear rudder status
+              if(dap_actions_st.payloadPedalAction_.Rudder_action==2)
+              {
+                dap_calculationVariables_st.Rudder_status=false;
+                dap_calculationVariables_st.rudder_brake_status=false;
+                Serial.println("Rudder Status Clear");
+                moveSlowlyToPosition_b=true;
+
               }
 
 

@@ -360,6 +360,14 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                       //Serial.println(dap_calculationVariables_st.Rudder_status);
                     }
                   }
+                  //clear rudder status
+                  if(dap_actions_st.payloadPedalAction_.Rudder_action==2)
+                  {
+                    dap_calculationVariables_st.Rudder_status=false;
+                    dap_calculationVariables_st.rudder_brake_status=false;
+                    //Serial.println("Rudder Status Clear");
+                    moveSlowlyToPosition_b=true;
+                  }
                 }
               }
 
