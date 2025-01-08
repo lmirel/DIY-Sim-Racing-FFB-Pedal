@@ -8556,7 +8556,7 @@ namespace User.PluginSdkDemo
                     Plugin.Rudder_brake_status = false;
                     text_rudder_log.Clear();
                     text_rudder_log.Visibility = Visibility.Hidden;
-
+                    btn_rudder_initialize.Content = "Enable Rudder";
 
 
                 }
