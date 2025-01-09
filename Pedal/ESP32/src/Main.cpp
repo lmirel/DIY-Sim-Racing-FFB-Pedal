@@ -233,7 +233,7 @@ void setup()
 
   Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
   Serial.println("Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
-  delay(3000);
+  delay(500);
 
 // check whether iSV57 communication can be established
 // and in case, (a) send tuned servo parameters and (b) prepare the servo for signal read
@@ -245,7 +245,8 @@ void setup()
 
   if (!isv57slaveIdFound_b)
   {
-    Serial.println("Restarting ESP");
+    Serial.println("Restarting ESP..");
+    delay(3000);
     ESP.restart();
   }
 
@@ -253,7 +254,8 @@ void setup()
   isv57LifeSignal_b = isv57.checkCommunication();
   if (!isv57LifeSignal_b)
   {
-    Serial.println("Restarting ESP");
+    Serial.println("Restarting ESP..");
+    delay(3000);
     ESP.restart();
   }
 
@@ -386,12 +388,14 @@ void setup()
 
   if (semaphore_updateJoystick == NULL)
   {
-    Serial.println("Could not create semaphore");
+    Serial.println("Could not create semaphore! Restarting ESP..");
+    delay(3000);
     ESP.restart();
   }
   if (semaphore_updateConfig == NULL)
   {
-    Serial.println("Could not create semaphore");
+    Serial.println("Could not create semaphore! Restarting ESP..");
+    delay(3000);
     ESP.restart();
   }
 
@@ -1489,8 +1493,9 @@ void servoCommunicationTask(void *pvParameters)
     }
     else
     {
-      Serial.println("Servo communication lost!");
-      delay(1000);
+      Serial.println("Servo communication lost! Restarting ESP..");
+      delay(3000);
+      ESP.restart();
     }
   }
 }

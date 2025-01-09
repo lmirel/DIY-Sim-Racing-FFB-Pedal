@@ -138,6 +138,9 @@
 
 #define Using_analog_output
 #define FANATEC_analog_output
+//Fanatec RJ12 pins cable view: GND HBRK CLU GAS BRK 5v
+// CLU+GAS+BRK needs high 5v/3v for 0% input
+// HBRK needs high5v/3v for 100% input
 
 #define BLUETOOTH_GAMEPAD
 //#define USB_JOYSTICK
