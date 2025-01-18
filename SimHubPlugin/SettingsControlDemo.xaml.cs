@@ -539,7 +539,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.pedalStartPosition = 5;
             dap_config_st_rudder.payloadPedalConfig_.pedalEndPosition = 95;
             dap_config_st_rudder.payloadPedalConfig_.maxForce = 10;
-            dap_config_st_rudder.payloadPedalConfig_.preloadForce = 0;
+            dap_config_st_rudder.payloadPedalConfig_.preloadForce = 1.0f;
             dap_config_st_rudder.payloadPedalConfig_.relativeForce_p000 = 0;
             dap_config_st_rudder.payloadPedalConfig_.relativeForce_p020 = 20;
             dap_config_st_rudder.payloadPedalConfig_.relativeForce_p040 = 40;
@@ -600,7 +600,7 @@ namespace User.PluginSdkDemo
             dap_config_st_rudder.payloadPedalConfig_.PID_d_gain = 0.0f;
             dap_config_st_rudder.payloadPedalConfig_.PID_velocity_feedforward_gain = 0.0f;
 
-            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 6.0f;
+            dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = 3.0f;
             dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain = 0.0f;
 
             dap_config_st_rudder.payloadPedalConfig_.control_strategy_b = 2;

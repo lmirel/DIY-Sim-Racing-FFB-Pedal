@@ -31,6 +31,9 @@ bool software_pairing_action_b = false;
 bool hardware_pairing_action_b = false;
 bool OTA_update_action_b=false;
 bool Config_update_b=false;
+bool Rudder_initializing = false;
+bool Rudder_deinitializing = false;
+
 struct ESPNow_Send_Struct
 { 
   uint16_t pedal_position;
@@ -329,6 +332,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                     if(dap_calculationVariables_st.Rudder_status==false)
                     {
                       dap_calculationVariables_st.Rudder_status=true;
+                      Rudder_initializing=true;
                       //Serial.println("Rudder on");
                       moveSlowlyToPosition_b=true;
                       //Serial.print("status:");
@@ -338,6 +342,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                     {
                       dap_calculationVariables_st.Rudder_status=false;
                       //Serial.println("Rudder off");
+                      Rudder_deinitializing=true;
                       moveSlowlyToPosition_b=true;
                       //Serial.print("status:");
                       //Serial.println(dap_calculationVariables_st.Rudder_status);
@@ -366,6 +371,7 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                     dap_calculationVariables_st.Rudder_status=false;
                     dap_calculationVariables_st.rudder_brake_status=false;
                     //Serial.println("Rudder Status Clear");
+                    Rudder_deinitializing=true;
                     moveSlowlyToPosition_b=true;
                   }
                 }

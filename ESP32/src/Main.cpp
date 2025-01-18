@@ -1094,10 +1094,37 @@ void pedalUpdateTask( void * pvParameters )
     int32_t BP_trigger_min = (BP_trigger_value-4);
     int32_t BP_trigger_max = (BP_trigger_value+4);
     int32_t Position_check = 100*((Position_Next-dap_calculationVariables_st.stepperPosMin) / dap_calculationVariables_st.stepperPosRange);
-
+    int32_t Rudder_real_poisiton= 100*((Position_Next-dap_calculationVariables_st.stepperPosMin_default) / dap_calculationVariables_st.stepperPosRange_default);
 
     dap_calculationVariables_st.current_pedal_position = Position_Next;
 
+    //Rudder initialzing and de initializing
+
+    if(dap_calculationVariables_st.Rudder_status)
+    {
+      if(Rudder_initializing)
+      {
+        moveSlowlyToPosition_b=true;
+        //Serial.println("moving to center");
+      }
+      if(Rudder_initializing && (Rudder_real_poisiton<51 && Rudder_real_poisiton>49))
+      {
+        Rudder_initializing=false;
+        moveSlowlyToPosition_b=false;
+        Serial.println("initialized disable move slow");
+      }
+    }
+    if(Rudder_deinitializing)
+    {
+      moveSlowlyToPosition_b=true;
+        //Serial.println("moving to min end stop");
+    }
+    if(Rudder_deinitializing && (Rudder_real_poisiton< 2 ))
+    {
+      Rudder_deinitializing=false;
+      moveSlowlyToPosition_b=false;
+      Serial.println("deinitialized disable move slow");
+    }
 
     //Serial.println(Position_check);
     if(dap_config_pedalUpdateTask_st.payLoadPedalConfig_.BP_trigger==1)
@@ -1572,6 +1599,7 @@ void serialCommunicationTask( void * pvParameters )
                 {
                   dap_calculationVariables_st.Rudder_status=true;
                   Serial.println("Rudder on");
+                  Rudder_initializing=true;
                   moveSlowlyToPosition_b=true;
                   //Serial.print("status:");
                   //Serial.println(dap_calculationVariables_st.Rudder_status);
@@ -1580,7 +1608,9 @@ void serialCommunicationTask( void * pvParameters )
                 {
                   dap_calculationVariables_st.Rudder_status=false;
                   Serial.println("Rudder off");
-                  moveSlowlyToPosition_b=true;
+                  Rudder_deinitializing=true;
+                  moveSlowlyToPosition_b=true; 
+
                   //Serial.print("status:");
                   //Serial.println(dap_calculationVariables_st.Rudder_status);
                 }
@@ -1608,6 +1638,7 @@ void serialCommunicationTask( void * pvParameters )
                 dap_calculationVariables_st.Rudder_status=false;
                 dap_calculationVariables_st.rudder_brake_status=false;
                 Serial.println("Rudder Status Clear");
+                Rudder_deinitializing=true;
                 moveSlowlyToPosition_b=true;
 
               }
