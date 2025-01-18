@@ -1785,27 +1785,6 @@ namespace User.PluginSdkDemo
                 Version_Check_Simhub_MSFS = false;
             }
 
-            // Declare an event
-            //this.AddEvent("SpeedWarning");
-
-
-            // Declare an action which can be called
-            /*
-            this.AddAction("IncrementSpeedWarning",(a, b) =>
-            {
-                Settings.SpeedWarningLevel++;
-                SimHub.Logging.Current.Info("Speed warning changed");
-            });
-
-            // Declare an action which can be called
-            this.AddAction("DecrementSpeedWarning", (a, b) =>
-            {
-                Settings.SpeedWarningLevel--;
-            });
-
-            */
-
-
             this.AddAction("ChangeSlotA", (a, b) =>
             {
                 profile_index = 0;
@@ -2052,8 +2031,10 @@ namespace User.PluginSdkDemo
                 {
 
                     _serialPort[pedalIdx].Handshake = Handshake.None;
+                    /*
                     _serialPort[pedalIdx].RtsEnable = false;
                     _serialPort[pedalIdx].DtrEnable = false;
+                    */
 
 
                     if (_serialPort[pedalIdx].IsOpen)
