@@ -9,12 +9,12 @@ isv57communication::isv57communication()
 {
   
   //Serial1.begin(38400, SERIAL_8N2, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
-  #if PCB_VERSION == 10 || PCB_VERSION == 9
-  Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, false); // Modbus serial
+  #if PCB_VERSION == 10 || PCB_VERSION == 9 || PCB_VERSION == 12
+    Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, false); // Modbus serial
+  #elif
+    Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
   #endif
-  #if PCB_VERSION != 10 && PCB_VERSION != 9
-  Serial1.begin(38400, SERIAL_8N1, ISV57_RXPIN, ISV57_TXPIN, true); // Modbus serial
-  #endif
+
 
   modbus.init(MODE);
 }

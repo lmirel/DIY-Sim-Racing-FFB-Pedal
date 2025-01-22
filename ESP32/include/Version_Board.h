@@ -27,3 +27,6 @@
 #if PCB_VERSION==11
 	#define CONTROL_BOARD "Switch-!t_ESP32S3"
 #endif
+#if PCB_VERSION==12
+	#define CONTROL_BOARD "V5_ESP32S3"
+#endif
