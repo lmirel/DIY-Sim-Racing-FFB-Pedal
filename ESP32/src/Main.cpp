@@ -15,8 +15,6 @@
 #define DEBUG_INFO_0_LOG_ALL_SERVO_PARAMS 128
 
 
-#define SERVO_VOLTAGE_TO_STOP_MOVEMENT_IN_0p1V 400
-
 
 
 //#define PI 3.14159267
@@ -1176,17 +1174,7 @@ void pedalUpdateTask( void * pvParameters )
     // Serial.print("Position next: ");
     // Serial.println(Position_Next);
 
-    // Activate brake resistor once a certain voltage level is exceeded
-#ifdef BRAKE_RESISTOR_PIN
-    if ( stepper->getServosVoltage() > SERVO_VOLTAGE_TO_STOP_MOVEMENT_IN_0p1V)
-    {
-      digitalWrite(BRAKE_RESISTOR_PIN, HIGH);
-    }
-    else
-    {
-      digitalWrite(BRAKE_RESISTOR_PIN, LOW);
-    }
-  #endif
+
 
 
 

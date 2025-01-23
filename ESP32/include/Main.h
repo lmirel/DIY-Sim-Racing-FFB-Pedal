@@ -46,6 +46,8 @@
 //#define PUT_TARGET_CYCLE_TIME_IN_US DAP_MICROSECONDS_PER_SECOND / 1000
 
 
+#define SERVO_MAX_VOLTAGE_IN_V_36V 38.0f
+#define SERVO_MAX_VOLTAGE_IN_V_48V 50.0f
 
 /********************************************************************/
 /*                      Loadcell defines                            */
@@ -436,15 +438,15 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
   #define PIN_CS 17 //--> CS
 
   // stepper pins
-  #define dirPinStepper    36//37
-  #define stepPinStepper   35//38
+  #define dirPinStepper    36
+  #define stepPinStepper   37
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
-  #define ISV57_TXPIN 1//43
-  #define ISV57_RXPIN 2//44
+  #define ISV57_TXPIN 2
+  #define ISV57_RXPIN 1
 
-  #define BRAKE_RESISTOR_PIN 21
+  #define BRAKE_RESISTOR_PIN 35
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK
