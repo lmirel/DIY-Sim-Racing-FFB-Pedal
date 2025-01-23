@@ -163,6 +163,12 @@
     <Compile Include="SettingsControlDemo.xaml.cs">
       <DependentUpon>SettingsControlDemo.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIElement\CheckboxWithLabel.xaml.cs">
+      <DependentUpon>CheckboxWithLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIElement\SliderWithLabel.xaml.cs">
+      <DependentUpon>SliderWithLabel.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Page Include="OnlineProfile.xaml">
@@ -179,6 +185,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsControlDemo.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIElement\CheckboxWithLabel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIElement\SliderWithLabel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
