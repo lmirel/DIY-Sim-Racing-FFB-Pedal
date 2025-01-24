@@ -64,6 +64,35 @@ uint16_t checksumCalculator(uint8_t * data, uint16_t length)
    return (sum2 << 8) | sum1;
 }
 
+// uint16_t checksumCalculator_withLog(uint8_t * data, uint16_t length)
+// {
+//    uint16_t curr_crc = 0x0000;
+//    uint8_t sum1 = (uint8_t) curr_crc;
+//    uint8_t sum2 = (uint8_t) (curr_crc >> 8);
+//    int index;
+//    for(index = 0; index < length; index = index+1)
+//    {
+//       sum1 = (sum1 + data[index]) % 255;
+//       sum2 = (sum2 + sum1) % 255;
+
+//       Serial.print("index: ");
+//       Serial.print(index);
+
+//       Serial.print(",    data: ");
+//       Serial.print(data[index]);
+
+//       Serial.print(",    Sum1: ");
+//       Serial.print(sum1);
+
+//       Serial.print(",    sum2: ");
+//       Serial.println(sum2);
+
+
+//    }
+//    return (sum2 << 8) | sum1;
+// }
+
+
 
 bool systemIdentificationMode_b = false;
 
@@ -1437,6 +1466,7 @@ void serialCommunicationTask( void * pvParameters )
                     Serial.print(",   Payload type received: ");
                     Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
                   }
+
                   if ( dap_config_st_local.payLoadHeader_.version != DAP_VERSION_CONFIG ){ 
                     structChecker = false;
                     Serial.print("Config version expected: ");
@@ -1452,6 +1482,30 @@ void serialCommunicationTask( void * pvParameters )
                     Serial.print(crc);
                     Serial.print(",   CRC received: ");
                     Serial.println(dap_config_st_local.payloadFooter_.checkSum);
+
+                    Serial.print("Headersize: ");
+                    Serial.print(sizeof(dap_config_st_local.payLoadHeader_));
+                    Serial.print(",    Configsize: ");
+                    Serial.println(sizeof(dap_config_st_local.payLoadPedalConfig_));
+
+                    // uint8_t * testOut = (uint8_t*)dap_config_st_local_ptr;
+                    // for (uint16_t byteIdx = 0; byteIdx < sizeof(DAP_config_st); byteIdx++ )
+                    // {
+
+                    //   if(byteIdx % 10== 0)
+                    //   {
+                    //     Serial.println("");
+                    //   }
+
+                    //   Serial.print(*(testOut+byteIdx));
+                    //   Serial.print(", ");
+
+                    // }
+                    // Serial.println("");
+                    // Serial.println("");
+
+                    // crc = checksumCalculator_withLog((uint8_t*)(&(dap_config_st_local.payLoadHeader_)), sizeof(dap_config_st_local.payLoadHeader_) + sizeof(dap_config_st_local.payLoadPedalConfig_));
+
                   }
 
 

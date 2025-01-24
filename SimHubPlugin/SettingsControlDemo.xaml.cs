@@ -2447,12 +2447,15 @@ namespace User.PluginSdkDemo
             //payloadPedalConfig tmp = this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
             DAP_config_st* v = &tmp;
 
-            byte* p = (byte*)v;
-            this.dap_config_st[pedalIdx].payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
+            //byte* p = (byte*)v;
+            //this.dap_config_st[pedalIdx].payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
             int length = sizeof(DAP_config_st);
             //int val = this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.checkSum;
             //string msg = "CRC value: " + val.ToString();
             byte[] newBuffer = new byte[length];
+            newBuffer = getBytes(this.dap_config_st[pedalIdx]);
+
+            this.dap_config_st[pedalIdx].payloadFooter_.checkSum = Plugin.checksumCalcArray(newBuffer, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
             newBuffer = getBytes(this.dap_config_st[pedalIdx]);
 
             //TextBox_debugOutput.Text = "CRC simhub calc: " + this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum + "    ";

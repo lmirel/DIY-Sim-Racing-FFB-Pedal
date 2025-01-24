@@ -458,6 +458,29 @@ namespace User.PluginSdkDemo
             return (UInt16)x;
         }
 
+
+        unsafe public UInt16 checksumCalcArray(byte[] data, int length)
+        {
+
+            UInt16 curr_crc = 0x0000;
+            byte sum1 = (byte)curr_crc;
+            byte sum2 = (byte)(curr_crc >> 8);
+            int index;
+            for (index = 0; index < length; index = index + 1)
+            {
+                int v = (sum1 + data[index]);
+                sum1 = (byte)v;
+                sum1 = (byte)(v % 255);
+
+                int w = (sum1 + sum2) % 255;
+                sum2 = (byte)w;
+
+            }
+
+            int x = (sum2 << 8) | sum1;
+            return (UInt16)x;
+        }
+
         public byte[] getBytes_Action(DAP_action_st aux)
         {
             int length = Marshal.SizeOf(aux);
