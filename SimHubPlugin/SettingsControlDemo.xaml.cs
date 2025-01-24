@@ -777,15 +777,24 @@ namespace User.PluginSdkDemo
         }
 
 
-        public byte[] getBytes(DAP_config_st aux)
+        unsafe public byte[] getBytes(DAP_config_st aux)
         {
             int length = Marshal.SizeOf(aux);
             IntPtr ptr = Marshal.AllocHGlobal(length);
+
+            //int length = sizeof(DAP_config_st);
             byte[] myBuffer = new byte[length];
 
             Marshal.StructureToPtr(aux, ptr, true);
             Marshal.Copy(ptr, myBuffer, 0, length);
             Marshal.FreeHGlobal(ptr);
+
+
+            //DAP_config_st* v = &aux;
+            //for (UInt16 ptrIdx = 0; ptrIdx < length; ptrIdx++)
+            //{
+            //    myBuffer[ptrIdx] = *((byte*)v + ptrIdx);
+            //}
 
             return myBuffer;
         }
@@ -2441,22 +2450,21 @@ namespace User.PluginSdkDemo
             this.dap_config_st[pedalIdx].payloadHeader_.payloadType = (byte)Constants.pedalConfigPayload_type;
             this.dap_config_st[pedalIdx].payloadHeader_.PedalTag = (byte)pedalIdx;
             this.dap_config_st[pedalIdx].payloadHeader_.storeToEeprom = 1;
+            this.dap_config_st[pedalIdx].payloadPedalConfig_.pedal_type = (byte)pedalIdx;
+
             DAP_config_st tmp = this.dap_config_st[pedalIdx];
             //prevent read default config from pedal without assignement
-            tmp.payloadPedalConfig_.pedal_type = (byte)pedalIdx;
-            //payloadPedalConfig tmp = this.dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_;
             DAP_config_st* v = &tmp;
 
-            //byte* p = (byte*)v;
-            //this.dap_config_st[pedalIdx].payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
+            byte* p = (byte*)v;
+            tmp.payloadFooter_.checkSum = Plugin.checksumCalc(p, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
+
+
             int length = sizeof(DAP_config_st);
             //int val = this.dap_config_st[indexOfSelectedPedal_u].payloadHeader_.checkSum;
             //string msg = "CRC value: " + val.ToString();
             byte[] newBuffer = new byte[length];
-            newBuffer = getBytes(this.dap_config_st[pedalIdx]);
-
-            this.dap_config_st[pedalIdx].payloadFooter_.checkSum = Plugin.checksumCalcArray(newBuffer, sizeof(payloadHeader) + sizeof(payloadPedalConfig));
-            newBuffer = getBytes(this.dap_config_st[pedalIdx]);
+            newBuffer = getBytes(tmp);
 
             //TextBox_debugOutput.Text = "CRC simhub calc: " + this.dap_config_st[indexOfSelectedPedal_u].payloadFooter_.checkSum + "    ";
 
@@ -2472,6 +2480,8 @@ namespace User.PluginSdkDemo
                         Plugin.ESPsync_serialPort.DiscardOutBuffer();
                         // send data
                         Plugin.ESPsync_serialPort.Write(newBuffer, 0, newBuffer.Length);
+
+
                         //Plugin._serialPort[indexOfSelectedPedal_u].Write("\n");
                         System.Threading.Thread.Sleep(100);
                     }
