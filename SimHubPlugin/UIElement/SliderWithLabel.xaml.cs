@@ -22,15 +22,26 @@ namespace User.PluginSdkDemo.UIElement
         {
             InitializeComponent();
         }
-        // Dependency Property for LabelText
-        public static readonly DependencyProperty LabelTextProperty =
-            DependencyProperty.Register(nameof(LabelText), typeof(string), typeof(SliderWithLabel),
-                new PropertyMetadata("Default Label"));
+        // Dependency Property for SliderName
+        public static readonly DependencyProperty SliderNameProperty =
+            DependencyProperty.Register(nameof(SliderName), typeof(string), typeof(SliderWithLabel),
+                new PropertyMetadata("Slider"));
 
-        public string LabelText
+        public string SliderName
         {
-            get => (string)GetValue(LabelTextProperty);
-            set => SetValue(LabelTextProperty, value);
+            get => (string)GetValue(SliderNameProperty);
+            set => SetValue(SliderNameProperty, value);
+        }
+
+        // Dependency Property for Unit
+        public static readonly DependencyProperty UnitProperty =
+            DependencyProperty.Register(nameof(Unit), typeof(string), typeof(SliderWithLabel),
+                new PropertyMetadata(""));
+
+        public string Unit
+        {
+            get => (string)GetValue(UnitProperty);
+            set => SetValue(UnitProperty, value);
         }
 
         // Dependency Property for SliderValue
@@ -44,52 +55,81 @@ namespace User.PluginSdkDemo.UIElement
             set => SetValue(SliderValueProperty, value);
         }
 
-        // Dependency Property for SliderMinimum
-        public static readonly DependencyProperty SliderMinimumProperty =
-            DependencyProperty.Register(nameof(SliderMinimum), typeof(double), typeof(SliderWithLabel),
+        // Dependency Property for MinValue
+        public static readonly DependencyProperty MinValueProperty =
+            DependencyProperty.Register(nameof(MinValue), typeof(double), typeof(SliderWithLabel),
                 new PropertyMetadata(0.0));
 
-        public double SliderMinimum
+        public double MinValue
         {
-            get => (double)GetValue(SliderMinimumProperty);
-            set => SetValue(SliderMinimumProperty, value);
+            get => (double)GetValue(MinValueProperty);
+            set => SetValue(MinValueProperty, value);
         }
 
-        // Dependency Property for SliderMaximum
-        public static readonly DependencyProperty SliderMaximumProperty =
-            DependencyProperty.Register(nameof(SliderMaximum), typeof(double), typeof(SliderWithLabel),
+        // Dependency Property for MaxValue
+        public static readonly DependencyProperty MaxValueProperty =
+            DependencyProperty.Register(nameof(MaxValue), typeof(double), typeof(SliderWithLabel),
                 new PropertyMetadata(100.0));
 
-        public double SliderMaximum
+        public double MaxValue
         {
-            get => (double)GetValue(SliderMaximumProperty);
-            set => SetValue(SliderMaximumProperty, value);
+            get => (double)GetValue(MaxValueProperty);
+            set => SetValue(MaxValueProperty, value);
         }
 
-        // Dependency Property for SliderTickFrequency
-        public static readonly DependencyProperty SliderTickFrequencyProperty =
-            DependencyProperty.Register(nameof(SliderTickFrequency), typeof(double), typeof(SliderWithLabel),
+        // Dependency Property for TickFrequency
+        public static readonly DependencyProperty TickFrequencyProperty =
+            DependencyProperty.Register(nameof(TickFrequency), typeof(double), typeof(SliderWithLabel),
                 new PropertyMetadata(1.0));
 
-        public double SliderTickFrequency
+        public double TickFrequency
         {
-            get => (double)GetValue(SliderTickFrequencyProperty);
-            set => SetValue(SliderTickFrequencyProperty, value);
+            get => (double)GetValue(TickFrequencyProperty);
+            set => SetValue(TickFrequencyProperty, value);
         }
 
-        // Event raised when the slider value changes
-        public event RoutedPropertyChangedEventHandler<double> ValueChanged;
+        // Dependency Property for SliderLength
+        public static readonly DependencyProperty SliderLengthProperty =
+            DependencyProperty.Register(nameof(SliderLength), typeof(double), typeof(SliderWithLabel),
+                new PropertyMetadata(400.0));
+
+        public double SliderLength
+        {
+            get => (double)GetValue(SliderLengthProperty);
+            set => SetValue(SliderLengthProperty, value);
+        }
+        // Dependency Property for LabelContent
+        public static readonly DependencyProperty LabelContentProperty =
+            DependencyProperty.Register(nameof(LabelContent), typeof(string), typeof(SliderWithLabel),
+                new PropertyMetadata("Slider: 0"));
+
+        public string LabelContent
+        {
+            get => (string)GetValue(LabelContentProperty);
+            private set => SetValue(LabelContentProperty, value);
+        }
+
+        // Event to notify the main window of slider value changes
+        public event RoutedPropertyChangedEventHandler<double> SliderValueChanged;
 
         private static void OnSliderValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var control = d as SliderWithLabel;
-            control?.ValueChanged?.Invoke(control, new RoutedPropertyChangedEventArgs<double>(
-                (double)e.OldValue, (double)e.NewValue));
+            if (d is SliderWithLabel control)
+            {
+                control.UpdateLabelContent();
+                control.SliderValueChanged?.Invoke(control,
+                    new RoutedPropertyChangedEventArgs<double>((double)e.OldValue, (double)e.NewValue));
+            }
         }
 
-        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void SliderElement_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            SliderValue = e.NewValue; // Keep SliderValue in sync
+            UpdateLabelContent();
+        }
+
+        private void UpdateLabelContent()
+        {
+            LabelContent = $"{SliderName}: {SliderValue}{Unit}";
         }
     }
 }

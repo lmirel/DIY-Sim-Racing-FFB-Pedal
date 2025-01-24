@@ -5349,10 +5349,10 @@ namespace User.PluginSdkDemo
         unsafe private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
 
-            //ToastNotification("Rudder Brake","Test");
+            ToastNotification("Rudder Brake","Test");
             //Plugin.Rudder_brake_enable_flag = true;
             //TestSlider.SliderValue = TestSlider.SliderValue + 1;
-            Check1.IsChecked = true;
+            //Check1.IsChecked = true;
 
 
         }
