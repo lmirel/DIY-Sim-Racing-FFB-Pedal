@@ -995,28 +995,10 @@
 
 
                                                     </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_damping"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Damping:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_damping" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="250" ValueChanged="Slider_damping_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1"/>
-                                                    </StackPanel>
-
-
-
+                                                    <localUI:SliderWithLabel x:Name="Slider_damping" SliderLength="400" SliderName="Damping factor" TickFrequency="0.00015" Unit="s" Width="400" Height="40" MaxValue="0.0375" SliderValueChanged="Slider_damping_ValueChanged" SliderValue="0.0375"/>
                                                     <StackPanel Height="40" Width="540" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
-                                                        <StackPanel Width="200" Height="40" Margin="70,0,0,0">
-                                                            <StackPanel Width="200" Height="20" Orientation="Horizontal">
-                                                                <Label x:Name="label_LC_rate"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Loadcell Rate:" Height="12" Padding="0,0,0,0"/>
-                                                            </StackPanel>
-                                                            <Slider x:Name="Slider_LC_rate" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="190" Height="10" Maximum="500" ValueChanged="Slider_LC_rate_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="10" TickFrequency="10" LargeChange="100"/>
-                                                        </StackPanel>
-                                                        <StackPanel Width="200" Height="40" Margin="0,0,0,0">
-                                                            <StackPanel Width="200" Height="20" Orientation="Horizontal">
-                                                                <Label x:Name="label_maxgame_output"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Max Game Output:" Height="12" Padding="0,0,0,0"/>
-                                                            </StackPanel>
-                                                            <Slider x:Name="Slider_maxgame_output" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="190" Height="10" Maximum="100" ValueChanged="Slider_maxgame_output_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="5" TickFrequency="5" LargeChange="10"/>
-                                                        </StackPanel>
+                                                        <localUI:SliderWithLabel x:Name="Slider_LC_rate" Width="200" SliderLength="190" SliderName="Loadcell Rate" MaxValue="500" Height="40" Unit="kg" TickFrequency="10" SliderValue="300" SliderValueChanged="Slider_LC_rate_ValueChanged" Margin="70,0,0,0"/>
+                                                        <localUI:SliderWithLabel x:Name="Slider_maxgame_output" SliderName="Max Game Output" SliderLength="190" SliderValue="100" Width="190" Height="40" Margin="10,0,0,0" Unit="%" SliderValueChanged="Slider_maxgame_output_ValueChanged"/>
                                                     </StackPanel>
                                                     <StackPanel Height="40" Width="540" Orientation="Horizontal" HorizontalAlignment="Left">
                                                         <StackPanel Height="20" Width="160" Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="70,0,0,0">
@@ -1262,7 +1244,7 @@
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
                                                             <Label x:Name="label_ABS_AMP"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="ABS/TC Amplitude:" Height="12" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <Slider x:Name="Slider_ABS_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="12.5" ValueChanged="Slider_ABS_AMP_ValueChanged" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05" Minimum="0.05" SmallChange="0.05"/>
+                                                        <Slider x:Name="Slider_ABS_AMP" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="12.5" ValueChanged="Slider_ABS_AMP_ValueChanged" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.05" SmallChange="0.05"/>
                                                     </StackPanel>
 
                                                     <StackPanel Width="400" Height="40">

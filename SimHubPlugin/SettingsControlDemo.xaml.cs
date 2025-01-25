@@ -1341,15 +1341,10 @@ namespace User.PluginSdkDemo
             {
                 Label_max_force.Content = "Max force:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxForce  + "kg";
                 Label_min_force.Content = "Preload:\n" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.preloadForce  + "kg";
-            }
-
-            label_damping.Content = "Damping factor: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress * 0.00015f)+"s";
-            Slider_damping.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress;
-            Slider_LC_rate.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2;
-            label_LC_rate.Content = "Loadcell rate: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2+"kg";
-
-            Slider_maxgame_output.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;
-            label_maxgame_output.Content = "Max Game Output: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
+            }            
+            Slider_damping.SliderValue = (double)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress*(double)Slider_damping.TickFrequency);
+            Slider_LC_rate.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2;
+            Slider_maxgame_output.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;            
 
             Slider_KF.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
             label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
@@ -6250,21 +6245,21 @@ namespace User.PluginSdkDemo
 
         private void Slider_damping_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = (Byte)e.NewValue;
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = (Byte)e.NewValue;
-            label_damping.Content = "Damping factor: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress * 0.00015f) + "s";
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress = (Byte)(e.NewValue / (double)Slider_damping.TickFrequency);
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPull = (Byte)(e.NewValue / (double)Slider_damping.TickFrequency);
+            //label_damping.Content = "Damping factor: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.dampingPress * 0.00015f) + "s";
         }
 
         private void Slider_LC_rate_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating= (Byte)(e.NewValue/2);
-            label_LC_rate.Content = "Loadcell rate: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2+"kg";
+            //label_LC_rate.Content = "Loadcell rate: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating*2+"kg";
         }
 
         private void Slider_maxgame_output_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput = (Byte)(e.NewValue);
-            label_maxgame_output.Content = "Max Game Output: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
+            //label_maxgame_output.Content = "Max Game Output: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput + "%";
         }
 
         private void Slider_KF_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -127,17 +127,18 @@
     </UserControl.Resources>
     <Grid>
         <StackPanel>
-            <Label Content="{Binding LabelContent, RelativeSource={RelativeSource AncestorType=UserControl}}" 
-           VerticalAlignment="Center" HorizontalAlignment="Left" Height="12" Width="300" Margin="0,0,0,8" FontFamily="Arial" FontSize="10" Padding="0,0,0,0"/>
+            <Label 
+                Content="{Binding LabelContent, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=OneWay}"
+                VerticalAlignment="Center" HorizontalAlignment="Left" Height="12" Width="300" Margin="0,0,0,8" FontFamily="Arial" FontSize="10" Padding="0,0,0,0"/>
             <Slider  
-            Value="{Binding SliderValue, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}" 
-            Minimum="{Binding MinValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            Maximum="{Binding MaxValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            TickFrequency="{Binding TickFrequency, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            Width="{Binding SliderLength, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                Minimum="{Binding MinValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                Maximum="{Binding MaxValue, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                TickFrequency="{Binding TickFrequency, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                Value="{Binding SliderValue, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
+                Width="{Binding SliderLength, RelativeSource={RelativeSource AncestorType=UserControl}}"
             IsSnapToTickEnabled="True"
             ValueChanged="SliderElement_ValueChanged"
-            VerticalAlignment="Center" />
+            VerticalAlignment="Center" HorizontalAlignment="Left" Height="10" />
         </StackPanel>
     </Grid>
 </UserControl>
