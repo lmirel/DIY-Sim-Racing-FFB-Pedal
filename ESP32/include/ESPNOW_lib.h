@@ -327,8 +327,16 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
                     Serial.print("\r\n");
                     */
                   }
-                  if(dap_actions_st.payloadPedalAction_.Rudder_action==1)
+                  if(dap_actions_st.payloadPedalAction_.Rudder_action==1 || dap_actions_st.payloadPedalAction_.Rudder_action==3)
                   {
+                    if(dap_actions_st.payloadPedalAction_.Rudder_action==3)
+                    {
+                      if(dap_config_st.payLoadPedalConfig_.pedal_type==2)
+                      {
+                        Recv_mac=Clu_mac;
+                        //ESPNow.add_peer(Recv_mac);
+                      }
+                    }
                     if(dap_calculationVariables_st.Rudder_status==false)
                     {
                       dap_calculationVariables_st.Rudder_status=true;
@@ -494,7 +502,7 @@ void ESPNow_initialize()
     }
     if(dap_config_st.payLoadPedalConfig_.pedal_type==0)
     {
-      Recv_mac=Brk_mac;
+      Recv_mac=Gas_mac;
       ESPNow.add_peer(Recv_mac);
     }
     

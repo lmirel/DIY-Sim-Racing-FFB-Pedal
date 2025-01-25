@@ -1062,9 +1062,9 @@ void Joystick_Task( void * pvParameters )
         SetControllerOutputValueBrake(0);
         SetControllerOutputValueThrottle(0);
         //3% deadzone
-        if(pedal_brake_value<((int16_t)(0.47*JOYSTICK_RANGE))||pedal_brake_value>((int16_t)(0.53*JOYSTICK_RANGE)))
+        if(pedal_throttle_value<((int16_t)(0.47*JOYSTICK_RANGE))||pedal_throttle_value>((int16_t)(0.53*JOYSTICK_RANGE)))
         {
-          SetControllerOutputValueRudder(pedal_brake_value);
+          SetControllerOutputValueRudder(JOYSTICK_RANGE-pedal_throttle_value);
         }
         else
         {
@@ -1081,8 +1081,15 @@ void Joystick_Task( void * pvParameters )
         SetControllerOutputValueRudder((int16_t)(0.5*JOYSTICK_RANGE));
         //int16_t filter_brake=0;
         //int16_t filter_throttle=0;
+        if(dap_bridge_state_st.payloadBridgeState_.Pedal_availability[0]==1)
+        {
+          SetControllerOutputValueRudder_brake(pedal_cluth_value,pedal_throttle_value);
+        }
+        else
+        {
+          SetControllerOutputValueRudder_brake(pedal_brake_value,pedal_throttle_value);
+        }
         
-        SetControllerOutputValueRudder_brake(pedal_brake_value,pedal_throttle_value);
         
       }
       
@@ -1404,31 +1411,13 @@ void FanatecUpdate(void * pvParameters)
 
 
 //long lastCallTime = micros();
-unsigned long cycleTimeLastCall = micros();
-unsigned long minCyclesForFirToInit = 1000;
-unsigned long firCycleIncrementer = 0;
+//unsigned long cycleTimeLastCall = micros();
+////unsigned long minCyclesForFirToInit = 1000;
+//unsigned long firCycleIncrementer = 0;
 
-float filteredReading_exp_filter = 0;
-unsigned long printCycleCounter = 0;
+//float filteredReading_exp_filter = 0;
+//unsigned long printCycleCounter = 0;
 
-
-
-
-
-  
-
-
-
-
-
-
-
-
-/**********************************************************************************************/
-/*                                                                                            */
-/*                         communication task                                                 */
-/*                                                                                            */
-/**********************************************************************************************/
 
 
 

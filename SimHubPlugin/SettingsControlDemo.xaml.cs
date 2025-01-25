@@ -133,6 +133,21 @@ namespace User.PluginSdkDemo
         public byte[] Pedal_version = new byte[3];
         private SerialMonitor_Window _serial_monitor_window;
         public bool Pedal_Log_warning_1st_show_b = true;
+        private string[] Rudder_Pedal_idx_Name= new string[3] {"Clutch", "Brake","Throttle"};
+        public byte Pedal_connect_status = 0;
+
+
+        public enum PedalAvailability        
+        {
+            NopedalConnect,
+            SinglePedalClutch,
+            SinglePedalBrake,
+            SinglePedalThrottle,
+            TwoPedalConnectClutchBrake,
+            TwoPedalConnectClutchThrottle,
+            TwoPedalConnectBrakeThrottle,
+            ThreePedalConnect
+        }
         //public int Bridge_baudrate = 921600;
         /*
         private double kinematicDiagram_zeroPos_OX = 100;
@@ -1848,7 +1863,7 @@ namespace User.PluginSdkDemo
 
 
                 //Rudder text
-                info_rudder_label.Content = "Bridge State:\nBRK Pedal:\nGAS Pedal:\nRudder:";
+                info_rudder_label.Content = "Bridge State:\nClutch:\nBrake:\nThrottle:\nRudder:";
                 if (Plugin.ESPsync_serialPort.IsOpen)
                 {
                     info_rudder_label_2.Content = "Online\n";
@@ -1856,6 +1871,14 @@ namespace User.PluginSdkDemo
                 else
                 {
                     info_rudder_label_2.Content = "Offline\n";
+                }
+                if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 1)
+                {
+                    info_rudder_label_2.Content += "Online\n";
+                }
+                else
+                {
+                    info_rudder_label_2.Content += "Offline\n";
                 }
                 if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 1)
                 {
@@ -5362,10 +5385,11 @@ namespace User.PluginSdkDemo
         unsafe private void btn_toast_Click(object sender, RoutedEventArgs e)
         {
 
-            ToastNotification("Rudder Brake","Test");
+            ToastNotification("Debug","Print All parameter in Serial log");
             //Plugin.Rudder_brake_enable_flag = true;
             //TestSlider.SliderValue = TestSlider.SliderValue + 1;
             //Check1.IsChecked = true;
+            PrintUnknownStructParameters(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_);
 
 
         }
@@ -7043,6 +7067,46 @@ namespace User.PluginSdkDemo
                                         dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 = bridge_state.payloadBridgeState_.Pedal_availability_2;
 
                                     }
+
+                                    //Pedal availability status update
+                                    int PedalAvailabilityCheck = dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 + dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 + dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2;
+                                    if (PedalAvailabilityCheck == 3)
+                                    {
+                                        Pedal_connect_status = (byte)PedalAvailability.ThreePedalConnect;
+                                    }
+
+                                    if (PedalAvailabilityCheck == 2)
+                                    {
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 1 && dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 1)
+                                        {
+                                            Pedal_connect_status = (byte)PedalAvailability.TwoPedalConnectClutchBrake;
+                                        }
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 1 && dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 == 1)
+                                        {
+                                            Pedal_connect_status = (byte)PedalAvailability.TwoPedalConnectClutchThrottle;
+                                        }
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 1 && dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 == 1)
+                                        {
+                                            Pedal_connect_status = (byte)PedalAvailability.TwoPedalConnectBrakeThrottle;
+                                        }
+                                    }
+
+                                    if (PedalAvailabilityCheck == 1)
+                                    {
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_0 == 1)
+                                        {
+                                            Pedal_connect_status = (byte)PedalAvailability.SinglePedalClutch;
+                                        }
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 1)
+                                        {
+                                            Pedal_connect_status = (byte)PedalAvailability.SinglePedalBrake;
+                                        }
+                                        if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 == 1)
+                                        {
+                                            Pedal_connect_status = (byte)PedalAvailability.SinglePedalThrottle;
+                                        }
+                                    }
+
                                     if (wireless_connection_update)
                                     {
                                         ToastNotification("Wireless Connection", connection_tmp);
@@ -7732,14 +7796,14 @@ namespace User.PluginSdkDemo
 
             DelayCall(400, () =>
             {
-                Reading_config_auto(1);//read brk config from pedal
-                text_rudder_log.Text += "Read Config from BRK Pedal\n";              
+                Reading_config_auto(Plugin.Rudder_Pedal_idx[0]);//read brk config from pedal
+                text_rudder_log.Text += "Read Config from" + Rudder_Pedal_idx_Name[Plugin.Rudder_Pedal_idx[0]] +"\n";              
             });
 
             DelayCall(600, () =>
             {
-                Reading_config_auto(2);//read gas config from pedal
-                text_rudder_log.Text += "Read Config from GAS Pedal\n";               
+                Reading_config_auto(Plugin.Rudder_Pedal_idx[1]);//read gas config from pedal
+                text_rudder_log.Text += "Read Config from"+ Rudder_Pedal_idx_Name[Plugin.Rudder_Pedal_idx[1]] + "\n";               
             });
             /*
             text_rudder_log.Text += "Read Config from BRK Pedal\n";
@@ -7756,8 +7820,9 @@ namespace User.PluginSdkDemo
                 //System.Threading.Thread.Sleep(200);
                 DelayCall((int)(900), () =>
                 {
-                    for (uint i = 1; i < 3; i++)
+                    for (uint idx = 0; idx < 2; idx++)
                     {
+                        uint i = Plugin.Rudder_Pedal_idx[idx];
                         text_rudder_log.Visibility = Visibility.Visible;
                         //read pedal kinematic
                         text_rudder_log.Text += "Create Rudder config for Pedal: " + i + "\n";
@@ -7801,7 +7866,16 @@ namespace User.PluginSdkDemo
         {
             if (Plugin.ESPsync_serialPort.IsOpen)
             {
-                if (dap_bridge_state_st.payloadBridgeState_.Pedal_availability_1 == 1 && dap_bridge_state_st.payloadBridgeState_.Pedal_availability_2 == 1)
+                
+                if (Pedal_connect_status == (byte)PedalAvailability.ThreePedalConnect)
+                {
+                    Plugin.Rudder_Pedal_idx[0] = 0;
+                }
+                else
+                {
+                    Plugin.Rudder_Pedal_idx[0] = 1;
+                }
+                if (Pedal_connect_status==(byte)PedalAvailability.TwoPedalConnectBrakeThrottle || Pedal_connect_status == (byte)PedalAvailability.ThreePedalConnect)
                 {
                     if (Plugin.Rudder_status)
                     {
@@ -7817,15 +7891,15 @@ namespace User.PluginSdkDemo
                         DelayCall(300, () =>
                         {
                             text_rudder_log.Visibility = Visibility.Visible;
-                            Sendconfig(1);
-                            text_rudder_log.Text += "Send Original config back to Brk Pedal\n";
+                            Sendconfig(Plugin.Rudder_Pedal_idx[0]);
+                            text_rudder_log.Text += "Send Original config back to" + Rudder_Pedal_idx_Name[Plugin.Rudder_Pedal_idx[0]] +"\n";
                             
                         });
                         DelayCall(600, () =>
                         {
                             text_rudder_log.Visibility = Visibility.Visible;
-                            Sendconfig(2);
-                            text_rudder_log.Text += "Send Original config back to Gas Pedal\n";
+                            Sendconfig(Plugin.Rudder_Pedal_idx[1]);
+                            text_rudder_log.Text += "Send Original config back to"+ Rudder_Pedal_idx_Name[Plugin.Rudder_Pedal_idx[1]] + "\n";
                             
                         });
                         DelayCall(1600, () =>
@@ -7879,7 +7953,7 @@ namespace User.PluginSdkDemo
                 else
                 {
                     String MSG_tmp;
-                    MSG_tmp = "BRK or GAS pedal didnt connect to Bridge, please connect pedal to via Bridge then try again.";
+                    MSG_tmp = "Pedal didnt connect to Bridge, please connect pedal to via Bridge then try again.";
                     System.Windows.MessageBox.Show(MSG_tmp, "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
 
@@ -8583,9 +8657,34 @@ namespace User.PluginSdkDemo
             }
         }
 
+        void PrintUnknownStructParameters(object obj)
+        {
+            if (obj == null) throw new ArgumentNullException(nameof(obj));
 
+            Type type = obj.GetType();
+            _serial_monitor_window.TextBox_SerialMonitor.Text += $"Structure: {type.Name}" + "\n";
+            _serial_monitor_window.TextBox_SerialMonitor.ScrollToEnd();
+            
 
+            // Get and print all fields
+            foreach (FieldInfo field in type.GetFields(BindingFlags.Public | BindingFlags.Instance))
+            {
+                _serial_monitor_window.TextBox_SerialMonitor.Text += $"Field: {field.Name}, Value: {field.GetValue(obj)}" + "\n";
+                _serial_monitor_window.TextBox_SerialMonitor.ScrollToEnd();
+                
+            }
 
+            // Get and print all properties
+            foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (property.CanRead) // Ensure the property is readable
+                {
+                    _serial_monitor_window.TextBox_SerialMonitor.Text += $"Property: {property.Name}, Value: {property.GetValue(obj)}" + "\n";
+                    _serial_monitor_window.TextBox_SerialMonitor.ScrollToEnd();
+                    
+                }
+            }
+        }
     }
     
 }

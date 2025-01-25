@@ -360,6 +360,7 @@ namespace User.PluginSdkDemo
         public bool MSFS_Plugin_Status = false;
         public string Simhub_version = "";
         public bool Version_Check_Simhub_MSFS = false;
+        public byte[] Rudder_Pedal_idx = new byte[2] { 1, 2 };
 
         //effect trigger timer
         DateTime[] Action_currentTime = new DateTime[3];
@@ -381,7 +382,14 @@ namespace User.PluginSdkDemo
         DateTime Rudder_Action_currentTime = DateTime.Now;
         DateTime Rudder_Action_lastTime = DateTime.Now;
 
+        public enum RudderAction
+        {
+            None,
+            EnableRudderTwoPedals,
+            ClearRudderStatus,
+            EnableRudderThreePedals
 
+        }
 
         //https://www.c-sharpcorner.com/uploadfile/eclipsed4utoo/communicating-with-serial-port-in-C-Sharp/
         public SerialPort[] _serialPort = new SerialPort[4] {new SerialPort("COM7", 921600, Parity.None, 8, StopBits.One),
@@ -1054,11 +1062,20 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.impact_value = 0;
                 tmp.payloadPedalAction_.Trigger_CV_1 = 0;
                 tmp.payloadPedalAction_.Trigger_CV_2 = 0;
-                tmp.payloadPedalAction_.Rudder_action = 1;
+                if (Rudder_Pedal_idx[0] == 0)
+                {
+                    tmp.payloadPedalAction_.Rudder_action = (byte)RudderAction.EnableRudderThreePedals;
+                }
+                else
+                {
+                    tmp.payloadPedalAction_.Rudder_action = (byte)RudderAction.EnableRudderTwoPedals;
+                }
+                
                 tmp.payloadPedalAction_.Rudder_brake_action = 0;
 
-                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                for (uint i = 0; i < 2; i++)
                 {
+                    uint PIDX = Rudder_Pedal_idx[i];
                     tmp.payloadHeader_.PedalTag = (byte)PIDX;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
@@ -1216,8 +1233,9 @@ namespace User.PluginSdkDemo
                             //Write to Pedal
                             if (Rudder_Effect_update_b)
                             {
-                                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                                for (uint i = 0; i < 2; i++)
                                 {
+                                    uint PIDX = Rudder_Pedal_idx[i];
                                     tmp.payloadHeader_.PedalTag = (byte)PIDX;
                                     DAP_action_st* v = &tmp;
                                     byte* p = (byte*)v;
@@ -1269,8 +1287,9 @@ namespace User.PluginSdkDemo
                 tmp.payloadPedalAction_.Rudder_action = 0;
                 tmp.payloadPedalAction_.Rudder_brake_action = 1;
 
-                for (uint PIDX = 1; PIDX < 3; PIDX++)
+                for (uint i = 0; i < 2; i++)
                 {
+                    uint PIDX = Rudder_Pedal_idx[i];
                     tmp.payloadHeader_.PedalTag = (byte)PIDX;
                     DAP_action_st* v = &tmp;
                     byte* p = (byte*)v;
