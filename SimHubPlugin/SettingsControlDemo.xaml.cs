@@ -1346,26 +1346,20 @@ namespace User.PluginSdkDemo
             Slider_LC_rate.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.loadcell_rating * 2;
             Slider_maxgame_output.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;            
 
-            Slider_KF.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
-            label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
+            Slider_KF.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
+            //label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
 
-            Slider_MPC_0th_gain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain;
-            label_MPC_0th_gain.Content = "Foot spring stiffness: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
+            Slider_MPC_0th_gain.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain;
+            
 
             //Slider_MPC_1st_gain.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain;
             //label_MPC_1st_gain.Content = "Foot spring damping: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
 
-            Slider_Pgain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain;
-            label_Pgain.Content = "P-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
-
-            Slider_Igain.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
-            label_Igain.Content = "I-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
-
-            Slider_Dgain.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
-            label_Dgain.Content = "D-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
-
-            Slider_VFgain.Value= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain;
-            label_VFgain.Content = "Feed Forward Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 1);
+            Slider_Pgain.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain;
+            Slider_Igain.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
+            Slider_Dgain.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain;
+            Slider_VFgain.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain;
+            
 
             
             if (Plugin != null)
@@ -6265,13 +6259,12 @@ namespace User.PluginSdkDemo
         private void Slider_KF_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise = (byte)e.NewValue;
-            label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
+            //label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
         }
 
         private void Slider_MPC_0th_gain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain = (float)e.NewValue;
-            label_MPC_0th_gain.Content = "Foot spring stiffness: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain, 2)+ "kg/mm";
         }
 
         //private void Slider_MPC_1st_gain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -6283,25 +6276,24 @@ namespace User.PluginSdkDemo
         private void Slider_Pgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain = (float)e.NewValue;
-            label_Pgain.Content = "P-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain, 2);
+            
         }
 
         private void Slider_Igain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain = (float)e.NewValue;
-            label_Igain.Content = "I-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain, 2);
         }
 
         private void Slider_Dgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain = (float)e.NewValue;
-            label_Dgain.Content = "D-Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_d_gain, 4);
+            
         }
 
         private void Slider_VFgain_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain = (float)e.NewValue;
-            label_VFgain.Content = "Feed Forward Gain: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_velocity_feedforward_gain, 1);
+            
         }
 
         private void CheckBox_rudder_Checked(object sender, RoutedEventArgs e)

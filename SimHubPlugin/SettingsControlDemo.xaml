@@ -995,7 +995,7 @@
 
 
                                                     </StackPanel>
-                                                    <localUI:SliderWithLabel x:Name="Slider_damping" SliderLength="400" SliderName="Damping factor" TickFrequency="0.00015" Unit="s" Width="400" Height="40" MaxValue="0.0375" SliderValueChanged="Slider_damping_ValueChanged" SliderValue="0.0375"/>
+                                                    <localUI:SliderWithLabel x:Name="Slider_damping" SliderLength="400" SliderName="Damping factor" TickFrequency="0.00015" Unit="s" Width="400" Height="40" MaxValue="0.0375" SliderValueChanged="Slider_damping_ValueChanged"/>
                                                     <StackPanel Height="40" Width="540" HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Horizontal">
                                                         <localUI:SliderWithLabel x:Name="Slider_LC_rate" Width="200" SliderLength="190" SliderName="Loadcell Rate" MaxValue="500" Height="40" Unit="kg" TickFrequency="10" SliderValue="300" SliderValueChanged="Slider_LC_rate_ValueChanged" Margin="70,0,0,0"/>
                                                         <localUI:SliderWithLabel x:Name="Slider_maxgame_output" SliderName="Max Game Output" SliderLength="190" SliderValue="100" Width="190" Height="40" Margin="10,0,0,0" Unit="%" SliderValueChanged="Slider_maxgame_output_ValueChanged"/>
@@ -1047,10 +1047,8 @@
                                                         <StackPanel Width="400" Height="10" Orientation="Horizontal">
                                                             <Label  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Loadcell Denoising Factor (slow to fast)" Height="10" Padding="0,0,0,0"/>
                                                         </StackPanel>
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_KF"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="KF:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_KF" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="255" ValueChanged="Slider_KF_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1"/>
+                                                        
+                                                        <localUI:SliderWithLabel x:Name="Slider_KF" SliderLength="400" SliderName="KF" SliderValue="1" MinValue="1" MaxValue="255"  SliderValueChanged="Slider_KF_ValueChanged"/>
                                                     </StackPanel>
                                                 </StackPanel>
 
@@ -1093,31 +1091,10 @@
                                                     <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                                         <Label Content="PID Tuning" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                                                     </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_Pgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="P-Gain:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_Pgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="0.5" ValueChanged="Slider_Pgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
-                                                    </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_Igain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="I-Gain:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_Igain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="10" ValueChanged="Slider_Igain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1" LargeChange="10"/>
-                                                    </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_Dgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="D-Gain:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_Dgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="0.001" ValueChanged="Slider_Dgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="0.0001" LargeChange="0.001" TickFrequency="0.0001"/>
-                                                    </StackPanel>
-
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_VFgain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Feed Forward Gain:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_VFgain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="20" ValueChanged="Slider_VFgain_ValueChanged" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.1"/>
-                                                    </StackPanel>
+                                                    <localUI:SliderWithLabel x:Name="Slider_Pgain" Width="400" Height="40" SliderLength="400" SliderName="P-Gain" TickFrequency="0.01" MinValue="0.1" MaxValue="0.5" SliderValue="0" SliderValueChanged="Slider_Pgain_ValueChanged"/>
+                                                    <localUI:SliderWithLabel x:Name="Slider_Igain" Width="400" Height="40" SliderLength="400" SliderName="I-Gain" MaxValue="10"  SliderValueChanged="Slider_Igain_ValueChanged"/>
+                                                    <localUI:SliderWithLabel x:Name="Slider_Dgain" Width="400" Height="40" TickFrequency="0.0001" SliderLength="400" SliderName="D-Gain" MaxValue="0.001" SliderValueChanged="Slider_Dgain_ValueChanged"/>
+                                                    <localUI:SliderWithLabel x:Name="Slider_VFgain" SliderName="Feed Forward Gain" Width="400" Height="40" SliderLength="400" TickFrequency="0.1" MaxValue="20"  SliderValueChanged="Slider_VFgain_ValueChanged"/>
                                                 </StackPanel>
                                             </Border>
                                         </TabItem>
@@ -1140,14 +1117,9 @@
                                                     <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                                         <Label Content="MPC gain tuning" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                                                     </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_MPC_0th_gain"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_MPC_0th_gain" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="10" ValueChanged="Slider_MPC_0th_gain_ValueChanged" IsSnapToTickEnabled="True" Value="10" SmallChange="0.1" LargeChange="0.5" TickFrequency="0.1"/>
-                                                    </StackPanel>
+                                                    <localUI:SliderWithLabel x:Name="Slider_MPC_0th_gain" Width="400" Height="40" SliderName="Foot spring stiffness" TickFrequency="0.1" SliderValue="10" SliderLength="400" MaxValue="10" SliderValueChanged="Slider_MPC_0th_gain_ValueChanged" Unit="kg/mm"/>
 
-                                                    <!-- dampening--><!--
+                                                        <!-- dampening--><!--
                                                     <StackPanel Width="400" Height="40">
                                                         <StackPanel Width="400" Height="20" Orientation="Horizontal">
                                                             <Label x:Name="label_MPC_1st_gain"  Width="170" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring damping:" Height="12" Padding="0,0,0,0"/>

@@ -121,7 +121,8 @@ namespace User.PluginSdkDemo.UIElement
 
         private void UpdateLabelContent()
         {
-            LabelContent = $"{SliderName}: {SliderValue} {Unit}";
+            //LabelContent = $"{SliderName}: {SliderValue} {Unit}";
+            LabelContent = SliderName+": "+ Math.Round(SliderValue,4)+" "+Unit;
         }
 
         // Event to notify the main window of slider value changes

@@ -136,9 +136,10 @@
                 TickFrequency="{Binding TickFrequency, RelativeSource={RelativeSource AncestorType=UserControl}}"
                 Value="{Binding SliderValue, RelativeSource={RelativeSource AncestorType=UserControl}, Mode=TwoWay}"
                 Width="{Binding SliderLength, RelativeSource={RelativeSource AncestorType=UserControl}}"
-            IsSnapToTickEnabled="True"
-            ValueChanged="SliderElement_ValueChanged"
-            VerticalAlignment="Center" HorizontalAlignment="Left" Height="10" />
+                IsSnapToTickEnabled="True"
+                ValueChanged="SliderElement_ValueChanged"
+                VerticalAlignment="Center" HorizontalAlignment="Left" Height="10" 
+                Style="{DynamicResource SliderStyle_single_H}"/>
         </StackPanel>
     </Grid>
 </UserControl>
