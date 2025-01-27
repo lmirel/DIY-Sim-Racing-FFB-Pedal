@@ -3,10 +3,6 @@
   "WorkspaceRootPath": "C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{833040C9-FE5E-4CCF-B21D-71979E049B6B}|User.PluginSdkDemo.csproj|C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\settingscontroldemo.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{833040C9-FE5E-4CCF-B21D-71979E049B6B}|User.PluginSdkDemo.csproj|solutionrelative:settingscontroldemo.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{833040C9-FE5E-4CCF-B21D-71979E049B6B}|User.PluginSdkDemo.csproj|C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\settingscontroldemo.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{833040C9-FE5E-4CCF-B21D-71979E049B6B}|User.PluginSdkDemo.csproj|solutionrelative:settingscontroldemo.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
@@ -19,6 +15,10 @@
       "RelativeMoniker": "D:0:0:{833040C9-FE5E-4CCF-B21D-71979E049B6B}|User.PluginSdkDemo.csproj|solutionrelative:dataplugindemosettings.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{833040C9-FE5E-4CCF-B21D-71979E049B6B}|User.PluginSdkDemo.csproj|C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\settingscontroldemo.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{833040C9-FE5E-4CCF-B21D-71979E049B6B}|User.PluginSdkDemo.csproj|solutionrelative:settingscontroldemo.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{00000000-0000-0000-0000-000000000000}|\u003CSolution\u003E|User.PluginSdkDemo||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
     }
   ],
@@ -29,11 +29,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1796,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "DataPluginDemo.cs",
               "DocumentMoniker": "C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\DataPluginDemo.cs",
               "RelativeDocumentMoniker": "DataPluginDemo.cs",
@@ -46,20 +46,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "SettingsControlDemo.xaml.cs",
               "DocumentMoniker": "C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\SettingsControlDemo.xaml.cs",
               "RelativeDocumentMoniker": "SettingsControlDemo.xaml.cs",
               "ToolTip": "C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\SettingsControlDemo.xaml.cs",
               "RelativeToolTip": "SettingsControlDemo.xaml.cs",
-              "ViewState": "AgIAAFgAAAAAAAAAAAApwGcAAAARAAAAAAAAAA==",
+              "ViewState": "AQIAAIgIAAAAAAAAAAAuwJUIAABLAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-09-22T01:27:42.579Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-09-22T01:27:42.579Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "DataPluginDemoSettings.cs",
               "DocumentMoniker": "C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\DataPluginDemoSettings.cs",
               "RelativeDocumentMoniker": "DataPluginDemoSettings.cs",
@@ -71,7 +70,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "SettingsControlDemo.xaml",
               "DocumentMoniker": "C:\\Users\\tcfshcrw\\Documents\\GitHub\\DIY-Sim-Racing-FFB-Pedal\\SimHubPlugin\\SettingsControlDemo.xaml",
               "RelativeDocumentMoniker": "SettingsControlDemo.xaml",
