@@ -1272,27 +1272,22 @@ namespace User.PluginSdkDemo
 
             //slider setting
 
-            Slider_impact_smoothness.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
-            label_impact_window.Content = "Impact Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
-            Slider_impact_multi.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi;
-            label_impact_multi.Content = "Impact Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi + "%";
+            Slider_impact_smoothness.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;            
+            Slider_impact_multi.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi;
+            
 
-            Slider_WS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
-            label_WS_freq.Content = "Notification Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "Hz";
-            Slider_WS_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / 20.0f;
-            label_WS_AMP.Content = "Notification Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp / 20.0f + "kg";
-            Slider_WS_trigger.Value = Plugin.Settings.WS_trigger;
-            label_WS_trigger.Content = "Notification Trigger: " + (Plugin.Settings.WS_trigger + 50) + "%";
+            Slider_WS_freq.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq;
+            Slider_WS_AMP.SliderValue = (double)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp) / (double)20.0f;           
+            Slider_WS_trigger.SliderValue = Plugin.Settings.WS_trigger+50;
+            
 
-            Slider_G_force_smoothness.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
-            label_G_force_window.Content = "G Force Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
-            Slider_G_force_multi.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi;
-            label_G_force_multi.Content = "G Force Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi + "%";
+            Slider_G_force_smoothness.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;            
+            Slider_G_force_multi.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi;
+            
 
-            Slider_BP_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq;
-            label_BP_freq.Content = "Bite Point Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "Hz";
-            Slider_BP_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f;
-            label_BP_AMP.Content = "Bite Point Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp / 100.0f + "kg";
+            Slider_BP_freq.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq;
+            Slider_BP_AMP.SliderValue = (double)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / (double)100.0f;
+            
 
             Rangeslider_RPM_freq.LowerValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq;
             Rangeslider_RPM_freq.UpperValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_max_freq;
@@ -1300,12 +1295,12 @@ namespace User.PluginSdkDemo
             label_RPM_freq_min.Content = "MIN:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_min_freq + "Hz";
 
 
-            Slider_RPM_AMP.Value = (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f;
-            label_RPM_AMP.Content = "Effect Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
+            Slider_RPM_AMP.SliderValue = (double)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / (double)100.0f;
+            
 
-            Slider_ABS_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency;
-            label_ABS_freq.Content = "ABS/TC Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "Hz";
-            Slider_ABS_AMP.Value = ((float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude) / 20.0f;
+            Slider_ABS_freq.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency;
+            
+            Slider_ABS_AMP.SliderValue = ((double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude) / (double)20.0f;
             if (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition < 5)
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.pedalStartPosition = 5;
@@ -1381,18 +1376,13 @@ namespace User.PluginSdkDemo
                 {
                     checkbox_enable_CV2.IsChecked = false;
                 }
-                Slider_CV1_trigger.Value = Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
-                Slider_CV1_AMP.Value = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/20.0f;
-                Slider_CV1_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1;
-                Slider_CV2_trigger.Value = Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
-                Slider_CV2_AMP.Value = (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2/20.0f;
-                Slider_CV2_freq.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2;
-                label_CV1_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
-                label_CV1_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/20.0f + "kg";
-                label_CV1_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1 + "Hz";
-                label_CV2_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
-                label_CV2_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2 / 20.0f + "kg";
-                label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
+                Slider_CV1_trigger.SliderValue = Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
+                Slider_CV1_AMP.SliderValue = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/(double)20.0f;
+                Slider_CV1_freq.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1;
+                Slider_CV2_trigger.SliderValue = Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
+                Slider_CV2_AMP.SliderValue = (double)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2/(double)20.0f;
+                Slider_CV2_freq.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2;
+
                 if (Update_CV_textbox)
                 {
                     Update_CV_textbox = false;
@@ -1467,10 +1457,12 @@ namespace User.PluginSdkDemo
             switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
             {
                 case 0:
-                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
+                    //label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
+                    Slider_ABS_AMP.Unit = "kg";
                     break;
                 case 1:
-                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
+                    Slider_ABS_AMP.Unit = "%";
+                    //label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
                     break;
                 default:
                     break;
@@ -4956,15 +4948,17 @@ namespace User.PluginSdkDemo
             {
                 dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit = (byte)EffectAppliedOnForceOrTravel_combobox.SelectedIndex;
 
-                if (label_ABS_AMP != null)
+                if (Slider_ABS_AMP != null)
                 {
                     switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
                     {
                         case 0:
-                            label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
+                            Slider_ABS_AMP.Unit = "kg";
+                            //label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
                             break;
                         case 1:
-                            label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
+                            Slider_ABS_AMP.Unit = "%";
+                            //label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
                             break;
                         default:
                             break;
@@ -6089,29 +6083,26 @@ namespace User.PluginSdkDemo
 
         private void Slider_impact_smoothness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window = (Byte)Slider_impact_smoothness.Value;
-            label_impact_window.Content = "Impact Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window;
-
-
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_window = (Byte)Slider_impact_smoothness.SliderValue;
+            
         }
 
         private void Slider_impact_multi_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi = (Byte)e.NewValue;
-            label_impact_multi.Content = "Impact Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.Impact_multi+"%";
+            
         }
 
         private void Slider_WS_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = (Byte)e.NewValue;
-            label_WS_freq.Content = "Notification Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq + "Hz";
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_freq = (Byte)e.NewValue;            
             update_plot_WS();
         }
 
         private void Slider_WS_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp = (Byte)(e.NewValue*20);
-            label_WS_AMP.Content = "Notification Amplitude: " + (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.WS_amp)/20.0f + "kg";
+            
             update_plot_WS();
         }
 
@@ -6119,8 +6110,8 @@ namespace User.PluginSdkDemo
         {
             if (Plugin!= null)
             {
-                Plugin.Settings.WS_trigger = (int)e.NewValue;
-                label_WS_trigger.Content = "Notification Trigger: "+(Plugin.Settings.WS_trigger + 50) + "%";
+                Plugin.Settings.WS_trigger = (int)(e.NewValue-50);
+                
             }
 
         }
@@ -6128,34 +6119,32 @@ namespace User.PluginSdkDemo
         private void Slider_G_force_smoothness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window=(Byte)e.NewValue;
-            label_G_force_window.Content = "G Force Smoothness: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_window;
+            
 
         }
 
         private void Slider_G_force_multi_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi=(Byte)e.NewValue;
-            label_G_force_multi.Content = "G Force Multiplier: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.G_multi + "%";
+            
         }
 
         private void Slider_BP_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq = (Byte)e.NewValue;
-            label_BP_freq.Content = "Bite Point Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_freq + "Hz";
             update_plot_BP();
         }
 
         private void Slider_BP_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = (Byte)(e.NewValue * 100);
-            label_BP_AMP.Content = "Bite Point Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp) / 100.0f + "kg";
+            dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.BP_amp = (Byte)(e.NewValue * 100);          
             update_plot_BP();
         }
 
         private void Slider_RPM_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP = (Byte)(e.NewValue * 100);
-            label_RPM_AMP.Content = "Effect Amplitude: " + (float)(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
+            
             update_plot_RPM();
         }
 
@@ -6177,7 +6166,7 @@ namespace User.PluginSdkDemo
         private void Slider_ABS_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency = (Byte)(e.NewValue);
-            label_ABS_freq.Content = "ABS/TC Frequency: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absFrequency + "Hz";
+            
             update_plot_ABS();
         }
 
@@ -6187,10 +6176,12 @@ namespace User.PluginSdkDemo
             switch (dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absForceOrTarvelBit)
             {
                 case 0:
-                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
+                    Slider_ABS_AMP.Unit = "kg";
+                    //label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "kg";
                     break;
                 case 1:
-                    label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
+                    Slider_ABS_AMP.Unit = "%";
+                    //label_ABS_AMP.Content = "ABS/TC Amplitude: " + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.absAmplitude / 20.0f + "%";
                     break;
                 default:
                     break;
@@ -6356,25 +6347,25 @@ namespace User.PluginSdkDemo
         private void Slider_CV2_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2 = (Byte)(e.NewValue*20);
-            label_CV2_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_2/20.0f + "kg";
+            
         }
 
         private void Slider_CV1_AMP_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1 = (Byte)(e.NewValue*20);
-            label_CV1_AMP.Content = "Effect Amplitude:" + (float)dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_amp_1/20.0f+"kg";
+            
         }
 
         private void Slider_CV1_trigger_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u]= (Byte)e.NewValue;
-            label_CV1_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV1_trigger[indexOfSelectedPedal_u];
+            
         }
 
         private void Slider_CV1_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1 = (Byte)e.NewValue;
-            label_CV1_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_1 + "Hz";
+            
         }
 
         private void checkbox_enable_CV2_Checked(object sender, RoutedEventArgs e)
@@ -6417,13 +6408,13 @@ namespace User.PluginSdkDemo
         private void Slider_CV2_trigger_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u] = (Byte)e.NewValue;
-            label_CV2_trigger.Content = "Effect Trigger:" + Plugin.Settings.CV2_trigger[indexOfSelectedPedal_u];
+           
         }
 
         private void Slider_CV2_freq_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 = (Byte)e.NewValue;
-            label_CV2_freq.Content = "Effect Frequency:" + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.CV_freq_2 + "Hz";
+            
         }
 
 
