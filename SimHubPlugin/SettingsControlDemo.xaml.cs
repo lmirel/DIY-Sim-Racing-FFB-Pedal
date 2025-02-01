@@ -1342,13 +1342,10 @@ namespace User.PluginSdkDemo
             Slider_maxgame_output.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.maxGameOutput;            
 
             Slider_KF.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
-            //label_KF.Content = "KF: " + dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.kf_modelNoise;
+
 
             Slider_MPC_0th_gain.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_0th_order_gain;
-            
 
-            //Slider_MPC_1st_gain.Value = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain;
-            //label_MPC_1st_gain.Content = "Foot spring damping: " + Math.Round(dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
 
             Slider_Pgain.SliderValue= dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_p_gain;
             Slider_Igain.SliderValue = dap_config_st[indexOfSelectedPedal_u].payloadPedalConfig_.PID_i_gain;
@@ -1808,8 +1805,8 @@ namespace User.PluginSdkDemo
                 Rangeslider_RPM_freq_rudder.UpperValue = dap_config_st_rudder.payloadPedalConfig_.RPM_max_freq;
                 label_RPM_freq_max_rudder.Content = "MAX:" + dap_config_st_rudder.payloadPedalConfig_.RPM_max_freq + "Hz";
                 label_RPM_freq_min_rudder.Content = "MIN:" + dap_config_st_rudder.payloadPedalConfig_.RPM_min_freq + "Hz";
-                Slider_RPM_AMP_rudder.Value = (float)(dap_config_st_rudder.payloadPedalConfig_.RPM_AMP) / 100.0f;
-                label_RPM_AMP_rudder.Content = "Effect Amplitude: " + (float)(dap_config_st_rudder.payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
+                Slider_RPM_AMP_rudder.SliderValue = (double)(dap_config_st_rudder.payloadPedalConfig_.RPM_AMP) / (double)100.0f;
+                
 
                 // rect position
                 double dyy_rudder = canvas_rudder_curve.Height / control_rect_value_max;
@@ -1913,17 +1910,15 @@ namespace User.PluginSdkDemo
                     Checkbox_Rudder_ACC_WindForce.IsChecked = false;
                 }
 
-                Slider_MPC_0th_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain;
-                label_MPC_0th_gain_rudder.Content = "MPC Foot spring stiffness: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
-                Slider_MPC_1st_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain;
-                label_MPC_1st_gain_rudder.Content = "Foot spring damping: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
+                Slider_MPC_0th_gain_rudder.SliderValue = dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain;
+                Slider_MPC_1st_gain_rudder.SliderValue = dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain;
 
 
                 //Slider_MPC_1st_gain_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain;
                 //label_MPC_1st_gain_rudder.Content = "MPC Foot spring dampening: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
 
-                label_damping_rudder.Content = "Damping factor: " + (float)(dap_config_st_rudder.payloadPedalConfig_.dampingPress * 0.00015f) + "s";
-                Slider_damping_rudder.Value = dap_config_st_rudder.payloadPedalConfig_.dampingPress;
+                
+                Slider_damping_rudder.SliderValue =(double) dap_config_st_rudder.payloadPedalConfig_.dampingPress* (double)Slider_damping_rudder.TickFrequency;
 
 
 
@@ -6829,7 +6824,7 @@ namespace User.PluginSdkDemo
                                         {
                                             // Specify the path to the file
                                             string currentDirectory = Directory.GetCurrentDirectory();
-                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\output_" + pedalSelected + ".txt";
+                                            string filePath = currentDirectory + "\\PluginsData\\Common" + "\\DiyFfbPedalStateLog_" + pedalSelected + ".txt";
 
                                             // delete file 
                                             if (true == dumpPedalToResponseFile_clearFile[indexOfSelectedPedal_u])
@@ -7950,7 +7945,7 @@ namespace User.PluginSdkDemo
         private void Slider_RPM_AMP_rudder_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st_rudder.payloadPedalConfig_.RPM_AMP = (Byte)(e.NewValue * 100);
-            label_RPM_AMP_rudder.Content = "Effect Amplitude: " + (float)(dap_config_st_rudder.payloadPedalConfig_.RPM_AMP) / 100.0f + "kg";
+            
         }
 
         private void Rangeslider_RPM_freq_rudder_LowerValueChanged(object sender, RangeParameterChangedEventArgs e)
@@ -8140,15 +8135,15 @@ namespace User.PluginSdkDemo
 
         private void Slider_damping_rudder_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            dap_config_st_rudder.payloadPedalConfig_.dampingPress = (Byte)e.NewValue;
-            dap_config_st_rudder.payloadPedalConfig_.dampingPull = (Byte)e.NewValue;
-            label_damping_rudder.Content = "Damping factor: " + (float)(dap_config_st_rudder.payloadPedalConfig_.dampingPress * 0.00015f) + "s";
+            dap_config_st_rudder.payloadPedalConfig_.dampingPress = (Byte)((double)e.NewValue/(double)Slider_damping_rudder.TickFrequency);
+            dap_config_st_rudder.payloadPedalConfig_.dampingPull = (Byte)((double)e.NewValue / (double)Slider_damping_rudder.TickFrequency);
+
         }
 
         private void Slider_MPC_0th_gain_rudder_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain = (float)e.NewValue;
-            label_MPC_0th_gain_rudder.Content = "MPC Foot spring stiffness: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_0th_order_gain, 2) + "kg/mm";
+            
 
         }
 
@@ -8438,7 +8433,7 @@ namespace User.PluginSdkDemo
             if (Plugin != null)
             {
                 dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain = (float)e.NewValue;
-                label_MPC_1st_gain_rudder.Content = "Foot spring damping: " + Math.Round(dap_config_st_rudder.payloadPedalConfig_.MPC_1st_order_gain, 2) + "kg*s/mm";
+                
             }
         }
 

@@ -1638,24 +1638,9 @@
                                                     <StackPanel Height="20" Width="540" Orientation="Horizontal">
                                                         <Label Content="General Setting" Height="15" Width="150" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="70,0,0,0"/>
                                                     </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_damping_rudder"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Damping:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_damping_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="250" ValueChanged="Slider_damping_rudder_ValueChanged" IsSnapToTickEnabled="True" Value="0" SmallChange="1"/>
-                                                    </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_MPC_0th_gain_rudder"  Width="200" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring stiffness:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_MPC_0th_gain_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="10" ValueChanged="Slider_MPC_0th_gain_rudder_ValueChanged" IsSnapToTickEnabled="True" Value="3" SmallChange="0.1" LargeChange="0.5" TickFrequency="0.1"/>
-                                                    </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_MPC_1st_gain_rudder"  Width="170" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Foot spring damping:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_MPC_1st_gain_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="1.0" ValueChanged="Slider_MPC_1st_gain_rudder_ValueChanged" IsSnapToTickEnabled="True" Value="1" SmallChange="0.01" LargeChange="0.1" TickFrequency="0.01"/>
-                                                    </StackPanel>
+                                                    <localUI:SliderWithLabel x:Name="Slider_damping_rudder" Width="400" Height="40" SliderLength="400" TickFrequency="0.00015" MaxValue="0.0375" SliderName="Damping factor" Unit="s" SliderValueChanged="Slider_damping_rudder_ValueChanged"/>
+                                                    <localUI:SliderWithLabel x:Name="Slider_MPC_0th_gain_rudder" Width="400" Height="40" SliderLength="400" TickFrequency="0.1" MaxValue="10" SliderName="Foot spring stiffness" Unit="kg/mm" SliderValueChanged="Slider_MPC_0th_gain_rudder_ValueChanged"/>
+                                                    <localUI:SliderWithLabel x:Name="Slider_MPC_1st_gain_rudder" Width="400" Height="40" SliderLength="400" SliderName="Foot spring damping" Unit="kg*s/mm" MaxValue="1" TickFrequency="0.01" SliderValueChanged="Slider_MPC_1st_gain_rudder_ValueChanged"/>
                                                 </StackPanel>
                                             </Border>
                                         </TabItem>
@@ -1671,12 +1656,7 @@
                                                         <styles:SHToggleButton x:Name="checkbox_enable_RPM_rudder" Content="" Checked="checkbox_enable_RPM_rudder_Checked" Unchecked="checkbox_enable_RPM_rudder_Unchecked" IsChecked="False" FontSize="10" Width="35" Height="15" HorizontalAlignment="Left" FontFamily="Arial"  Margin="60,0,0,0" ToolTip="Enable for RPM/Spped rumble, the trigger was save in local, no need sned config to Pedal"/>
                                                         <Label Content="Engine RPM Rumble Effect" Height="15" Width="300" Padding="0,0,0,0" VerticalContentAlignment="Center" FontFamily="Arial Black" HorizontalAlignment="Left" Margin="4,0,0,0"/>
                                                     </StackPanel>
-                                                    <StackPanel Width="400" Height="40">
-                                                        <StackPanel Width="400" Height="20" Orientation="Horizontal">
-                                                            <Label x:Name="label_RPM_AMP_rudder"  Width="150" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Amplitude:" Height="12" Padding="0,0,0,0"/>
-                                                        </StackPanel>
-                                                        <Slider x:Name="Slider_RPM_AMP_rudder" Style="{DynamicResource SliderStyle_single_H}" HorizontalAlignment="Left" Grid.Row="1" VerticalAlignment="Top" Width="400" Height="10" Maximum="2" SmallChange="0.01" ValueChanged="Slider_RPM_AMP_rudder_ValueChanged" LargeChange="0.1" IsSnapToTickEnabled="True" Value="0" TickFrequency="0.01"/>
-                                                    </StackPanel>
+                                                    <localUI:SliderWithLabel x:Name="Slider_RPM_AMP_rudder" Width="400" Height="40" SliderLength="400" TickFrequency="0.01" MaxValue="2" SliderName="Effect Amplitude" Unit="kg" SliderValueChanged="Slider_RPM_AMP_rudder_ValueChanged"/>
                                                     <StackPanel Width="400" Height="50">
                                                         <StackPanel Width="400" Height="12" Orientation="Horizontal">
                                                             <Label x:Name="label_RPM_freq_rudder"  Width="250" Foreground="White" RenderTransformOrigin="0.5,0.5" Canvas.Top="3" FontSize="10" FontFamily="Arial" Canvas.Left="5" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Effect Frequency:" Height="12" Padding="0,0,0,0"/>
