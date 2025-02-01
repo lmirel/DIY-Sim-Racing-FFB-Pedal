@@ -268,6 +268,10 @@ char* APhost;
   char* APhost;
 #endif
 
+#ifndef OTA_update || OTA_update_ESP32
+  #include "ota.h"
+#endif
+
 
 //ESPNOW
 #ifdef ESPNOW_Enable
@@ -348,7 +352,9 @@ void setup()
   Serial.println(" ");
   #ifndef CONTROLLER_SPECIFIC_VIDPID
     // init controller
+    #ifdef BLUETOOTH_GAMEPAD ||USB_JOYSTICK
     SetupController();
+    #endif
     //delay(3000);
   #endif
   //delay(3000);
@@ -1126,7 +1132,7 @@ void pedalUpdateTask( void * pvParameters )
     dap_calculationVariables_st.current_pedal_position = Position_Next;
 
     //Rudder initialzing and de initializing
-
+    #ifdef ESPNOW_Enable
     if(dap_calculationVariables_st.Rudder_status)
     {
       if(Rudder_initializing)
@@ -1152,6 +1158,7 @@ void pedalUpdateTask( void * pvParameters )
       moveSlowlyToPosition_b=false;
       Serial.println("deinitialized disable move slow");
     }
+    #endif
 
     //Serial.println(Position_check);
     if(dap_config_pedalUpdateTask_st.payLoadPedalConfig_.BP_trigger==1)
@@ -1168,9 +1175,17 @@ void pedalUpdateTask( void * pvParameters )
     // if pedal in min position, recalibrate position --> automatic step loss compensation
 
     stepper->configSteplossRecovAndCrashDetection(dap_config_pedalUpdateTask_st.payLoadPedalConfig_.stepLossFunctionFlags_u8);
-    if (stepper->isAtMinPos() && OTA_status==false)
+    if (stepper->isAtMinPos())
     {
-      stepper->correctPos();
+      #ifdef OTA_update_ESP32 || OTA_update
+        if(OTA_status==false)
+        {
+          stepper->correctPos();
+        }    
+      #else
+        stepper->correctPos();
+      #endif
+
     }
 
 
@@ -1208,18 +1223,34 @@ void pedalUpdateTask( void * pvParameters )
 
 
   // Move to new position
-  if(OTA_status==false)
+  
+  
+  if (!moveSlowlyToPosition_b)
   {
-    if (!moveSlowlyToPosition_b)
-    {
+    #ifdef OTA_update_ESP32 || OTA_update
+      if(OTA_status==false)
+      {
+        stepper->moveTo(Position_Next, false);
+      }
+    #else
       stepper->moveTo(Position_Next, false);
-    }
-    else
-    {
+    #endif
+  }
+  else
+  {
+    #ifdef OTA_update_ESP32 || OTA_update
+      if(OTA_status==false)
+      {
+        moveSlowlyToPosition_b = false;
+        stepper->moveSlowlyToPos(Position_Next);
+      }
+    #else
       moveSlowlyToPosition_b = false;
       stepper->moveSlowlyToPos(Position_Next);
-    }
+    #endif
+
   }
+  
 
 
     
@@ -1635,55 +1666,57 @@ void serialCommunicationTask( void * pvParameters )
                 Serial.write((char*)dap_config_st_local_ptr, sizeof(DAP_config_st));
                 Serial.print("\r\n");
               }
-              if(dap_actions_st.payloadPedalAction_.Rudder_action==1)//Enable Rudder
-              {
-                if(dap_calculationVariables_st.Rudder_status==false)
+              #ifdef ESPNOW_Enable
+                if(dap_actions_st.payloadPedalAction_.Rudder_action==1)//Enable Rudder
                 {
-                  dap_calculationVariables_st.Rudder_status=true;
-                  Serial.println("Rudder on");
-                  Rudder_initializing=true;
-                  moveSlowlyToPosition_b=true;
-                  //Serial.print("status:");
-                  //Serial.println(dap_calculationVariables_st.Rudder_status);
+                  if(dap_calculationVariables_st.Rudder_status==false)
+                  {
+                    dap_calculationVariables_st.Rudder_status=true;
+                    Serial.println("Rudder on");
+                    Rudder_initializing=true;
+                    moveSlowlyToPosition_b=true;
+                    //Serial.print("status:");
+                    //Serial.println(dap_calculationVariables_st.Rudder_status);
+                  }
+                  else
+                  {
+                    dap_calculationVariables_st.Rudder_status=false;
+                    Serial.println("Rudder off");
+                    Rudder_deinitializing=true;
+                    moveSlowlyToPosition_b=true; 
+
+                    //Serial.print("status:");
+                    //Serial.println(dap_calculationVariables_st.Rudder_status);
+                  }
                 }
-                else
+                if(dap_actions_st.payloadPedalAction_.Rudder_brake_action==1)
+                {
+                  if(dap_calculationVariables_st.rudder_brake_status==false&&dap_calculationVariables_st.Rudder_status==true)
+                  {
+                    dap_calculationVariables_st.rudder_brake_status=true;
+                    Serial.println("Rudder brake on");
+                    //Serial.print("status:");
+                    //Serial.println(dap_calculationVariables_st.Rudder_status);
+                  }
+                  else
+                  {
+                    dap_calculationVariables_st.rudder_brake_status=false;
+                    Serial.println("Rudder brake off");
+                    //Serial.print("status:");
+                    //Serial.println(dap_calculationVariables_st.Rudder_status);
+                  }
+                }
+                //clear rudder status
+                if(dap_actions_st.payloadPedalAction_.Rudder_action==2)
                 {
                   dap_calculationVariables_st.Rudder_status=false;
-                  Serial.println("Rudder off");
-                  Rudder_deinitializing=true;
-                  moveSlowlyToPosition_b=true; 
-
-                  //Serial.print("status:");
-                  //Serial.println(dap_calculationVariables_st.Rudder_status);
-                }
-              }
-              if(dap_actions_st.payloadPedalAction_.Rudder_brake_action==1)
-              {
-                if(dap_calculationVariables_st.rudder_brake_status==false&&dap_calculationVariables_st.Rudder_status==true)
-                {
-                  dap_calculationVariables_st.rudder_brake_status=true;
-                  Serial.println("Rudder brake on");
-                  //Serial.print("status:");
-                  //Serial.println(dap_calculationVariables_st.Rudder_status);
-                }
-                else
-                {
                   dap_calculationVariables_st.rudder_brake_status=false;
-                  Serial.println("Rudder brake off");
-                  //Serial.print("status:");
-                  //Serial.println(dap_calculationVariables_st.Rudder_status);
-                }
-              }
-              //clear rudder status
-              if(dap_actions_st.payloadPedalAction_.Rudder_action==2)
-              {
-                dap_calculationVariables_st.Rudder_status=false;
-                dap_calculationVariables_st.rudder_brake_status=false;
-                Serial.println("Rudder Status Clear");
-                Rudder_deinitializing=true;
-                moveSlowlyToPosition_b=true;
+                  Serial.println("Rudder Status Clear");
+                  Rudder_deinitializing=true;
+                  moveSlowlyToPosition_b=true;
 
-              }
+                }
+              #endif
 
 
             }
@@ -1788,14 +1821,16 @@ void serialCommunicationTask( void * pvParameters )
         xSemaphoreGive(semaphore_updateJoystick);
       }
     }
-    if (IsControllerReady()) 
-    {
-      if(dap_calculationVariables_st.Rudder_status==false)
+    #ifdef USB_JOYSTICK || BLUETOOTH_GAMEPAD
+      if (IsControllerReady()) 
       {
-        //general output
-        SetControllerOutputValue(joystickNormalizedToInt32_local);
+        if(dap_calculationVariables_st.Rudder_status==false)
+        {
+          //general output
+          SetControllerOutputValue(joystickNormalizedToInt32_local);
+        }
       }
-    }
+    #endif
 
     #ifdef PRINT_TASK_FREE_STACKSIZE_IN_WORDS
       if( communicationTask_stackSizeIdx_u32 == 1000)

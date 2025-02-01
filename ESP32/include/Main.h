@@ -149,7 +149,7 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
   //#define Using_I2C_Sync
   #define ESPNOW_Enable
   #define ESPNow_ESP32
-  #define I2C_slave_address 0x15
+  //#define I2C_slave_address 0x15
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
