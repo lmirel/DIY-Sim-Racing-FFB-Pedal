@@ -146,6 +146,11 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
   // #define CFG1 15
   // #define CFG2 12
   //#define Using_analog_output
+  
+  //Fanatec RJ12 pins cable view: GND HBRK CLU GAS BRK 5v
+  // CLU+GAS+BRK needs high 5v/3v for 0% input
+  // HBRK needs high5v/3v for 100% input
+  #define FANATEC_analog_output
   //#define Using_I2C_Sync
   #define ESPNOW_Enable
   #define ESPNow_ESP32
