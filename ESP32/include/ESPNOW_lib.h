@@ -2,6 +2,7 @@
 #include <esp_wifi.h>
 #include <Arduino.h>
 #include "ESPNowW.h"
+#include "DiyActivePedal_types.h"
 //#define ESPNow_debug
 uint8_t esp_master[] = {0x36, 0x33, 0x33, 0x33, 0x33, 0x31};
 //uint8_t esp_master[] = {0xdc, 0xda, 0x0c, 0x22, 0x8f, 0xd8}; // S3
@@ -33,6 +34,7 @@ bool OTA_update_action_b=false;
 bool Config_update_b=false;
 bool Rudder_initializing = false;
 bool Rudder_deinitializing = false;
+bool ESPNOW_BootIntoDownloadMode = false;
 
 struct ESPNow_Send_Struct
 { 
@@ -266,14 +268,19 @@ void onRecv(const uint8_t *mac_addr, const uint8_t *data, int data_len)
 
                   
                   //2= restart pedal
-                  if (dap_actions_st.payloadPedalAction_.system_action_u8==2)
+                  if (dap_actions_st.payloadPedalAction_.system_action_u8==(uint8_t)PedalSystemAction::PEDAL_RESTART)
                   {
                     ESPNow_restart = true;
                   }
                   //3= Wifi OTA
-                  if (dap_actions_st.payloadPedalAction_.system_action_u8==3)
+                  if (dap_actions_st.payloadPedalAction_.system_action_u8==(uint8_t)PedalSystemAction::ENABLE_OTA)
                   {
                     ESPNow_OTA_enable = true;
+                  }
+                  //5= Boot into download mode
+                  if (dap_actions_st.payloadPedalAction_.system_action_u8==(uint8_t)PedalSystemAction::ESP_BOOT_INTO_DOWNLOAD_MODE)
+                  {
+                    ESPNOW_BootIntoDownloadMode = true;
                   }
                   // trigger ABS effect
                   if (dap_actions_st.payloadPedalAction_.triggerAbs_u8)

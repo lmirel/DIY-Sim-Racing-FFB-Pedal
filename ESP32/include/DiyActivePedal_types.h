@@ -300,3 +300,13 @@ struct DAP_calculationVariables_st
   void update_stepperMinpos(long newMinstop);
   void update_stepperMaxpos(long newMaxstop);
 };
+
+enum class PedalSystemAction
+{
+  NONE,
+  RESET_PEDAL_POSITION,//not in use
+  PEDAL_RESTART,
+  ENABLE_OTA,//not in use
+  ENABLE_PAIRING,//not in use
+  ESP_BOOT_INTO_DOWNLOAD_MODE
+};

@@ -1615,6 +1615,21 @@ void serialCommunicationTask( void * pvParameters )
                   Serial.println("no supporting command");
                 #endif
               }
+              
+              if (dap_actions_st.payloadPedalAction_.system_action_u8==(uint8_t)PedalSystemAction::ESP_BOOT_INTO_DOWNLOAD_MODE)
+              {
+                #ifdef ESPNow_S3
+                  Serial.println("Restart into Download mode");
+                  delay(1000);
+                  REG_WRITE(RTC_CNTL_OPTION1_REG, RTC_CNTL_FORCE_DOWNLOAD_BOOT);
+                  ESP.restart();
+                #else
+                  Serial.println("Command not supported");
+                  delay(1000);
+                #endif
+                //ESPNOW_BootIntoDownloadMode = false;
+              }
+              
 
               // trigger ABS effect
               if (dap_actions_st.payloadPedalAction_.triggerAbs_u8)
@@ -2243,7 +2258,21 @@ void ESPNOW_SyncTask( void * pvParameters )
           }
           #endif
 
-      } 
+      }
+
+      if(ESPNOW_BootIntoDownloadMode)
+      {
+        #ifdef ESPNow_S3
+          Serial.println("Restart into Download mode");
+          delay(1000);
+          REG_WRITE(RTC_CNTL_OPTION1_REG, RTC_CNTL_FORCE_DOWNLOAD_BOOT);
+          ESP.restart();
+        #else
+          Serial.println("Command not supported");
+          delay(1000);
+        #endif
+        ESPNOW_BootIntoDownloadMode = false;
+      }
       //rudder sync
       if(dap_calculationVariables_st.Rudder_status)
       {              
