@@ -27,6 +27,10 @@
 #define reg_add_velocity_current_feedback_percent 0x0081 // checked
 #define reg_add_voltage_0p1V 0x0140 // checked
 
+
+// DC bus voltage: 0B0AH --> 140 = 8c
+// position feedback: 0B14H
+
 #define ref_cyclic_read_0 0x01F3
 #define ref_cyclic_read_1 0x01F4
 #define ref_cyclic_read_2 0x01F5
@@ -49,17 +53,26 @@ class isv57communication {
 	public:
     isv57communication();
     void setupServoStateReading();
-    void sendTunedServoParameters();
+    void sendTunedServoParameters(bool commandRotationDirection, uint32_t stepsPerMotorRev_u32);
     void readAllServoParameters();
     void readServoStates();
     bool checkCommunication();
     bool findServosSlaveId();
     bool clearServoAlarms();
-
+    bool readAlarmHistory();
+    bool readCurrentAlarm();
+    void resetToFactoryParams();
+	
+	void clearServoUnitPosition();
+    void disableAxis();
+	void enableAxis();
+    //void resetAxisCounter(); 
 
 
     void setZeroPos();
+    void applyOfsetToZeroPos(int16_t givenPosOffset_i16);
     int16_t getZeroPos();
+    int16_t getPosFromMin();
     int16_t regArray[4];
 
     int16_t slaveId = 63; 
@@ -68,6 +81,7 @@ class isv57communication {
     int16_t servo_pos_error_p = 0;
     int16_t servo_current_percent = 0;
     int16_t servo_voltage_0p1V = 0;
+    bool isv57_update_parameter_b=false;
 
   private:
     // declare variables

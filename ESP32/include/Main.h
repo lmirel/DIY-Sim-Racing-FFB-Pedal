@@ -1,6 +1,8 @@
 #pragma once
-
 //#include <ADS1256.h>
+
+
+//#define PRINT_TASK_FREE_STACKSIZE_IN_WORDS
 
 /********************************************************************/
 /*                      Select the PCB      */
@@ -36,12 +38,12 @@
 //#define PUT_TARGET_CYCLE_TIME_IN_US DAP_MICROSECONDS_PER_SECOND / 3750
 
 // 2.0kHz
-//#define ADC_SAMPLE_RATE ADS1256_DRATE_2000SPS
-//#define PUT_TARGET_CYCLE_TIME_IN_US DAP_MICROSECONDS_PER_SECOND / 2000
+#define ADC_SAMPLE_RATE ADS1256_DRATE_2000SPS
+#define PUT_TARGET_CYCLE_TIME_IN_US DAP_MICROSECONDS_PER_SECOND / 2000
 
 // 1.0kHz
-#define ADC_SAMPLE_RATE ADS1256_DRATE_1000SPS
-#define PUT_TARGET_CYCLE_TIME_IN_US DAP_MICROSECONDS_PER_SECOND / 1000
+//#define ADC_SAMPLE_RATE ADS1256_DRATE_1000SPS
+//#define PUT_TARGET_CYCLE_TIME_IN_US DAP_MICROSECONDS_PER_SECOND / 1000
 
 
 
@@ -57,8 +59,9 @@
 /*                      Motor defines                            */
 /********************************************************************/
 //#define MOTOR_INVERT_MOTOR_DIR false
-
-
+static const uint32_t MAXIMUM_STEPPER_RPM = 4000;     
+static const uint32_t SECONDS_PER_MINUTE = 60;
+#define MAXIMUM_STEPPER_SPEED (uint32_t)250000//  max steps per second, see https://github.com/gin66/FastAccelStepper
 
 
 /********************************************************************/
@@ -78,9 +81,6 @@
   #define dirPinStepper    0
   #define stepPinStepper   4
 
-  // endstop pins
-  #define minPin 34
-  #define maxPin 35
 
   // level shifter not present on this PCB design
   #define SENSORLESS_HOMING false
@@ -105,9 +105,6 @@
   #define dirPinStepper    8
   #define stepPinStepper   9
 
-  // endstop pins
-  #define minPin 11
-  #define maxPin 10
 
   // level shifter not present on this PCB design
   #define SENSORLESS_HOMING false
@@ -137,23 +134,29 @@
   //I2Cpins
   #define I2C_SDA 32
   #define I2C_SCL 33
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
   #define ISV57_TXPIN 27 //17
   #define ISV57_RXPIN 26 // 16
-
-  #define Using_analog_output
+  //pedal assignment
+  // #define PEDAL_ASSIGNMENT
+  // #define CFG1 15
+  // #define CFG2 12
+  //#define Using_analog_output
   //#define Using_I2C_Sync
   #define ESPNOW_Enable
+  #define ESPNow_ESP32
   #define I2C_slave_address 0x15
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
+  //#define ESPNow_Pairing_function
+  //#define Pairing_GPIO 13
+  //#define ESPNow_debug_rudder
+  #define OTA_update_ESP32
+  #define BRAKE_RESISTOR_PIN 13
+  
 #endif
 
 
@@ -171,10 +174,6 @@
   // stepper pins
   #define dirPinStepper    32
   #define stepPinStepper   33
-  
-  // endstop pins
-  #define minPin 35
-  #define maxPin 34
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
@@ -185,6 +184,9 @@
   //#define USB_JOYSTICK
 
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 3
+  //#define Pairing_GPIO 0
+  //#define ESPNow_Pairing_function
+  #define ESPNow_ESP32
 #endif
 
 
@@ -203,19 +205,19 @@
   // stepper pins
   #define dirPinStepper    22
   #define stepPinStepper   23
-  
-  // endstop pins
-  #define minPin 35
-  #define maxPin 34
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
   #define ISV57_TXPIN 26 //17
   #define ISV57_RXPIN 27 // 16
-
+  #define ESPNOW_Enable
   #define BLUETOOTH_GAMEPAD
   //#define USB_JOYSTICK
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 3
+  #define Pairing_GPIO 0
+  //#define ESPNow_Pairing_function
+  #define ESPNow_ESP32
+  #define OTA_update_ESP32
 #endif
 
 
@@ -243,28 +245,27 @@
   //MCP4725 SDA SCL
   #define MCP_SDA 48
   #define MCP_SCL 47
-  
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
   #define ISV57_TXPIN 10//27 //17
   #define ISV57_RXPIN 9//26 // 16
 
-  #define Using_analog_output_ESP32_S3
+  //#define Using_analog_output_ESP32_S3
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK
-
+  #define ESPNOW_Enable
+  #define ESPNow_S3
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 5
+  //#define ESPNow_Pairing_function
+  #define Pairing_GPIO 0
+  #define OTA_update
 #endif
 
-// V3 version of dev PCB for ESP32 S3
+// For Gilphilbert PCBA design
 // flash instructions, see https://hutscape.com/tutorials/hello-arduino-esp32s3
-// 1. ESP32S3 Dev Module
-// 2. USB CDC On Boot Enabled
+// 1. USB CDC On Boot Enabled
 #if PCB_VERSION == 7
   // ADC defines
   #define PIN_DRDY 15//19// 19 --> DRDY
@@ -283,21 +284,161 @@
   //MCP4725 SDA SCL
   #define MCP_SDA 5
   #define MCP_SCL 4
+
+  // Pedal assignment pin
+  #define PEDAL_ASSIGNMENT
+  #define CFG1 1
+  #define CFG2 2
+
+  #define EMERGENCY_BUTTON
+  #define ShutdownPin 6
+  // level shifter is present on this PCB design
+  #define SENSORLESS_HOMING true
+  #define ISV57_TXPIN 10//27 //17
+  #define ISV57_RXPIN 9//26 // 16
+
+  //#define Using_analog_output_ESP32_S3
+  #define ESPNOW_Enable
+  #define ESPNow_S3
+  //#define BLUETOOTH_GAMEPAD
+  #define USB_JOYSTICK
+
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 5
+  //#define ESPNow_Pairing_function
+  //#define Hardware_Pairing_button
+  #define Pairing_GPIO 0
+  //#define ESPNow_debug_rudder
+  #define USING_LED
+  #define LED_GPIO 12
+  #define OTA_update
+  #define USING_BUZZER
+#endif
+
+#if PCB_VERSION == 8
+  // ADC defines
+  #define PIN_DRDY 15//19// 19 --> DRDY
+  #define PIN_RST  6 // X --> X
+  #define PIN_SCK 16//16 // 16 -->SCLK
+  #define PIN_MISO 18 // 18 --> DOUT
+  #define PIN_MOSI 17 // 17 --> DIN
+  #define PIN_CS 7//21 // 21 --> CS
+
+  // stepper pins
+  #define dirPinStepper    37//22
+  #define stepPinStepper   38//23
+
+  //analog output pin
+  //#define D_O 25   
+  //MCP4725 SDA SCL
+  #define MCP_SDA 5
+  #define MCP_SCL 4
+
+  // Pedal assignment pin
+  #define PEDAL_ASSIGNMENT
+  #define CFG1 1
+  #define CFG2 2
+
+  #define EMERGENCY_BUTTON
+  #define ShutdownPin 6
+  // level shifter is present on this PCB design
+  #define SENSORLESS_HOMING true
+  #define ISV57_TXPIN 10//27 //17
+  #define ISV57_RXPIN 9//26 // 16
+
+  //#define Using_analog_output_ESP32_S3
+  #define ESPNOW_Enable
+  #define ESPNow_S3
+  //#define BLUETOOTH_GAMEPAD
+  #define USB_JOYSTICK
+
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 5
+  //#define ESPNow_Pairing_function
+  //#define Hardware_Pairing_button
+  #define Pairing_GPIO 33
+  //#define ESPNow_debug_rudder
+  #define CONTROLLER_SPECIFIC_VIDPID
+  #define USING_LED
+  #define LED_GPIO 12
+  #define OTA_update
+  #define USING_BUZZER
+#endif
+
+// V3 version of dev PCB for inverted serial, dev only
+#if PCB_VERSION == 9
+  // ADC defines
+  #define PIN_DRDY 19// 19 --> DRDY
+  #define PIN_RST  15 // X --> X
+  #define PIN_SCK 16 // 16 -->SCLK
+  #define PIN_MISO 18 // 18 --> DOUT
+  #define PIN_MOSI 17 // 17 --> DIN
+  #define PIN_CS 21 // 21 --> CS
+
+  // stepper pins
+  #define dirPinStepper    22
+  #define stepPinStepper   23
+  //analog output pin
+  #define D_O 25 
+  //I2Cpins
+  #define I2C_SDA 32
+  #define I2C_SCL 33
+
+  // level shifter is present on this PCB design
+  #define SENSORLESS_HOMING true
+  #define ISV57_TXPIN 27 //17
+  #define ISV57_RXPIN 26 // 16
+  //pedal assignment
+  #define PEDAL_ASSIGNMENT
+  #define CFG1 15
+  #define CFG2 12
+  //#define Using_analog_output
+  //#define Using_I2C_Sync
+  #define ESPNOW_Enable
+  #define ESPNow_ESP32
+  #define I2C_slave_address 0x15
+  #define BLUETOOTH_GAMEPAD
+  //#define USB_JOYSTICK
+  #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 1
+  //#define ESPNow_Pairing_function
+  //#define Pairing_GPIO 13
+  //#define ESPNow_debug_rudder
+  #define OTA_update_ESP32
   
-  // endstop pins
-  #define minPin 12
-  #define maxPin 13
+  
+#endif
+
+// V4 version of dev PCB for inverted serial, dev only
+#if PCB_VERSION == 10
+  // ADC defines
+  #define PIN_DRDY 15//19// 19 --> DRDY
+  #define PIN_RST  6 // X --> X
+  #define PIN_SCK 16//16 // 16 -->SCLK
+  #define PIN_MISO 18 // 18 --> DOUT
+  #define PIN_MOSI 17 // 17 --> DIN
+  #define PIN_CS 7//21 // 21 --> CS
+
+  // stepper pins
+  #define dirPinStepper    37//22
+  #define stepPinStepper   38//23
+
+  //analog output pin
+  //#define D_O 25   
+  //MCP4725 SDA SCL
+  #define MCP_SDA 48
+  #define MCP_SCL 47
 
   // level shifter is present on this PCB design
   #define SENSORLESS_HOMING true
   #define ISV57_TXPIN 10//27 //17
   #define ISV57_RXPIN 9//26 // 16
 
-  #define Using_analog_output_ESP32_S3
+  //#define Using_analog_output_ESP32_S3
 
   //#define BLUETOOTH_GAMEPAD
   #define USB_JOYSTICK
-
+  #define ESPNOW_Enable
+  #define ESPNow_S3
   #define SERIAL_COOMUNICATION_TASK_DELAY_IN_MS 5
+  //#define ESPNow_Pairing_function
+  #define Pairing_GPIO 0
+  #define OTA_update
 #endif
-

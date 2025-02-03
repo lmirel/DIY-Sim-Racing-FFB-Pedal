@@ -11,25 +11,34 @@
 // 2015-11-20
 //--------------------------------------------------------------------
 
-#include <Joystick_ESP32S2.h>
+//#include <Joystick_ESP32S2.h>
 //USBCDC USBSerial;
 
-Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
+#include <USB.h>
+#include <USBHIDGamepad.h>
+
+// Define the gamepad
+USBHIDGamepad gamepad;
+
+/*Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
                    0, 0,                 // Button Count, Hat Switch Count
                    false, false, false,  // X and Y, but no Z Axis
                    false, false, false,  // No Rx, Ry, or Rz
                    false, false,         // No rudder or throttle
                    false, true, false);  // No accelerator, brake, or steering
-
+*/
 void setup() {
+
+  USB.begin();
+  gamepad.begin();
 
   Serial.setTxTimeoutMs(0);
   
   
-  Joystick.setBrakeRange(0, 1000);
+  //Joystick.setBrakeRange(0, 1000);
 
   // Initialize Joystick Library
-  Joystick.begin();
+  //Joystick.begin();
 }
 
 
@@ -39,7 +48,7 @@ void loop() {
   delay(2);
 
   // increment joystick output
-  counter+=100;
+  counter+=1;
   if (counter > 1000)
   {
     counter = 0;
@@ -54,6 +63,8 @@ void loop() {
   delay(2); // <-- This helped a lot!
 
   // send USB HID output
-  Joystick.setBrake(counter);
+  //Joystick.setBrake(counter);
+  //gamepad.joystickMove(0, 32767, 0, 0);   // Move joystick to the right
+  gamepad.leftStick(0, counter);
 }
 

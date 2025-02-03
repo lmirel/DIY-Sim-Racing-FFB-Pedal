@@ -47,7 +47,7 @@ public:
       float absAmp_fl32 = 0;
       switch (absForceOrTarvelBit) {
         case 0:
-          absAmp_fl32 = calcVars_st->absAmplitude;
+          absAmp_fl32 = calcVars_st->absAmplitude; 
           break;
         case 1:
           absAmp_fl32 = calcVars_st->stepperPosRange * calcVars_st->absAmplitude / 100.;
@@ -68,6 +68,7 @@ public:
           if (calcVars_st->absFrequency > 0)
           {
             absForceOffset_local = absAmp_fl32 * fmod(absTimeSeconds, 1.0 / (float)calcVars_st->absFrequency) * (float)calcVars_st->absFrequency;
+            absForceOffset_local -= absAmp_fl32 * 0.5f; // make it symmetrical around 0
           }
           break;
         default:
@@ -125,14 +126,16 @@ public:
     //float RPM_max =10;
     float RPM_amp_base = calcVars_st->RPM_AMP;
     float RPM_amp=0;
+    RPM_amp=RPM_amp_base*(1.0f+0.3*RPM_value/100.0f);
     if(RPM_value==0)
     {
       RPM_min_freq=0;
+      RPM_amp=0;
     }
-    RPM_amp=RPM_amp_base*(1+0.3*RPM_value/100);
+    
 
 
-    float RPM_freq=constrain(RPM_value*(RPM_max_freq-RPM_min_freq)/100, RPM_min_freq, RPM_max_freq);
+    float RPM_freq=constrain(RPM_value*(RPM_max_freq-RPM_min_freq)/100.0f, RPM_min_freq, RPM_max_freq);
     
 
 
@@ -147,7 +150,7 @@ public:
       float RPMTimeSeconds = _RPMTimeMillis / 1000.0f;
 
       //RPMForceOffset = calcVars_st->absAmplitude * sin(calcVars_st->absFrequency * RPMTimeSeconds);
-      RPMForceOffset = RPM_amp * sin( 2*PI* RPM_freq* RPMTimeSeconds);
+      RPMForceOffset = RPM_amp * sin( 2.0f*PI* RPM_freq* RPMTimeSeconds);
     }
 
     _lastCallTimeMillis = timeNowMillis;
@@ -443,8 +446,8 @@ class Rudder{
   int32_t dead_zone_upper;
   int32_t dead_zone_lower;
   int32_t dead_zone;
-  int16_t sync_pedal_position;
-  int16_t current_pedal_position;
+  int32_t sync_pedal_position;
+  int32_t current_pedal_position;
   float endpos_travel;
   float force_range;  
   float force_offset_raw;
@@ -529,4 +532,32 @@ class Rudder{
       force_offset_filter=0;
     }
   }
+};
+//Rudder impact
+MovingAverageFilter Averagefilter_Rudder_G_Offset(50);
+class Rudder_G_Force{
+  public:
+  int32_t offset_raw;
+  int32_t offset_filter;
+  int32_t stepper_range;
+  uint8_t G_value;
+  long stepperPosMax;
+  void offset_calculate(DAP_calculationVariables_st* calcVars_st)
+  {
+    stepperPosMax=(float)calcVars_st->stepperPosMax;
+    stepper_range=(float)calcVars_st->stepperPosRange;
+    float Amp_max=0.3*stepper_range;
+    if(calcVars_st->Rudder_status)
+    {
+      float offset= Amp_max*((float)G_value)/100.0f;
+      //offset=constrain(offset,0,Amp_max);
+      offset_filter=Averagefilter_Rudder_G_Offset.process((stepperPosMax-offset));
+    }
+    else
+    {
+      offset_filter=calcVars_st->stepperPosMax;
+    }
+
+  }
+  
 };

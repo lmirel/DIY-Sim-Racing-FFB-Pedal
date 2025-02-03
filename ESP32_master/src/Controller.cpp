@@ -4,10 +4,10 @@
 
 
 
-#define USB_JOYSTICK
+//#define USB_JOYSTICK
 #ifdef USB_JOYSTICK
+  //#include <Joystick_ESP32S2.h>
   #include <Joystick_ESP32S2.h>
-  
   Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD,
                    0, 0,                 // Button Count, Hat Switch Count
                    true, true, true,  // X and Y, but no Z Axis
@@ -16,6 +16,11 @@
                    false, false, false);  // No accelerator, brake, or steering
   
   void SetupController() {
+    	USB.PID(0x8213);
+      USB.VID(0x3035);
+      USB.productName("DIY_FFB_PEDAL_JOYSTICK");
+      USB.manufacturerName("OPENSOURCE");
+      USB.begin();
     Joystick.setRxAxisRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);
     Joystick.setRyAxisRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);
     Joystick.setRzAxisRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);
@@ -23,7 +28,7 @@
     Joystick.setYAxisRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);//rudder brake brake
     Joystick.setZAxisRange(JOYSTICK_MIN_VALUE, JOYSTICK_MAX_VALUE);//rudder brake throttle
     delay(100);
-  
+    //Joystick.begin();
     Joystick.begin(false);
 
     // rename HID device name, see e.g. https://github.com/schnoog/Joystick_ESP32S2/issues/8

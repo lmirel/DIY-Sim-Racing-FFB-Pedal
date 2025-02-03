@@ -3,13 +3,15 @@
 #include <stdint.h>
 
 // define the payload revision
-#define DAP_VERSION_CONFIG 138
+#define DAP_VERSION_CONFIG 142
 
 // define the payload types
 #define DAP_PAYLOAD_TYPE_CONFIG 100
 #define DAP_PAYLOAD_TYPE_ACTION 110
 #define DAP_PAYLOAD_TYPE_STATE_BASIC 120
 #define DAP_PAYLOAD_TYPE_STATE_EXTENDED 130
+#define DAP_PAYLOAD_TYPE_ESPNOW_PAIRING 140
+#define DAP_PAYLOAD_TYPE_BRIDGE_STATE 210
 
 struct payloadHeader {
   
@@ -22,11 +24,15 @@ struct payloadHeader {
   // store to EEPROM flag
   uint8_t storeToEeprom;
 
+  //pedal tag
+  uint8_t PedalTag;
+
 };
 
 struct payloadPedalAction {
   uint8_t triggerAbs_u8;
-  uint8_t resetPedalPos_u8;
+  //uint8_t resetPedalPos_u8; //1=reset position, 2=restart ESP
+  uint8_t system_action_u8; //1=reset position, 2=restart ESP, 3=OTA Enable, 4=enable pairing
   uint8_t startSystemIdentification_u8;
   uint8_t returnPedalConfig_u8;
   uint8_t RPM_u8;
@@ -44,6 +50,7 @@ struct payloadPedalState_Basic {
   uint16_t pedalPosition_u16;
   uint16_t pedalForce_u16;
   uint16_t joystickOutput_u16;
+  uint8_t erroe_code_u8;
 };
 
 struct payloadPedalState_Extended {
@@ -60,6 +67,12 @@ struct payloadPedalState_Extended {
   int16_t servo_current_percent_i16;
 };
 
+struct payloadBridgeState {
+  uint8_t Pedal_RSSI;
+  uint8_t Pedal_availability[3];
+  uint8_t Bridge_action;//0=none, 1=enable pairing
+
+};
 struct payloadPedalConfig {
   // configure pedal start and endpoint
   // In percent
@@ -67,8 +80,8 @@ struct payloadPedalConfig {
   uint8_t pedalEndPosition;
 
   // configure pedal forces
-  uint8_t maxForce;
-  uint8_t preloadForce;
+  float maxForce;
+  float preloadForce;
   
   // design force vs travel curve
   // In percent
@@ -173,15 +186,22 @@ struct payloadPedalConfig {
   //pedal type, 0= clutch, 1= brake, 2= gas
   uint8_t pedal_type;
   //OTA flag
-  uint8_t OTA_flag;
+  //uint8_t OTA_flag;
 
-  uint8_t enableReboot_u8;
+  uint8_t stepLossFunctionFlags_u8;
   //joystick out flag
   //uint8_t Joystick_ESPsync_to_ESP;
   
 
 };
 
+struct payloadESPNowInfo{
+  //uint8_t macAddr[6];
+  uint8_t _deviceID;
+  uint8_t occupy;
+  uint8_t occupy2;
+
+};
 struct payloadFooter {
   // To check if structure is valid
   uint16_t checkSum;
@@ -205,7 +225,11 @@ struct DAP_state_extended_st {
   payloadPedalState_Extended payloadPedalState_Extended_;
   payloadFooter payloadFooter_; 
 };
-
+struct DAP_bridge_state_st {
+  payloadHeader payLoadHeader_;
+  payloadBridgeState payloadBridgeState_;
+  payloadFooter payloadFooter_; 
+};
 
 struct DAP_config_st {
 
@@ -220,6 +244,11 @@ struct DAP_config_st {
   void storeConfigToEprom(DAP_config_st& config_st);
 };
 
+struct DAP_ESPPairing_st {
+  payloadHeader payLoadHeader_;
+  payloadESPNowInfo payloadESPNowInfo_;
+  payloadFooter payloadFooter_; 
+};
 
 struct DAP_calculationVariables_st
 {
@@ -251,13 +280,15 @@ struct DAP_calculationVariables_st
   float WS_freq;
   bool Rudder_status;
   uint8_t pedal_type;
-  uint16_t sync_pedal_position;
-  uint16_t current_pedal_position;
+  uint32_t sync_pedal_position;
+  uint32_t current_pedal_position;
   float current_pedal_position_ratio;
   float Sync_pedal_position_ratio;
   bool rudder_brake_status;
   long stepperPosMin_default;
+  long stepperPosMax_default;
   float stepperPosRange_default;
+  uint32_t stepsPerMotorRevolution;
 
   void updateFromConfig(DAP_config_st& config_st);
   void updateEndstops(long newMinEndstop, long newMaxEndstop);
@@ -266,5 +297,6 @@ struct DAP_calculationVariables_st
   void reset_maxforce();
   void StepperPos_setback();
   void Default_pos();
-  void update_stepperpos(long newMinstop);
+  void update_stepperMinpos(long newMinstop);
+  void update_stepperMaxpos(long newMaxstop);
 };

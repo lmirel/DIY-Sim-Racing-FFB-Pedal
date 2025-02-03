@@ -1,0 +1,97 @@
+name: OTA_Binary_building
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Firmware_Buidling:
+    runs-on: windows-latest
+    steps:    
+    # Prepare environment
+      - uses: actions/checkout@main
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+  
+  
+  
+      # Build ESP code
+      - name: Build PlatformIO Project ESP32
+        working-directory: ./ESP32
+        run: | 
+          pio system info
+          pio run --environment esp32 
+          pio run --environment esp32s3usbotg
+          pio run --environment esp32-speedcrafter
+          pio run --environment esp32s3usbotg-gilphilbert
+          pio run --environment esp32s3usbotg-gilphilbert_2_0
+      # copy files to dir
+      - name: Copy files to packing dir
+        run: | 
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/firmware.bin  ${{ github.workspace }}/OTA/ControlBoard/esp32
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/bootloader.bin  ${{ github.workspace }}/OTA/ControlBoard/esp32
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32/partitions.bin  ${{ github.workspace }}/OTA/ControlBoard/esp32
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg/firmware.bin  ${{ github.workspace }}/OTA/ControlBoard/esp32S3
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg/bootloader.bin  ${{ github.workspace }}/OTA/ControlBoard/esp32S3
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg/partitions.bin  ${{ github.workspace }}/OTA/ControlBoard/esp32S3
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32-speedcrafter/firmware.bin  ${{ github.workspace }}/OTA/ControlBoard/Speedcrafter
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32-speedcrafter/bootloader.bin  ${{ github.workspace }}/OTA/ControlBoard/Speedcrafter
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32-speedcrafter/partitions.bin  ${{ github.workspace }}/OTA/ControlBoard/Speedcrafter
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg-gilphilbert/firmware.bin  ${{ github.workspace }}/OTA/ControlBoard/Gilphilbert_1_2
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg-gilphilbert/bootloader.bin  ${{ github.workspace }}/OTA/ControlBoard/Gilphilbert_1_2
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg-gilphilbert/partitions.bin  ${{ github.workspace }}/OTA/ControlBoard/Gilphilbert_1_2   
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg-gilphilbert_2_0/firmware.bin  ${{ github.workspace }}/OTA/ControlBoard/Gilphilbert_2_0
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg-gilphilbert_2_0/bootloader.bin  ${{ github.workspace }}/OTA/ControlBoard/Gilphilbert_2_0
+          copy ${{ github.workspace }}/ESP32/.pio/build/esp32s3usbotg-gilphilbert_2_0/partitions.bin  ${{ github.workspace }}/OTA/ControlBoard/Gilphilbert_2_0 
+
+      # Build ESP code for esp32_master
+      - name: Build PlatformIO Project ESP32
+        working-directory: ./ESP32_master
+        run: | 
+          pio system info
+          pio run --environment esp32s3usbotg
+          pio run --environment esp32
+          pio run --environment esp32s3-Fanatec
+          pio run --environment esp32s3-gilphilbert
+      # copy files to dir
+      - name: Copy files to packing dir
+        run: | 
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3usbotg/firmware.bin  ${{ github.workspace }}/OTA/Bridge/dev_kit
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3usbotg/bootloader.bin  ${{ github.workspace }}/OTA/Bridge/dev_kit
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3usbotg/partitions.bin  ${{ github.workspace }}/OTA/Bridge/dev_kit
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32/firmware.bin  ${{ github.workspace }}/OTA/Bridge/SC_Shield
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32/bootloader.bin  ${{ github.workspace }}/OTA/Bridge/SC_Shield
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32/partitions.bin  ${{ github.workspace }}/OTA/Bridge/SC_Shield
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3-Fanatec/firmware.bin  ${{ github.workspace }}/OTA/Bridge/Fanatec_Bridge
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3-Fanatec/bootloader.bin  ${{ github.workspace }}/OTA/Bridge/Fanatec_Bridge
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3-Fanatec/partitions.bin  ${{ github.workspace }}/OTA/Bridge/Fanatec_Bridge
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3-gilphilbert/firmware.bin  ${{ github.workspace }}/OTA/Bridge/Gilphilbert_dongle
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3-gilphilbert/bootloader.bin  ${{ github.workspace }}/OTA/Bridge/Gilphilbert_dongle
+          copy ${{ github.workspace }}/ESP32_master/.pio/build/esp32s3-gilphilbert/partitions.bin  ${{ github.workspace }}/OTA/Bridge/Gilphilbert_dongle
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git checkout -b develop
+          git add OTA/ControlBoard/esp32/firmware.bin OTA/ControlBoard/esp32/partitions.bin OTA/ControlBoard/esp32/bootloader.bin
+          git add OTA/ControlBoard/esp32S3/firmware.bin OTA/ControlBoard/esp32S3/partitions.bin OTA/ControlBoard/esp32S3/bootloader..bin
+          git add OTA/ControlBoard/Speedcrafter/firmware.bin OTA/ControlBoard/Speedcrafter/partitions.bin OTA/ControlBoard/Speedcrafter/bootloader.bin
+          git add OTA/ControlBoard/Gilphilbert_1_2/firmware.bin OTA/ControlBoard/Gilphilbert_1_2/partitions.bin OTA/ControlBoard/Gilphilbert_1_2/bootloader.bin
+          git add OTA/ControlBoard/Gilphilbert_2_0/firmware.bin OTA/ControlBoard/Gilphilbert_2_0/partitions.bin OTA/ControlBoard/Gilphilbert_2_0/bootloader.bin
+          git add OTA/Bridge/dev_kit/firmware.bin OTA/Bridge/dev_kit/partitions.bin OTA/Bridge/dev_kit/bootloader.bin
+          git add OTA/Bridge/SC_Shield/firmware.bin OTA/Bridge/SC_Shield/partitions.bin OTA/Bridge/SC_Shield/bootloader.bin
+          git add OTA/Bridge/Fanatec_Bridge/firmware.bin OTA/Bridge/Fanatec_Bridge/partitions.bin OTA/Bridge/Fanatec_Bridge/bootloader.bin
+          git add OTA/Bridge/Gilphilbert_dongle/firmware.bin OTA/Bridge/Gilphilbert_dongle/partitions.bin OTA/Bridge/Gilphilbert_dongle/bootloader.bin
+          git commit -m "Add built firmware"
+          git push -u origin develop
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
