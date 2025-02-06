@@ -308,6 +308,19 @@ void setup()
   Serial.begin(921600, SERIAL_8N1);
   Serial.setTimeout(5);
 #endif
+
+#ifdef MACasHWID
+  unsigned char mac_base[6] = {0};
+  esp_efuse_mac_get_default(mac_base);
+  char hwid[20];
+  snprintf(hwid, 20, "hwid:%02x%02x%02x%02x%02x%02x", mac_base[0], mac_base[1], mac_base[2], mac_base[3], mac_base[4], mac_base[5]);
+  for (int i = 0; i < 5; i++)
+  {
+    Serial.println(hwid);
+    delay(500);
+  }
+#endif
+
   Serial.println(" ");
   Serial.println(" ");
   Serial.println(" ");
@@ -319,6 +332,7 @@ void setup()
   //delay(3000);
 #endif
   //delay(3000);
+
   Serial.println("This work is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.");
   Serial.println("Please check github repo for more detail: https://github.com/ChrGri/DIY-Sim-Racing-FFB-Pedal");
   //printout the github releasing version

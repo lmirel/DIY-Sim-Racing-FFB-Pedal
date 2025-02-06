@@ -140,6 +140,10 @@ static const uint32_t SECONDS_PER_MINUTE = 60;
 // CLU+GAS+BRK needs high 5v/3v for 0% input
 // HBRK needs high5v/3v for 100% input
 #define FANATEC_analog_output
+
+//CH340x doesn't support HW ID so we simulate one based on MAC address
+#define MACasHWID
+
 //#define Using_I2C_Sync
 //#define ESPNOW_Enable
 //#define ESPNow_ESP32
