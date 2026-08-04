@@ -266,6 +266,10 @@ Adafruit_NeoPixel pixels(LEDS_COUNT, LED_GPIO, NEO_GRB + NEO_KHZ800);
 #include "Buzzer.h"
 #endif
 
+#ifdef MACasHWID
+char hwid[32];
+#endif
+
 /**********************************************************************************************/
 /*                                                                                            */
 /*                         setup function                                                     */
@@ -312,9 +316,8 @@ void setup()
 #ifdef MACasHWID
   unsigned char mac_base[6] = {0};
   esp_efuse_mac_get_default(mac_base);
-  char hwid[20];
-  snprintf(hwid, 20, "hwid:%02x%02x%02x%02x%02x%02x", mac_base[0], mac_base[1], mac_base[2], mac_base[3], mac_base[4], mac_base[5]);
-  for (int i = 0; i < 5; i++)
+  snprintf(hwid, 32, "hwid:ffbpedal_%02x%02x%02x%02x%02x%02x", mac_base[0], mac_base[1], mac_base[2], mac_base[3], mac_base[4], mac_base[5]);
+  if (0) for (int i = 0; i < 5; i++)
   {
     Serial.println(hwid);
     delay(500);
@@ -1375,7 +1378,7 @@ void serialCommunicationTask(void *pvParameters)
                 Serial.print(",   Payload type received: ");
                 Serial.println(dap_config_st_local.payLoadHeader_.payloadType);
               }
-              
+              #if 0
               if (dap_actions_st.payloadPedalAction_.system_action_u8==(uint8_t)PedalSystemAction::ESP_BOOT_INTO_DOWNLOAD_MODE)
               {
                 #ifdef ESPNow_S3
@@ -1389,7 +1392,7 @@ void serialCommunicationTask(void *pvParameters)
                 #endif
                 //ESPNOW_BootIntoDownloadMode = false;
               }
-              
+              #endif
 
               if (dap_config_st_local.payLoadHeader_.version != DAP_VERSION_CONFIG)
               {
@@ -1644,6 +1647,14 @@ void serialCommunicationTask(void *pvParameters)
           Serial.println(sizeof(DAP_actions_st));
 
           break;
+#ifdef MACasHWID
+          case 5: //'HWID\n'
+            char lcmd[6];
+            Serial.readBytes((char *)lcmd, 5);
+            if (lcmd[0] == 'H' && lcmd[1] == 'W' && lcmd[2] == 'I' && lcmd[3] == 'D' && lcmd[4] == '\n')
+              Serial.println(hwid);
+          break;
+#endif
         }
       }
 
